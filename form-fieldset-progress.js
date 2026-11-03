@@ -138,8 +138,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				}
 			}
 		}
-		this._show(index, true);
-		return true;
+		return this._navigate(index);
 	}
 
 	_prepare() {
@@ -450,11 +449,34 @@ export class FormFieldsetProgressElement extends HTMLElement {
 					return;
 				event.preventDefault();
 				if (event.submitter?.formNoValidate)
-					this._show(this._index + 1, true);
+					this._navigate(this._index + 1);
 				else this.next();
 			},
 			{ capture: true, signal },
 		);
+	}
+
+	_navigate(index) {
+		const previousIndex = this._index;
+		const step = this._steps[index];
+		if (
+			!this._emit(
+				'beforechange',
+				{
+					stepIndex: index,
+					stepCount: this.stepCount,
+					fieldset: step.fieldset,
+					previousIndex,
+				},
+				true,
+			) ||
+			this._state !== 'ready' ||
+			this._index !== previousIndex ||
+			this._steps[index] !== step
+		)
+			return false;
+		this._show(index, true);
+		return true;
 	}
 
 	_show(index, focus) {
@@ -569,10 +591,11 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		};
 	}
 
-	_emit(name, detail) {
-		this.dispatchEvent(
+	_emit(name, detail, cancelable = false) {
+		return this.dispatchEvent(
 			new CustomEvent(`form-fieldset-progress:${name}`, {
 				bubbles: true,
+				cancelable,
 				detail,
 			}),
 		);

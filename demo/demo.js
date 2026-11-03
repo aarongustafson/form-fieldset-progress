@@ -1,3 +1,5 @@
+import './transitions.js';
+
 document.addEventListener('form-fieldset-progress:error', (event) => {
 	if (event.target.id === 'failure') {
 		document.querySelector('#setup-error').textContent =

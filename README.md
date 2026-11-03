@@ -76,6 +76,8 @@ behavior and authored label; the component never creates a Reset button. Hidden
 or disabled reset controls stay where authored so moving them cannot change
 inherited fieldset disabling. Only include Reset when discarding entered answers
 is an intentional part of the form.
+See the [optional Reset demo](demo/index.html#optional-reset) for that case; the
+introductory demo does not include Reset.
 
 ## Navigation and validation
 
@@ -248,21 +250,55 @@ layout-specific component API is needed.
 | `refresh()`   | Restore authored UI, re-read it, and restart at step zero; return setup success |
 
 `next()` and `previous()` return `false` at their boundaries or before readiness;
-validation failures also return `false`. A `goTo()` to the active step returns
+validation failures and canceled navigation also return `false`. A `goTo()` to the active step returns
 `true` without changing focus or emitting a change.
 
 All events bubble:
 
-| Event                           | Detail                               |
-| ------------------------------- | ------------------------------------ |
-| `form-fieldset-progress:ready`  | `stepIndex`, `stepCount`, `fieldset` |
-| `form-fieldset-progress:change` | The same, plus `previousIndex`       |
-| `form-fieldset-progress:error`  | `error`: the setup error             |
+| Event                                 | Detail                                                    |
+| ------------------------------------- | --------------------------------------------------------- |
+| `form-fieldset-progress:ready`        | `stepIndex`, `stepCount`, `fieldset`                      |
+| `form-fieldset-progress:beforechange` | Destination step detail, plus `previousIndex`; cancelable |
+| `form-fieldset-progress:change`       | The same, plus `previousIndex`                            |
+| `form-fieldset-progress:error`        | `error`: the setup error                                  |
 
 Change events follow rendering and any navigation focus update. Reset and native
 invalid events can also change the active step. Initial setup emits ready, not
 change. Register error listeners before upgrading the element, or use a
 document-level listener before importing `define.js`.
+
+### Optional section transitions
+
+The component does not animate by default. `beforechange` runs after applicable
+forward validation, before navigation changes visibility or focus. Its detail
+describes the destination; `stepIndex` on the element still identifies the current
+section. Call `preventDefault()` to cancel navigation; the method returns `false`.
+Without cancellation, navigation stays synchronous.
+
+This hook lets an author wrap a later `goTo(event.detail.stepIndex)` call in
+[`document.startViewTransition()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/startViewTransition).
+Guard the resumed call so it does not start another transition. It still checks
+validation. See the [section-transition demo](demo/index.html#section-transitions)
+and its [complete script](demo/transitions.js) for guarded re-entry, interruption,
+and cleanup.
+
+The demo names only the active fieldset for snapshotting and disables the root
+snapshot. The outgoing snapshot slides away as the incoming one slides in;
+controls and native progress remain live outside the snapshots. A minimum-sized
+section area keeps the footer steady for the demo’s content without clipping
+longer sections. Adjust that space for your form. Native progress-fill animation
+is not consistent across engines, so the demo updates its value without animation.
+
+Animation requires API support, an enabled author-supplied checkbox, and
+`prefers-reduced-motion: no-preference`. Otherwise navigation remains immediate.
+The reduced-motion stylesheet also stops an animation if that preference changes
+mid-transition. Only the active fieldset remains interactive or exposed to
+assistive technology; the outgoing image is not another form. Focus moves through
+the normal navigation path, without waiting for animation to finish.
+
+`beforechange` is not emitted for setup, the active-step no-op, reset, or native
+invalid-field recovery. Those paths remain immediate so an animation handler
+cannot delay error recovery or override Reset.
 
 ## Styling
 

@@ -21,11 +21,11 @@ export declare class FormFieldsetProgressElement extends HTMLElement {
 	readonly stepCount: number;
 	/** Restore authored markup, re-read configuration, and start at the first step. */
 	refresh(): boolean;
-	/** Validate the current section and advance, unless step validation is opted out. */
+	/** Validate the current section and advance; return false when canceled. */
 	next(): boolean;
-	/** Go back without validation. */
+	/** Go back without validation; return false when canceled. */
 	previous(): boolean;
-	/** Validate sections crossed forward. Throws RangeError for an invalid index. */
+	/** Validate sections crossed forward; return false when canceled. Throws RangeError for an invalid index. */
 	goTo(index: number): boolean;
 }
 
@@ -36,6 +36,7 @@ declare global {
 
 	interface HTMLElementEventMap {
 		'form-fieldset-progress:ready': CustomEvent<FieldsetProgressStepDetail>;
+		'form-fieldset-progress:beforechange': CustomEvent<FieldsetProgressChangeDetail>;
 		'form-fieldset-progress:change': CustomEvent<FieldsetProgressChangeDetail>;
 		'form-fieldset-progress:error': CustomEvent<FieldsetProgressErrorDetail>;
 	}

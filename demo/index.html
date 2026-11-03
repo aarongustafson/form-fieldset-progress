@@ -25,12 +25,10 @@
 				<p>
 					Next validates the current section. Back never does. Enter
 					in a single-line field also advances. The original submit
-					button appears on the final screen, and Start over resets
-					the form and step. With no reference attributes, Start over
-					moves into the full-width footer before Back. Equal Back and
-					Next slots keep progress centered between them, including
-					when Back is hidden. On narrow forms, Start over wraps above
-					the navigation row.
+					button appears on the final screen. Equal Back and Next
+					slots keep progress centered between them, including when
+					Back is hidden. Reset is optional and appears in a later
+					example.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
@@ -51,7 +49,6 @@
       &lt;!-- Review instructions --&gt;
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send application&lt;/button&gt;
-    &lt;button type="reset"&gt;Start over&lt;/button&gt;
   &lt;/form&gt;
 &lt;/form-fieldset-progress&gt;</code></pre>
 					<div class="demo">
@@ -128,7 +125,6 @@
 								>
 									Send application
 								</button>
-								<button type="reset">Start over</button>
 								<p role="status" data-result></p>
 							</form>
 						</form-fieldset-progress>
@@ -434,6 +430,168 @@
 									data-result
 									data-success="اكتمل المثال. لم يتم إرسال أي بيانات."
 								></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="section-transitions">
+				<h2>Optional section transitions</h2>
+				<p>
+					The cancelable <code>beforechange</code> event runs after
+					validation, before the next section is shown. This example
+					uses the
+					<a
+						href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API"
+						>View Transition API</a
+					>
+					to slide only the fieldset snapshots. Progress and buttons
+					stay outside the snapshots, and the section area reserves
+					space so the footer stays put.
+				</p>
+				<p>
+					Animation runs only when enabled, supported, and
+					<code>prefers-reduced-motion: no-preference</code> matches.
+					Otherwise navigation is immediate. Back reverses the slide;
+					another navigation action interrupts it. Native validation
+					and focus behavior remain available. Native progress values
+					update without animation because fill animation is not
+					consistent across browsers. The code below shows markup and
+					styling excerpts; see the
+					<a href="./transitions.js">complete animation script</a>
+					and <a href="./styles.css">demo styles</a>.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress id="animated"&gt;
+  &lt;form&gt;
+    &lt;div class="transition-pages"&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+        &lt;!-- Labeled, required email --&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Delivery&lt;/legend&gt;
+        &lt;!-- Labeled, required city --&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;&lt;/fieldset&gt;
+    &lt;/div&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+
+/* Reserve space; don’t clip longer content. */
+.transition-pages { min-block-size: 10rem; }
+
+/* The script names only the active fieldset
+   and disables the root snapshot. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(demo-section) {
+    animation: demo-section-out 240ms ease both;
+  }
+  ::view-transition-new(demo-section) {
+    animation: demo-section-in 240ms ease both;
+  }
+}
+
+// The demo script handles beforechange,
+// feature/preference checks, interruption,
+// cleanup, and guarded goTo() re-entry.
+import './transitions.js';</code></pre>
+					<div class="demo">
+						<label id="animation-option" hidden>
+							<input
+								type="checkbox"
+								id="enable-transitions"
+								checked
+							/>
+							Animate section changes when motion is allowed
+						</label>
+						<form-fieldset-progress id="animated">
+							<form action="/delivery" method="post">
+								<div class="transition-pages">
+									<fieldset>
+										<legend>Contact</legend>
+										<label for="animated-email"
+											>Email</label
+										>
+										<input
+											id="animated-email"
+											name="email"
+											type="email"
+											autocomplete="email"
+											required
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Delivery</legend>
+										<label for="animated-city">City</label>
+										<input
+											id="animated-city"
+											name="city"
+											autocomplete="address-level2"
+											required
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Review</legend>
+										<p>
+											Use Back to check your answers
+											before sending.
+										</p>
+									</fieldset>
+								</div>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="optional-reset">
+				<h2>Optional Reset: start over</h2>
+				<p>
+					Most forms don’t need Reset. Include one only when
+					discarding entered answers is intentional. Without reference
+					attributes, the component moves an authored, visible,
+					enabled Reset control before Back in the footer. On narrow
+					forms, Reset wraps above navigation. Any reference attribute
+					keeps Reset where you authored it; the component never
+					creates a Reset button.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;&lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;button type="reset"&gt;Start over&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="reset-demo">
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="reset-name">Name</label>
+									<input
+										id="reset-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>
+										Start over clears your answers and
+										returns to Contact.
+									</p>
+								</fieldset>
+								<button type="submit">Send</button>
+								<button type="reset">Start over</button>
+								<p role="status" data-result></p>
 							</form>
 						</form-fieldset-progress>
 					</div>

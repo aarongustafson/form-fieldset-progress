@@ -171,6 +171,68 @@ button {
 .custom-actions [data-fieldset-progress-submit] {
 	margin-inline-start: 0;
 }
+#animation-option[hidden] {
+	display: none;
+}
+.transition-pages {
+	min-block-size: 10rem;
+}
+
+:root[data-section-transition] {
+	view-transition-name: none;
+	--demo-slide-direction: 1;
+}
+:root[data-section-transition='backward'] {
+	--demo-slide-direction: -1;
+}
+:root[data-section-transition]::view-transition {
+	pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:root[data-section-transition]
+		#animated
+		.transition-pages
+		> fieldset:not([hidden]) {
+		view-transition-name: demo-section;
+	}
+	::view-transition-group(demo-section) {
+		animation-duration: 240ms;
+	}
+	::view-transition-old(demo-section) {
+		animation: demo-section-out 240ms ease both;
+	}
+	::view-transition-new(demo-section) {
+		animation: demo-section-in 240ms ease both;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(demo-section),
+	::view-transition-old(demo-section),
+	::view-transition-new(demo-section) {
+		animation: none;
+	}
+}
+@keyframes demo-section-in {
+	from {
+		opacity: 0;
+		transform: translateX(calc(var(--demo-slide-direction) * 1.5rem));
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes demo-section-out {
+	from {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateX(calc(var(--demo-slide-direction) * -1.5rem));
+	}
+}
 iframe {
 	border: 0;
 	inline-size: 100%;

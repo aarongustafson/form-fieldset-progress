@@ -76,6 +76,92 @@ describe('progressive enhancement', () => {
 		expect(host.stepIndex).toBe(0);
 	});
 
+	it('offers validated navigation before rendering and allows cancellation', async () => {
+		const host = await fixture();
+		const before = vi.fn((event) => {
+			expect(event.bubbles).toBe(true);
+			expect(event.cancelable).toBe(true);
+			expect(event.detail).toEqual({
+				stepIndex: 1,
+				previousIndex: 0,
+				stepCount: 3,
+				fieldset: host.querySelector('#address'),
+			});
+			expect(host.stepIndex).toBe(0);
+			expect(host.querySelector('#address').hidden).toBe(true);
+			event.preventDefault();
+		});
+		const change = vi.fn();
+		host.addEventListener('form-fieldset-progress:beforechange', before);
+		host.addEventListener('form-fieldset-progress:change', change);
+		expect(host.next()).toBe(false);
+		expect(before).not.toHaveBeenCalled();
+		host.querySelector('[name=name]').value = 'Ada';
+		const next = host.querySelector('[data-fieldset-progress-next]');
+		next.focus();
+		expect(host.next()).toBe(false);
+		expect(before).toHaveBeenCalledOnce();
+		expect(change).not.toHaveBeenCalled();
+		expect(document.activeElement).toBe(next);
+		expect(host.stepIndex).toBe(0);
+		expect(host.querySelector('progress').value).toBe(0);
+		host.removeEventListener('form-fieldset-progress:beforechange', before);
+		expect(host.next()).toBe(true);
+		expect(host.stepIndex).toBe(1);
+		expect(change).toHaveBeenCalledOnce();
+	});
+
+	it('does not allow a navigation hook to cancel reset or invalid-field recovery', async () => {
+		const host = await fixture();
+		host.querySelector('[name=name]').value = 'Ada';
+		host.querySelector('[name=city]').value = 'Seattle';
+		host.goTo(2);
+		const before = vi.fn((event) => event.preventDefault());
+		host.addEventListener('form-fieldset-progress:beforechange', before);
+		expect(host.previous()).toBe(false);
+		expect(host.stepIndex).toBe(2);
+		host.querySelector('[name=city]').dispatchEvent(
+			new Event('invalid', { cancelable: true }),
+		);
+		expect(host.stepIndex).toBe(1);
+		host.form.reset();
+		await tick();
+		expect(host.stepIndex).toBe(0);
+		expect(before).toHaveBeenCalledOnce();
+	});
+
+	it('offers the same cancellable hook for an early formnovalidate submit', async () => {
+		const host = await fixture(
+			'',
+			'<button id="skip" type="submit" formnovalidate>Skip checks</button>',
+		);
+		const before = vi.fn((event) => event.preventDefault());
+		host.addEventListener('form-fieldset-progress:beforechange', before);
+		host.form.dispatchEvent(
+			new SubmitEvent('submit', {
+				bubbles: true,
+				cancelable: true,
+				submitter: host.querySelector('#skip'),
+			}),
+		);
+		expect(before).toHaveBeenCalledOnce();
+		expect(host.stepIndex).toBe(0);
+	});
+
+	it('abandons navigation if a beforechange listener refreshes or disconnects the host', async () => {
+		for (const action of ['refresh', 'remove']) {
+			const host = await fixture('no-validation');
+			host.addEventListener(
+				'form-fieldset-progress:beforechange',
+				() => host[action](),
+				{ once: true },
+			);
+			expect(host.next()).toBe(false);
+			expect(host.stepIndex).toBe(0);
+			expect(host.state).toBe(action === 'refresh' ? 'ready' : 'idle');
+		}
+	});
+
 	it('uses the original submit control on the last screen', async () => {
 		const host = await fixture('no-validation');
 		const submit = host.querySelector('[type=submit]');

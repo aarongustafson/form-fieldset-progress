@@ -114,19 +114,19 @@
 						{
 							"kind": "method",
 							"name": "next",
-							"description": "Validate and advance. Return false at the boundary, before readiness, or on validation failure.",
+							"description": "Validate and advance. Return false at the boundary, before readiness, on validation failure, or when beforechange is canceled.",
 							"return": { "type": { "text": "boolean" } }
 						},
 						{
 							"kind": "method",
 							"name": "previous",
-							"description": "Go back without validation; return false at the boundary or before readiness.",
+							"description": "Go back without validation; return false at the boundary, before readiness, or when beforechange is canceled.",
 							"return": { "type": { "text": "boolean" } }
 						},
 						{
 							"kind": "method",
 							"name": "goTo",
-							"description": "Navigate to a zero-based step, validating sections crossed forward. Throw RangeError for an unavailable index.",
+							"description": "Navigate synchronously to a zero-based step, validating sections crossed forward. Return false when beforechange is canceled. Throw RangeError for an unavailable index.",
 							"parameters": [
 								{
 									"name": "index",
@@ -137,6 +137,13 @@
 						}
 					],
 					"events": [
+						{
+							"name": "form-fieldset-progress:beforechange",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressChangeDetail>"
+							},
+							"description": "Bubbling, cancelable navigation event after applicable validation and before rendering or focus changes. Detail describes the destination: stepIndex, stepCount, fieldset, and previousIndex. Cancellation returns false without navigating. Not emitted for setup, reset, invalid-field recovery, or requests for the active step."
+						},
 						{
 							"name": "form-fieldset-progress:ready",
 							"type": {

@@ -8,6 +8,13 @@ const success: boolean =
 const form: HTMLFormElement | null = same.form;
 const registered: boolean = defineFormFieldsetProgress();
 
+same.addEventListener('form-fieldset-progress:beforechange', (event) => {
+	const index: number = event.detail.stepIndex;
+	const previous: number = event.detail.previousIndex;
+	const fieldset: HTMLFieldSetElement = event.detail.fieldset;
+	event.preventDefault();
+	console.log(index, previous, fieldset);
+});
 same.addEventListener('form-fieldset-progress:change', (event) => {
 	const index: number = event.detail.previousIndex;
 	const fieldset: HTMLFieldSetElement = event.detail.fieldset;

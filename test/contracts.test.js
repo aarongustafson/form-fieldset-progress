@@ -26,6 +26,11 @@ describe('published API contracts', () => {
 				({ kind }) => kind === 'custom-element-definition',
 			).name,
 		).toBe('form-fieldset-progress');
+		expect(declaration.events.map(({ name }) => name).sort()).toEqual(
+			['ready', 'beforechange', 'change', 'error']
+				.map((name) => `form-fieldset-progress:${name}`)
+				.sort(),
+		);
 	});
 
 	it('exports only existing, explicitly packaged files', () => {
