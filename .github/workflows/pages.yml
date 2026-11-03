@@ -1,0 +1,66 @@
+name: Deploy to GitHub Pages
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - 'demo/**'
+            - 'form-fieldset-progress.js'
+            - 'form-fieldset-progress.css'
+            - 'custom-elements.json'
+            - 'define.js'
+            - 'index.js'
+            - 'README.md'
+            - '.github/workflows/pages.yml'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: 'pages'
+    cancel-in-progress: false
+
+jobs:
+    deploy:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '24.x'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Convert README to index.html
+              run: |
+                  echo '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>form-fieldset-progress</title><style>body{max-width:800px;margin:2rem auto;padding:0 1rem;font-family:system-ui,-apple-system,sans-serif;line-height:1.6}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}pre{background:#f4f4f4;padding:1rem;border-radius:5px;overflow-x:auto}pre code{background:none;padding:0}</style></head><body>' > index.html
+                  ./node_modules/.bin/marked README.md >> index.html
+                  echo '</body></html>' >> index.html
+
+            - name: Setup Pages
+              uses: actions/configure-pages@v6
+
+            - name: Stage public demo files
+              run: |
+                  mkdir _site
+                  cp index.html README.md LICENSE index.js define.js form-fieldset-progress.js form-fieldset-progress.css custom-elements.json _site/
+                  cp -R demo _site/demo
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v5
+              with:
+                  path: '_site'
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v5

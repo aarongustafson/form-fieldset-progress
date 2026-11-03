@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>form-fieldset-progress demos</title>
+		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="../form-fieldset-progress.css" />
+		<script type="module" src="./demo.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>&lt;form-fieldset-progress&gt;</h1>
+			<p>
+				One section at a time, with native fieldsets and validation.
+				<a
+					href="https://github.com/aarongustafson/form-fieldset-progress#readme"
+					>README and API</a
+				>
+			</p>
+		</header>
+		<main>
+			<section class="demo-section">
+				<h2>Generated navigation and section validation</h2>
+				<p>
+					Continue validates the current section. Back never does.
+					Enter in a single-line field also advances. The original
+					submit button appears on the final screen, and Start over
+					resets the form and step.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form action="/apply" method="post"&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Contact details&lt;/legend&gt;
+      &lt;label&gt;Your name
+        &lt;input name="name" required
+          autocomplete="name" /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Delivery address&lt;/legend&gt;
+      &lt;!-- Labeled, required address fields --&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Review&lt;/legend&gt;
+      &lt;!-- Review instructions --&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send application&lt;/button&gt;
+    &lt;button type="reset"&gt;Start over&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="basic">
+							<form action="/apply" method="post">
+								<fieldset>
+									<legend>Contact details</legend>
+									<label for="applicant-name"
+										>Your name</label
+									>
+									<input
+										id="applicant-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+									<label for="applicant-email">Email</label>
+									<input
+										id="applicant-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery address</legend>
+									<label for="delivery-city">City</label>
+									<input
+										id="delivery-city"
+										name="city"
+										autocomplete="address-level2"
+										required
+									/>
+									<fieldset>
+										<legend>Delivery preference</legend>
+										<label
+											><input
+												name="delivery"
+												type="radio"
+												value="standard"
+												checked
+											/>
+											Standard</label
+										>
+										<label
+											><input
+												name="delivery"
+												type="radio"
+												value="express"
+											/>
+											Express</label
+										>
+									</fieldset>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>
+										Use Back to check your answers. Sending
+										validates every section again.
+									</p>
+									<label for="delivery-notes"
+										>Delivery notes (optional)</label
+									>
+									<textarea
+										id="delivery-notes"
+										name="notes"
+									></textarea>
+								</fieldset>
+								<button
+									type="submit"
+									name="action"
+									value="apply"
+								>
+									Send application
+								</button>
+								<button type="reset">Start over</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>Authored controls and translated labels</h2>
+				<p>
+					Use ID references to own the navigation markup. Text spans
+					with
+					<code>data-fieldset-progress-label</code> preserve
+					decorative icons. Visible and accessible label templates are
+					independently configurable.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-ref="custom-back"
+  next-ref="custom-next"
+  progress-ref="custom-progress"
+  progress-label-ref="custom-status"
+  previous-label="Retour : {legend}"
+  next-label="Continuer : {legend}"
+  progress-label="Étape {current}/{total} : {legend}"
+  previous-aria-label="{label}, étape {current}"
+  next-aria-label="{label}, étape {current}"
+  progress-aria-label="{label}"&gt;
+  &lt;form&gt;
+    &lt;!-- Fieldsets --&gt;
+    &lt;nav aria-label="Sections du formulaire"&gt;
+      &lt;label id="custom-status"
+        for="custom-progress"&gt;Progression&lt;/label&gt;
+      &lt;button id="custom-back" type="button"&gt;
+        &lt;span aria-hidden="true"&gt;←&lt;/span&gt;
+        &lt;span data-fieldset-progress-label&gt;Retour&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;progress id="custom-progress"&gt;&lt;/progress&gt;
+      &lt;button id="custom-next" type="button"&gt;
+        &lt;span data-fieldset-progress-label&gt;Continuer&lt;/span&gt;
+        &lt;span aria-hidden="true"&gt;→&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;button type="submit"&gt;Envoyer&lt;/button&gt;
+    &lt;/nav&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo" lang="fr">
+						<form-fieldset-progress
+							id="authored"
+							previous-ref="custom-back"
+							next-ref="custom-next"
+							progress-ref="custom-progress"
+							progress-label-ref="custom-status"
+							previous-label="Retour : {legend}"
+							next-label="Continuer : {legend}"
+							progress-label="Étape {current}/{total} : {legend}"
+							previous-aria-label="{label}, étape {current}"
+							next-aria-label="{label}, étape {current}"
+							progress-aria-label="{label}"
+						>
+							<form action="/inscription" method="post">
+								<fieldset>
+									<legend>Coordonnées</legend>
+									<label for="french-name">Votre nom</label>
+									<input
+										id="french-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Confirmation</legend>
+									<p>
+										Vous pouvez revenir à la première
+										section pour vérifier votre nom.
+									</p>
+								</fieldset>
+								<nav
+									class="authored-navigation"
+									aria-label="Sections du formulaire"
+								>
+									<label
+										id="custom-status"
+										for="custom-progress"
+										>Progression</label
+									>
+									<button id="custom-back" type="button">
+										<span aria-hidden="true">←</span>
+										<span data-fieldset-progress-label
+											>Retour</span
+										>
+									</button>
+									<progress
+										id="custom-progress"
+										value="0"
+										max="2"
+									></progress>
+									<button id="custom-next" type="button">
+										<span data-fieldset-progress-label
+											>Continuer</span
+										>
+										<span aria-hidden="true">→</span>
+									</button>
+									<button type="submit">Envoyer</button>
+								</nav>
+								<p
+									role="status"
+									data-result
+									data-success="Démonstration terminée. Aucune donnée envoyée."
+								></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>Long section names and right-to-left layout</h2>
+				<p>
+					The default navigation wraps. Logical spacing follows the
+					reading direction.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress dir="rtl"
+  previous-label="العودة إلى {legend}"
+  next-label="المتابعة إلى {legend}"
+  progress-label="الخطوة {current} من {total}: {legend}"&gt;
+  &lt;form&gt;
+    &lt;!-- Fieldsets with Arabic legends --&gt;
+    &lt;button type="submit"&gt;إرسال&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo" lang="ar" dir="rtl">
+						<form-fieldset-progress
+							id="rtl"
+							previous-label="العودة إلى {legend}"
+							next-label="المتابعة إلى {legend}"
+							progress-label="الخطوة {current} من {total}: {legend}"
+						>
+							<form action="/application" method="post">
+								<fieldset>
+									<legend>بيانات الاتصال</legend>
+									<p>
+										يمكنك المتابعة دون إدخال بيانات في هذا
+										المثال.
+									</p>
+								</fieldset>
+								<fieldset>
+									<legend>
+										تفاصيل الطلب وتفضيلات التسليم والملاحظات
+										الإضافية
+									</legend>
+									<p>
+										استخدم زر العودة لمراجعة القسم السابق.
+									</p>
+								</fieldset>
+								<fieldset>
+									<legend>مراجعة الطلب</legend>
+									<p>أرسل النموذج لإكمال المثال.</p>
+								</fieldset>
+								<button type="submit">إرسال</button>
+								<p
+									role="status"
+									data-result
+									data-success="اكتمل المثال. لم يتم إرسال أي بيانات."
+								></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>Opt out of step validation</h2>
+				<p>
+					<code>no-validation</code> allows skipping incomplete
+					sections, but final native validation still applies. Try
+					sending without a name: the first section becomes visible
+					again.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress no-validation&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Profile&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;&lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="skip-validation"
+							no-validation
+						>
+							<form action="/profile" method="post">
+								<fieldset>
+									<legend>Profile</legend>
+									<label for="profile-name">Name</label
+									><input
+										id="profile-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>
+										Sending checks the required name in the
+										first section.
+									</p>
+								</fieldset>
+								<button type="submit">Send profile</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>A single section</h2>
+				<p>A one-step form needs no Back or Continue action.</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Newsletter&lt;/legend&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="single">
+							<form action="/subscribe" method="post">
+								<fieldset>
+									<legend>Newsletter</legend>
+									<label for="newsletter-email">Email</label
+									><input
+										id="newsletter-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<button type="submit">Subscribe</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>Configuration failure and recovery</h2>
+				<p>
+					A missing reference leaves the whole form usable. The error
+					event explains the failure. Repairing the reference restarts
+					enhancement.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress next-ref="missing"&gt;
+  &lt;form&gt;&lt;!-- Fieldsets and Submit --&gt;&lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+
+// After reporting the setup error:
+element.removeAttribute('next-ref');
+element.refresh();</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="failure" next-ref="missing">
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>First section</legend>
+									<p>
+										This remains visible when setup fails.
+									</p>
+								</fieldset>
+								<fieldset>
+									<legend>Second section</legend>
+									<p>So does this section.</p>
+								</fieldset>
+								<button type="submit">Send example</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+						<p role="status" id="setup-error"></p>
+						<button type="button" id="repair">
+							Repair configuration
+						</button>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>No JavaScript and loading fallback</h2>
+				<p>
+					This embedded form loads no module. Before upgrade or while
+					a module loads, the same native form structure remains
+					visible. Submit in this example uses the browser’s local
+					dialog behavior.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;!-- No module script: every section remains available. --&gt;
+&lt;form-fieldset-progress&gt;
+  &lt;form method="dialog"&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;…&lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;…&lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<iframe
+							title="Form without JavaScript"
+							src="./no-script.html"
+						></iframe>
+					</div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+			</p>
+		</footer>
+	</body>
+</html>

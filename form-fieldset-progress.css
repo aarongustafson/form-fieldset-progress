@@ -1,0 +1,60 @@
+form-fieldset-progress {
+	display: block;
+}
+
+form-fieldset-progress[hidden],
+form-fieldset-progress [hidden],
+[data-fieldset-progress-previous][hidden],
+[data-fieldset-progress-next][hidden],
+[data-fieldset-progress-submit][hidden] {
+	display: none !important;
+}
+
+[data-fieldset-progress-navigation] {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: var(--fieldset-progress-gap, 0.75rem);
+	margin-block-start: 1.5rem;
+}
+
+[data-fieldset-progress-status] {
+	flex-basis: 100%;
+}
+
+[data-fieldset-progress-progress] {
+	flex: 1 1 5rem;
+	min-inline-size: 0;
+	max-inline-size: var(--fieldset-progress-width, 16rem);
+	accent-color: var(--fieldset-progress-accent, Highlight);
+}
+
+[data-fieldset-progress-previous],
+[data-fieldset-progress-next] {
+	font: inherit;
+	padding: 0.625em 0.875em;
+	border: 2px solid ButtonBorder;
+	border-radius: var(--fieldset-progress-radius, 0.25rem);
+	cursor: pointer;
+}
+
+[data-fieldset-progress-previous] {
+	color: ButtonText;
+	background: ButtonFace;
+}
+
+[data-fieldset-progress-next] {
+	color: HighlightText;
+	background: var(--fieldset-progress-accent, Highlight);
+}
+
+[data-fieldset-progress-submit] {
+	margin-inline-start: auto;
+}
+
+[data-fieldset-progress-previous]:focus-visible,
+[data-fieldset-progress-next]:focus-visible {
+	outline: 3px solid CanvasText;
+	outline-offset: 3px;
+}

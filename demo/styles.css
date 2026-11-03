@@ -1,0 +1,153 @@
+:root {
+	color-scheme: light dark;
+	font-family: system-ui, sans-serif;
+	line-height: 1.6;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background: Canvas;
+	color: CanvasText;
+	max-inline-size: 90rem;
+	margin: auto;
+	padding: 1rem;
+}
+
+header,
+footer {
+	padding-block: 1rem;
+}
+footer {
+	border-block-start: 1px solid;
+	margin-block-start: 2rem;
+}
+a {
+	color: LinkText;
+}
+h1 {
+	overflow-wrap: anywhere;
+}
+h2 {
+	font-size: 1.4rem;
+	margin-block-start: 0;
+}
+code {
+	font-family: ui-monospace, monospace;
+}
+
+.demo-section {
+	padding: clamp(0.75rem, 2vw, 1.5rem);
+	border: 1px solid ButtonBorder;
+	border-radius: 0.5rem;
+	margin-block: 1.5rem;
+}
+
+.code-demo-pair {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1.5rem;
+}
+
+.code-demo-pair > * {
+	min-inline-size: 0;
+}
+pre {
+	margin: 0;
+	padding: 1rem;
+	overflow: auto;
+	background: ButtonFace;
+	color: ButtonText;
+	border-radius: 0.25rem;
+	line-height: 1.4;
+	font-size: 0.875rem;
+}
+
+.demo {
+	padding: 1rem;
+	border: 1px solid ButtonBorder;
+	border-radius: 0.25rem;
+}
+
+fieldset {
+	margin: 0 0 1rem;
+	padding: 1rem;
+	min-inline-size: 0;
+}
+legend {
+	font-weight: bold;
+	max-inline-size: 100%;
+}
+label {
+	display: block;
+	margin-block: 0.5rem;
+}
+input:not([type='radio'], [type='checkbox']),
+textarea {
+	display: block;
+	inline-size: 100%;
+	padding: 0.5rem;
+	font: inherit;
+	color: FieldText;
+	background: Field;
+	border: 1px solid ButtonBorder;
+}
+
+button {
+	font: inherit;
+	padding: 0.625em 0.875em;
+	cursor: pointer;
+}
+[type='reset'] {
+	margin-block-end: 1rem;
+}
+[type='submit'] {
+	background: Highlight;
+	color: HighlightText;
+	border: 2px solid ButtonBorder;
+}
+:focus-visible {
+	outline: 3px solid CanvasText;
+	outline-offset: 3px;
+}
+[role='status']:empty {
+	display: none;
+}
+
+.authored-navigation {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+}
+
+.authored-navigation label {
+	flex-basis: 100%;
+}
+.authored-navigation progress {
+	flex: 1 1 4rem;
+	min-inline-size: 0;
+}
+iframe {
+	border: 0;
+	inline-size: 100%;
+	block-size: 25rem;
+}
+dialog[open] {
+	position: static;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: Canvas;
+	color: CanvasText;
+}
+
+@media (min-width: 55rem) {
+	.code-demo-pair {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: start;
+	}
+}

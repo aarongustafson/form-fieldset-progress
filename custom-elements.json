@@ -1,0 +1,250 @@
+{
+	"schemaVersion": "1.0.0",
+	"modules": [
+		{
+			"kind": "javascript-module",
+			"path": "form-fieldset-progress.js",
+			"declarations": [
+				{
+					"kind": "class",
+					"name": "FormFieldsetProgressElement",
+					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience.",
+					"tagName": "form-fieldset-progress",
+					"customElement": true,
+					"superclass": { "name": "HTMLElement" },
+					"attributes": [
+						{
+							"name": "previous-ref",
+							"type": { "text": "string" },
+							"description": "ID of a type=button previous button owned by the form."
+						},
+						{
+							"name": "next-ref",
+							"type": { "text": "string" },
+							"description": "ID of a type=button next button owned by the form."
+						},
+						{
+							"name": "progress-ref",
+							"type": { "text": "string" },
+							"description": "ID of an authored progress element."
+						},
+						{
+							"name": "progress-label-ref",
+							"type": { "text": "string" },
+							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one."
+						},
+						{
+							"name": "previous-label",
+							"type": { "text": "string" },
+							"default": "\"Back to {legend}\"",
+							"description": "Visible destination-label template."
+						},
+						{
+							"name": "next-label",
+							"type": { "text": "string" },
+							"default": "\"Continue to {legend}\"",
+							"description": "Visible destination-label template."
+						},
+						{
+							"name": "progress-label",
+							"type": { "text": "string" },
+							"default": "\"Step {current} of {total}: {legend}\"",
+							"description": "Visible current-step template."
+						},
+						{
+							"name": "previous-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label}\"",
+							"description": "Previous button accessible-name template; visible wording is retained."
+						},
+						{
+							"name": "next-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label}\"",
+							"description": "Next button accessible-name template; visible wording is retained."
+						},
+						{
+							"name": "progress-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label}\"",
+							"description": "Progress accessible-name template."
+						},
+						{
+							"name": "no-validation",
+							"type": { "text": "boolean" },
+							"default": "false",
+							"description": "Skip validation on forward step changes, not final native form validation."
+						}
+					],
+					"members": [
+						{
+							"kind": "field",
+							"name": "state",
+							"readonly": true,
+							"type": { "text": "'idle' | 'ready' | 'error'" },
+							"description": "Enhancement state."
+						},
+						{
+							"kind": "field",
+							"name": "form",
+							"readonly": true,
+							"type": { "text": "HTMLFormElement | null" },
+							"description": "Controlled form while ready, otherwise null."
+						},
+						{
+							"kind": "field",
+							"name": "stepIndex",
+							"readonly": true,
+							"type": { "text": "number" },
+							"description": "Zero-based active step, reset to 0 on teardown."
+						},
+						{
+							"kind": "field",
+							"name": "stepCount",
+							"readonly": true,
+							"type": { "text": "number" },
+							"description": "Number of available steps."
+						},
+						{
+							"kind": "method",
+							"name": "refresh",
+							"description": "Restore authored markup and reinitialize at the first step. Report setup failures through the error event.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "next",
+							"description": "Validate and advance. Return false at the boundary, before readiness, or on validation failure.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "previous",
+							"description": "Go back without validation; return false at the boundary or before readiness.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "goTo",
+							"description": "Navigate to a zero-based step, validating sections crossed forward. Throw RangeError for an unavailable index.",
+							"parameters": [
+								{
+									"name": "index",
+									"type": { "text": "number" }
+								}
+							],
+							"return": { "type": { "text": "boolean" } }
+						}
+					],
+					"events": [
+						{
+							"name": "form-fieldset-progress:ready",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressStepDetail>"
+							},
+							"description": "Bubbling event after successful setup; detail: stepIndex, stepCount, fieldset."
+						},
+						{
+							"name": "form-fieldset-progress:change",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressChangeDetail>"
+							},
+							"description": "Bubbling event after a step changes; detail also includes previousIndex."
+						},
+						{
+							"name": "form-fieldset-progress:error",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressErrorDetail>"
+							},
+							"description": "Bubbling setup failure event with detail.error; fallback markup is restored first."
+						}
+					],
+					"cssProperties": [
+						{
+							"name": "--fieldset-progress-gap",
+							"default": "0.75rem",
+							"description": "Generated navigation spacing."
+						},
+						{
+							"name": "--fieldset-progress-width",
+							"default": "16rem",
+							"description": "Maximum progress width."
+						},
+						{
+							"name": "--fieldset-progress-radius",
+							"default": "0.25rem",
+							"description": "Navigation button corner radius."
+						},
+						{
+							"name": "--fieldset-progress-accent",
+							"default": "Highlight",
+							"description": "Progress and primary navigation color; ensure contrast with HighlightText."
+						}
+					]
+				}
+			],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "FormFieldsetProgressElement",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "index.js",
+			"exports": [
+				{
+					"kind": "js",
+					"name": "FormFieldsetProgressElement",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "define.js",
+			"declarations": [
+				{
+					"kind": "function",
+					"name": "defineFormFieldsetProgress",
+					"description": "Register the default tag on import. The helper is idempotent for the same class and tag; conflicting definitions throw.",
+					"parameters": [
+						{
+							"name": "tagName",
+							"default": "\"form-fieldset-progress\"",
+							"optional": true,
+							"type": { "text": "string" }
+						}
+					],
+					"return": { "type": { "text": "boolean" } }
+				}
+			],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "defineFormFieldsetProgress",
+					"declaration": {
+						"name": "defineFormFieldsetProgress",
+						"module": "define.js"
+					}
+				},
+				{
+					"kind": "custom-element-definition",
+					"name": "form-fieldset-progress",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		}
+	]
+}
