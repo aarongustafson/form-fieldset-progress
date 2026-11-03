@@ -25,7 +25,7 @@ test('native validity, keyboard progression, focus, FormData, and final submit',
 	await page
 		.getByRole('textbox', { name: 'Name', exact: true })
 		.press('Enter');
-	await expect(page.locator('#address > legend')).toBeFocused();
+	await expect(page.locator('#address')).toBeFocused();
 	await expect(
 		page.getByRole('group', { name: 'Contact', exact: true }),
 	).toHaveCount(0);
@@ -38,7 +38,7 @@ test('native validity, keyboard progression, focus, FormData, and final submit',
 	await page
 		.getByRole('textbox', { name: 'City', exact: true })
 		.press('Enter');
-	await expect(page.locator('#review > legend')).toBeFocused();
+	await expect(page.locator('#review')).toBeFocused();
 	await expect(
 		page.getByRole('button', { name: 'Send application', exact: true }),
 	).toBeVisible();

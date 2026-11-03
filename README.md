@@ -105,7 +105,8 @@ back. The visible description reports the current position; reaching the last
 screen does not mean the form was submitted or every preceding answer is valid.
 
 Reset returns to the first step after an uncanceled native reset. It does not
-move focus. Navigation buttons and `goTo()` focus the destination legend.
+move focus. Navigation buttons and `goTo()` focus the destination fieldset group,
+which takes its accessible name from the legend.
 
 ## Attributes and localization
 
@@ -252,8 +253,8 @@ its background. Do not override `[hidden]` to display inactive UI.
 ## Accessibility, recovery, and lifecycle
 
 Native fieldsets and legends retain their semantics. Inactive sections leave the
-focus order and accessibility tree. Legends receive temporary `tabindex="-1"` so
-navigation can move focus to the new section’s name. There is no live region:
+focus order and accessibility tree. Fieldsets receive temporary `tabindex="-1"`
+so navigation can focus the group named by its legend across browsers. There is no live region:
 focus communicates button-driven section changes without a duplicate announcement.
 Progress has both a visible description and an explicit accessible name.
 [`<progress>` has no native datalist linkage](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress#attributes);

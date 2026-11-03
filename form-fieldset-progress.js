@@ -303,8 +303,8 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			);
 		}
 		this._set(this._progressLabel, `${prefix}status`, '');
-		for (const { legend } of this._steps)
-			this._set(legend, 'tabindex', '-1');
+		for (const { fieldset } of this._steps)
+			this._set(fieldset, 'tabindex', '-1');
 		for (const submit of this._submits)
 			this._set(submit, `${prefix}submit`, '');
 		if (!authoredNext) {
@@ -424,7 +424,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		const previousIndex = this._index;
 		this._index = index;
 		this._render();
-		if (focus) this._steps[index].legend.focus();
+		if (focus) this._steps[index].fieldset.focus();
 		if (index !== previousIndex)
 			this._emit('change', { ...this._detail(), previousIndex });
 	}

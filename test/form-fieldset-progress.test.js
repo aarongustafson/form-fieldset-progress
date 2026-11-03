@@ -196,18 +196,16 @@ describe('progressive enhancement', () => {
 		const submit = host.querySelector('[type=submit]');
 		const reset = host.querySelector('[type=reset]');
 		host.next();
-		expect(document.activeElement).toBe(
-			host.querySelector('#address > legend'),
-		);
+		expect(document.activeElement).toBe(host.querySelector('#address'));
 		host.remove();
 		expect(host.state).toBe('idle');
 		expect(
 			host.querySelector('[data-fieldset-progress-navigation]'),
 		).toBeNull();
 		expect(host.querySelector('#address').hidden).toBe(false);
-		expect(
-			host.querySelector('#address > legend').hasAttribute('tabindex'),
-		).toBe(false);
+		expect(host.querySelector('#address').hasAttribute('tabindex')).toBe(
+			false,
+		);
 		expect(submit.nextElementSibling).toBe(reset);
 		document.body.append(host);
 		await tick();
