@@ -1,7 +1,7 @@
 # `<form-fieldset-progress>`
 
 Turn a form’s outermost fieldsets into one-section-at-a-time steps. The component
-adds Back and Continue buttons, a progress indicator, and per-section validation
+adds Back and Next buttons, a progress indicator, and per-section validation
 in light DOM. Without JavaScript, the full authored form remains usable.
 
 **Unreleased:** develop from this checkout; no npm release has been published.
@@ -18,7 +18,7 @@ import '@aarongustafson/form-fieldset-progress/form-fieldset-progress.css';
 ```
 
 The stylesheet is optional but supplies the default flex layout and distinct
-secondary Back/primary Continue treatments. Without a bundler, copy the package
+secondary Back/primary Next treatments. Without a bundler, copy the package
 files and load `define.js` as a module and the CSS with a stylesheet link.
 
 The package root and class module export the class **without registering it**:
@@ -65,19 +65,26 @@ Disabled fieldsets can still be steps, but native validation ignores disabled
 controls. Controls outside steps remain visible and participate in final native
 validation.
 
-The first step hides Back. The last hides Continue and shows the original submit
+The first step hides Back. The last hides Next and shows the original submit
 buttons. A single-step form shows its submit buttons immediately. No submit
 button is synthesized: authored names, values, labels, listeners, and submission
 overrides remain intact.
 
 ## Navigation and validation
 
-- Continue validates eligible controls in the current section, including custom
+**Keep per-section validation enabled.** Avoid `no-validation` unless you provide
+an equivalent, tested validation workflow. Delaying errors until submission can
+send people back through sections they thought were complete, increasing effort
+and confusion. Revealing an earlier invalid section is a recovery measure, not a
+replacement for timely, per-screen feedback. Do not use `novalidate` or
+`formnovalidate` merely to bypass this feedback.
+
+- Next validates eligible controls in the current section, including custom
   validity messages. Failure keeps the section visible and reports/focuses the
   first invalid control. Back never validates.
 - `goTo(index)` validates every section crossed forward. If an intervening
   section is invalid, that section becomes active.
-- `no-validation` skips step validation only. A form’s `novalidate` skips both
+- The discouraged `no-validation` setting skips step validation only. A form’s `novalidate` skips both
   step checks and native submission validation.
 - Enter in a standard single-line input advances an intermediate step. Textareas,
   buttons, modified/composing key presses, and inputs with a datalist retain
@@ -113,20 +120,23 @@ which takes its accessible name from the legend.
 Attributes are the configuration API; no JavaScript configuration object is
 required. Authored attributes override defaults. Button templates describe the
 **destination** section; progress templates describe the **current** section.
+Short visible labels default to “Back” and “Next”. Longer accessible names default
+to “Back to {legend}” and “Next to {legend}”, using the destination legend.
+Both sets remain independently customizable, including with template tokens.
 
-| Attribute             | Default / purpose                                   |
-| --------------------- | --------------------------------------------------- |
-| `previous-ref`        | ID of an authored Back `<button type="button">`     |
-| `next-ref`            | ID of an authored Continue `<button type="button">` |
-| `progress-ref`        | ID of an authored `<progress>`                      |
-| `progress-label-ref`  | ID of its visible text container                    |
-| `previous-label`      | `Back to {legend}`                                  |
-| `next-label`          | `Continue to {legend}`                              |
-| `progress-label`      | `Step {current} of {total}: {legend}`               |
-| `previous-aria-label` | `{label}`                                           |
-| `next-aria-label`     | `{label}`                                           |
-| `progress-aria-label` | `{label}`                                           |
-| `no-validation`       | Boolean; absent by default                          |
+| Attribute             | Default / purpose                               |
+| --------------------- | ----------------------------------------------- |
+| `previous-ref`        | ID of an authored Back `<button type="button">` |
+| `next-ref`            | ID of an authored Next `<button type="button">` |
+| `progress-ref`        | ID of an authored `<progress>`                  |
+| `progress-label-ref`  | ID of its visible text container                |
+| `previous-label`      | `Back`                                          |
+| `next-label`          | `Next`                                          |
+| `progress-label`      | `Step {current} of {total}: {legend}`           |
+| `previous-aria-label` | `{label} to {legend}`                           |
+| `next-aria-label`     | `{label} to {legend}`                           |
+| `progress-aria-label` | `{label}`                                       |
+| `no-validation`       | Discouraged opt-out; absent by default          |
 
 Visible templates support `{legend}`, `{current}` (one-based), and `{total}`.
 Accessible-name templates also support `{label}`, the rendered visible label.
@@ -139,6 +149,11 @@ The component does not translate browser validation messages.
 
 Label changes update in place. Reference changes restart setup at the first step.
 For changes to legends, steps, or submit controls, call `refresh()`.
+
+To show destination names visibly, set `previous-label="Back to {legend}"` and
+`next-label="Continue to {legend}"`. Set the corresponding ARIA templates to
+`{label}` to use the same wording as their accessible names. The
+[French demo](demo/index.html) shows translated templates and separate long labels.
 
 ## Supply your own navigation
 
@@ -174,7 +189,7 @@ external buttons need a `form` attribute.
       >
       <progress id="application-progress" value="0" max="2"></progress>
       <button id="forward" type="button">
-        <span data-fieldset-progress-label>Continue</span>
+        <span data-fieldset-progress-label>Next</span>
         <span aria-hidden="true">→</span>
       </button>
       <button type="submit">Send application</button>
@@ -195,10 +210,15 @@ associated label or generates a visible label. It sets `aria-label` and
 `aria-valuetext` on progress, replacing any authored `aria-labelledby` while
 enhanced. Existing values are restored on teardown.
 
-When Continue is generated, the component moves the original submit controls into
+When Next is generated, the component moves the original submit controls into
 its navigation row and restores their positions on teardown. With an authored
-Continue button, submit controls stay where authored. Supplying all three control
+Next button, submit controls stay where authored. Supplying all three control
 references avoids a generated navigation wrapper.
+
+See the [English custom-layout demo](demo/index.html#custom-layout) for progress
+above the form and buttons below it, with no reset button. Its external buttons
+use `form="english-application"` to keep their native form association. No new
+layout-specific component API is needed.
 
 ## JavaScript and events
 

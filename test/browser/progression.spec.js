@@ -13,7 +13,7 @@ test('native validity, keyboard progression, focus, FormData, and final submit',
 	page,
 }) => {
 	await page
-		.getByRole('button', { name: 'Continue to Address', exact: true })
+		.getByRole('button', { name: 'Next to Address', exact: true })
 		.click();
 	await expect(
 		page.getByRole('textbox', { name: 'Name', exact: true }),
@@ -123,14 +123,14 @@ test('custom validity and canceled reset preserve context; reset and reconnect c
 			input.setCustomValidity('Choose a different name.'),
 		);
 	await page
-		.getByRole('button', { name: 'Continue to Address', exact: true })
+		.getByRole('button', { name: 'Next to Address', exact: true })
 		.click();
 	await expect(page.locator('[name=name]')).toBeFocused();
 	await page
 		.locator('[name=name]')
 		.evaluate((input) => input.setCustomValidity(''));
 	await page
-		.getByRole('button', { name: 'Continue to Address', exact: true })
+		.getByRole('button', { name: 'Next to Address', exact: true })
 		.click();
 	await page.locator(host).evaluate((element) => {
 		element.form.addEventListener(
@@ -153,7 +153,7 @@ test('custom validity and canceled reset preserve context; reset and reconnect c
 	).toHaveCount(1);
 	await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Ada');
 	await page
-		.getByRole('button', { name: 'Continue to Address', exact: true })
+		.getByRole('button', { name: 'Next to Address', exact: true })
 		.click();
 	await expect(page.locator('#address')).toBeVisible();
 });
@@ -273,4 +273,124 @@ test('demos: authored icons, error recovery, single step, responsive layout, and
 	await expect(
 		page.locator('#rtl [data-fieldset-progress-next]'),
 	).toBeVisible();
+});
+
+test('English authored UI places progress above the form and actions below without reset', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	const example = page.locator('#english-custom');
+	await expect(example.getByRole('progressbar')).toHaveAccessibleName(
+		'Step 1 of 3: Contact',
+	);
+	await expect(
+		example.locator('button[type=reset], input[type=reset]'),
+	).toHaveCount(0);
+	await expect(
+		example.locator('[data-fieldset-progress-navigation]'),
+	).toHaveCount(0);
+	await expect(example.locator('#english-next')).toHaveText('Next');
+	await expect(example.locator('#english-next')).toHaveAccessibleName(
+		'Next to Availability',
+	);
+	for (const width of [1280, 320]) {
+		await page.setViewportSize({ width, height: 900 });
+		const layout = await example.evaluate((element) => {
+			const form = element.querySelector('form');
+			const progress = element.querySelector('.custom-progress');
+			const actions = element.querySelector('.custom-actions');
+			return {
+				progressAbove:
+					progress.getBoundingClientRect().bottom <=
+					form.getBoundingClientRect().top,
+				buttonsBelow:
+					form.getBoundingClientRect().bottom <=
+					actions.getBoundingClientRect().top,
+				noOverflow: document.documentElement.scrollWidth <= innerWidth,
+				buttonsOwnedByForm: Array.from(
+					actions.querySelectorAll('button'),
+				).every((button) => button.form === form),
+			};
+		});
+		expect(layout).toEqual({
+			progressAbove: true,
+			buttonsBelow: true,
+			noOverflow: true,
+			buttonsOwnedByForm: true,
+		});
+	}
+	await example.locator('#english-next').click();
+	await expect(example.locator('[name=email]')).toBeFocused();
+	await example.locator('[name=email]').fill('ada@example.test');
+	await example.locator('#english-next').focus();
+	await page.keyboard.press('Enter');
+	await expect(
+		example.getByRole('group', { name: 'Availability', exact: true }),
+	).toBeFocused();
+	await expect(example.locator('#english-back')).toHaveText('Back');
+	await expect(example.locator('#english-back')).toHaveAccessibleName(
+		'Back to Contact',
+	);
+	await example.locator('[name=hours]').fill('4');
+	await example.locator('#english-next').click();
+	await expect(example.locator('#english-next')).toBeHidden();
+	await expect(
+		example.getByRole('button', { name: 'Send application', exact: true }),
+	).toBeVisible();
+	await example
+		.getByRole('button', { name: 'Send application', exact: true })
+		.click();
+	await expect(example.locator('[data-result]')).toContainText(
+		'Demo complete',
+	);
+	await example.locator('#english-back').click();
+	await expect(example.locator('[name=hours]')).toHaveValue('4');
+});
+
+test('demo fieldsets are borderless with spaced groups and a clear legend hierarchy', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	const section = page.locator('#basic form > fieldset').first();
+	const styles = await section.evaluate((fieldset) => {
+		const style = getComputedStyle(fieldset);
+		return {
+			border: style.borderTopWidth,
+			padding: style.padding,
+			legendSize: parseFloat(
+				getComputedStyle(fieldset.querySelector(':scope > legend'))
+					.fontSize,
+			),
+			labelSize: parseFloat(
+				getComputedStyle(fieldset.querySelector('label')).fontSize,
+			),
+		};
+	});
+	expect(styles.border).toBe('0px');
+	expect(styles.padding).toBe('0px');
+	expect(styles.legendSize).toBeGreaterThanOrEqual(styles.labelSize * 1.2);
+	await page.locator('#applicant-name').fill('Ada');
+	await page.locator('#applicant-email').fill('ada@example.test');
+	await page.locator('#basic [data-fieldset-progress-next]').click();
+	const radioGroup = page.locator('#basic .radio-group');
+	const spacing = await radioGroup.evaluate((fieldset) => ({
+		margin: parseFloat(getComputedStyle(fieldset).marginBlockStart),
+		labelMargin: parseFloat(
+			getComputedStyle(fieldset.querySelector('label')).marginBlockStart,
+		),
+		legendSize: getComputedStyle(fieldset.querySelector('legend')).fontSize,
+		labelSize: getComputedStyle(fieldset.querySelector('label')).fontSize,
+		gap:
+			fieldset.querySelector('legend').getBoundingClientRect().top -
+			fieldset.previousElementSibling.getBoundingClientRect().bottom,
+	}));
+	expect(spacing.margin).toBeGreaterThanOrEqual(spacing.labelMargin * 2);
+	expect(spacing.legendSize).toBe(spacing.labelSize);
+	expect(spacing.gap).toBeGreaterThan(spacing.labelMargin);
+	const stacked = await page
+		.locator('#failure fieldset + fieldset')
+		.evaluate((fieldset) =>
+			parseFloat(getComputedStyle(fieldset).marginBlockStart),
+		);
+	expect(stacked).toBeGreaterThanOrEqual(spacing.labelMargin * 2);
 });

@@ -23,10 +23,10 @@
 			<section class="demo-section">
 				<h2>Generated navigation and section validation</h2>
 				<p>
-					Continue validates the current section. Back never does.
-					Enter in a single-line field also advances. The original
-					submit button appears on the final screen, and Start over
-					resets the form and step.
+					Next validates the current section. Back never does. Enter
+					in a single-line field also advances. The original submit
+					button appears on the final screen, and Start over resets
+					the form and step.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
@@ -82,7 +82,7 @@
 										autocomplete="address-level2"
 										required
 									/>
-									<fieldset>
+									<fieldset class="radio-group">
 										<legend>Delivery preference</legend>
 										<label
 											><input
@@ -127,6 +127,142 @@
 								<button type="reset">Start over</button>
 								<p role="status" data-result></p>
 							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="custom-layout">
+				<h2>English custom UI: progress above, buttons below</h2>
+				<p>
+					ID references let you place progress above the form and the
+					buttons below it. Each external button uses
+					<code>form</code>
+					to keep its native form association. Short visible labels
+					default to “Back” and “Next”; longer accessible names
+					identify the destination. This example has no reset button.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-ref="english-back"
+  next-ref="english-next"
+  progress-ref="english-progress"
+  progress-label-ref="english-status"&gt;
+  &lt;div class="custom-progress"&gt;
+    &lt;label id="english-status"
+      for="english-progress"&gt;Application sections&lt;/label&gt;
+    &lt;progress id="english-progress"
+      value="0" max="3"&gt;&lt;/progress&gt;
+  &lt;/div&gt;
+  &lt;form id="english-application"
+    action="/volunteer" method="post"&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Availability&lt;/legend&gt;
+      &lt;!-- Labeled hours input, required --&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;
+      &lt;!-- Review instructions --&gt;
+    &lt;/fieldset&gt;
+  &lt;/form&gt;
+  &lt;nav class="custom-actions"
+    aria-label="Application sections"&gt;
+    &lt;button id="english-back" type="button"
+      form="english-application" hidden&gt;Back&lt;/button&gt;
+    &lt;button id="english-next" type="button"
+      form="english-application" hidden&gt;Next&lt;/button&gt;
+    &lt;button type="submit"
+      form="english-application"&gt;Send application&lt;/button&gt;
+  &lt;/nav&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="english-custom"
+							previous-ref="english-back"
+							next-ref="english-next"
+							progress-ref="english-progress"
+							progress-label-ref="english-status"
+						>
+							<div class="custom-progress">
+								<label
+									id="english-status"
+									for="english-progress"
+									>Application sections</label
+								>
+								<progress
+									id="english-progress"
+									value="0"
+									max="3"
+								></progress>
+							</div>
+							<form
+								id="english-application"
+								action="/volunteer"
+								method="post"
+							>
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="volunteer-email">Email</label>
+									<input
+										id="volunteer-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Availability</legend>
+									<label for="volunteer-hours"
+										>Hours available each week</label
+									>
+									<input
+										id="volunteer-hours"
+										name="hours"
+										type="number"
+										min="1"
+										max="40"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>
+										Use Back to check your contact details
+										and availability before sending.
+									</p>
+								</fieldset>
+								<p role="status" data-result></p>
+							</form>
+							<nav
+								class="custom-actions"
+								aria-label="Application sections"
+							>
+								<button
+									id="english-back"
+									type="button"
+									form="english-application"
+									hidden
+								>
+									Back
+								</button>
+								<button
+									id="english-next"
+									type="button"
+									form="english-application"
+									hidden
+								>
+									Next
+								</button>
+								<button
+									type="submit"
+									form="english-application"
+								>
+									Send application
+								</button>
+							</nav>
 						</form-fieldset-progress>
 					</div>
 				</div>
@@ -250,6 +386,8 @@
 					<pre><code>&lt;form-fieldset-progress dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
+  previous-aria-label="{label}"
+  next-aria-label="{label}"
   progress-label="الخطوة {current} من {total}: {legend}"&gt;
   &lt;form&gt;
     &lt;!-- Fieldsets with Arabic legends --&gt;
@@ -261,6 +399,8 @@
 							id="rtl"
 							previous-label="العودة إلى {legend}"
 							next-label="المتابعة إلى {legend}"
+							previous-aria-label="{label}"
+							next-aria-label="{label}"
 							progress-label="الخطوة {current} من {total}: {legend}"
 						>
 							<form action="/application" method="post">
@@ -296,12 +436,20 @@
 				</div>
 			</section>
 			<section class="demo-section">
-				<h2>Opt out of step validation</h2>
+				<h2>Why step validation should stay on</h2>
 				<p>
-					<code>no-validation</code> allows skipping incomplete
-					sections, but final native validation still applies. Try
-					sending without a name: the first section becomes visible
-					again.
+					<strong>Keep per-section validation enabled.</strong>
+					<code>no-validation</code> delays error feedback and can
+					send people back through sections they thought were
+					finished. Revealing invalid sections at submission is a
+					recovery measure, not a replacement for timely feedback.
+					Avoid this setting unless you provide an equivalent, tested
+					validation workflow.
+				</p>
+				<p>
+					This exception-only demo shows the recovery path. Try
+					sending without a name: final native validation reveals the
+					first section.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress no-validation&gt;
@@ -346,7 +494,7 @@
 			</section>
 			<section class="demo-section">
 				<h2>A single section</h2>
-				<p>A one-step form needs no Back or Continue action.</p>
+				<p>A one-step form needs no Back or Next action.</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
   &lt;form&gt;

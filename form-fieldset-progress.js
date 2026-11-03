@@ -1,9 +1,14 @@
 const owners = new WeakMap();
 const prefix = 'data-fieldset-progress-';
 const defaults = {
-	'previous-label': 'Back to {legend}',
-	'next-label': 'Continue to {legend}',
+	'previous-label': 'Back',
+	'next-label': 'Next',
 	'progress-label': 'Step {current} of {total}: {legend}',
+};
+const ariaDefaults = {
+	'previous-aria-label': '{label} to {legend}',
+	'next-aria-label': '{label} to {legend}',
+	'progress-aria-label': '{label}',
 };
 const references = [
 	'previous-ref',
@@ -19,9 +24,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		return [
 			...references,
 			...Object.keys(defaults),
-			'previous-aria-label',
-			'next-aria-label',
-			'progress-aria-label',
+			...Object.keys(ariaDefaults),
 			'no-validation',
 		];
 	}
@@ -493,7 +496,10 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			label,
 		};
 		const template =
-			this.getAttribute(attribute) ?? defaults[attribute] ?? '{label}';
+			this.getAttribute(attribute) ??
+			defaults[attribute] ??
+			ariaDefaults[attribute] ??
+			'{label}';
 		return (
 			template
 				.replace(

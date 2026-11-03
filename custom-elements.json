@@ -36,14 +36,14 @@
 						{
 							"name": "previous-label",
 							"type": { "text": "string" },
-							"default": "\"Back to {legend}\"",
-							"description": "Visible destination-label template."
+							"default": "\"Back\"",
+							"description": "Short visible Back label; supports destination-template tokens."
 						},
 						{
 							"name": "next-label",
 							"type": { "text": "string" },
-							"default": "\"Continue to {legend}\"",
-							"description": "Visible destination-label template."
+							"default": "\"Next\"",
+							"description": "Short visible Next label; supports destination-template tokens."
 						},
 						{
 							"name": "progress-label",
@@ -54,14 +54,14 @@
 						{
 							"name": "previous-aria-label",
 							"type": { "text": "string" },
-							"default": "\"{label}\"",
-							"description": "Previous button accessible-name template; visible wording is retained."
+							"default": "\"{label} to {legend}\"",
+							"description": "Long destination-aware Back accessible-name template; visible wording is retained."
 						},
 						{
 							"name": "next-aria-label",
 							"type": { "text": "string" },
-							"default": "\"{label}\"",
-							"description": "Next button accessible-name template; visible wording is retained."
+							"default": "\"{label} to {legend}\"",
+							"description": "Long destination-aware Next accessible-name template; visible wording is retained."
 						},
 						{
 							"name": "progress-aria-label",
@@ -73,7 +73,7 @@
 							"name": "no-validation",
 							"type": { "text": "boolean" },
 							"default": "false",
-							"description": "Skip validation on forward step changes, not final native form validation."
+							"description": "Discouraged opt-out of forward-step validation; delays error feedback until submission. Final native validation remains enabled."
 						}
 					],
 					"members": [

@@ -48,7 +48,12 @@ describe('progressive enhancement', () => {
 		).toBe(true);
 		expect(
 			host.querySelector('[data-fieldset-progress-next]').textContent,
-		).toBe('Continue to Address');
+		).toBe('Next');
+		expect(
+			host
+				.querySelector('[data-fieldset-progress-next]')
+				.getAttribute('aria-label'),
+		).toBe('Next to Address');
 		expect(host.querySelector('[type=submit]').hidden).toBe(true);
 		expect(host.querySelector('progress').max).toBe(3);
 		expect(host.querySelector('progress').value).toBe(0);
@@ -85,6 +90,11 @@ describe('progressive enhancement', () => {
 		);
 		expect(
 			host.querySelector('[data-fieldset-progress-previous]').textContent,
+		).toBe('Back');
+		expect(
+			host
+				.querySelector('[data-fieldset-progress-previous]')
+				.getAttribute('aria-label'),
 		).toBe('Back to Address');
 		expect(submit.hidden).toBe(false);
 		expect(submit.name).toBe('action');
@@ -120,12 +130,37 @@ describe('progressive enhancement', () => {
 	});
 
 	it('preserves the visible wording in a button accessible name', async () => {
-		const host = await fixture('next-aria-label="Next section"');
+		const host = await fixture('next-aria-label="Continue to {legend}"');
 		expect(
 			host
 				.querySelector('[data-fieldset-progress-next]')
 				.getAttribute('aria-label'),
-		).toContain('Continue to Address');
+		).toBe('Next: Continue to Address');
+	});
+
+	it('keeps short labels stable while long labels follow the destination', async () => {
+		const host = await fixture('no-validation');
+		const next = host.querySelector('[data-fieldset-progress-next]');
+		const previous = host.querySelector(
+			'[data-fieldset-progress-previous]',
+		);
+		host.next();
+		expect(next.textContent).toBe('Next');
+		expect(next.getAttribute('aria-label')).toBe('Next to Review');
+		expect(previous.textContent).toBe('Back');
+		expect(previous.getAttribute('aria-label')).toBe('Back to Contact');
+		host.previous();
+		expect(next.textContent).toBe('Next');
+		expect(next.getAttribute('aria-label')).toBe('Next to Address');
+	});
+
+	it('uses customized short labels in default long labels and empty overrides', async () => {
+		const host = await fixture('next-label="Continue"');
+		const next = host.querySelector('[data-fieldset-progress-next]');
+		expect(next.textContent).toBe('Continue');
+		expect(next.getAttribute('aria-label')).toBe('Continue to Address');
+		host.setAttribute('next-aria-label', '');
+		expect(next.getAttribute('aria-label')).toBe('Continue');
 	});
 
 	it('uses authored controls without duplicating or destroying their icons', async () => {
