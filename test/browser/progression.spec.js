@@ -394,3 +394,161 @@ test('demo fieldsets are borderless with spaced groups and a clear legend hierar
 		);
 	expect(stacked).toBeGreaterThanOrEqual(spacing.labelMargin * 2);
 });
+
+for (const includeReset of [true, false]) {
+	test(`default footer reserves balanced navigation space ${includeReset ? 'with' : 'without'} Reset`, async ({
+		page,
+	}) => {
+		await page.locator(host).evaluate((element, keepReset) => {
+			element.remove();
+			if (!keepReset) element.querySelector('[type=reset]').remove();
+			element.setAttribute('no-validation', '');
+			document.body.append(element);
+		}, includeReset);
+		await expect(
+			page.locator('[data-fieldset-progress-controls]'),
+		).toHaveCount(1);
+		for (const direction of ['ltr', 'rtl']) {
+			await page.locator(host).evaluate((element, dir) => {
+				element.dir = dir;
+			}, direction);
+			for (const width of [1280, 320]) {
+				await page.setViewportSize({ width, height: 900 });
+				let initialCenter;
+				for (const step of [0, 1, 2]) {
+					await page
+						.locator(host)
+						.evaluate(
+							(element, index) => element.goTo(index),
+							step,
+						);
+					const layout = await page
+						.locator(host)
+						.evaluate((element) => {
+							const form = element
+								.querySelector('form')
+								.getBoundingClientRect();
+							const footer = element
+								.querySelector(
+									'[data-fieldset-progress-navigation]',
+								)
+								.getBoundingClientRect();
+							const row = element
+								.querySelector(
+									'[data-fieldset-progress-controls]',
+								)
+								.getBoundingClientRect();
+							const previous = element
+								.querySelector(
+									'[data-fieldset-progress-previous-slot]',
+								)
+								.getBoundingClientRect();
+							const next = element
+								.querySelector(
+									'[data-fieldset-progress-next-slot]',
+								)
+								.getBoundingClientRect();
+							const progress = element
+								.querySelector('progress')
+								.getBoundingClientRect();
+							const reset = element
+								.querySelector('[type=reset]')
+								?.getBoundingClientRect();
+							const center = progress.left + progress.width / 2;
+							const rtl =
+								getComputedStyle(element).direction === 'rtl';
+							return {
+								footerWidth: footer.width,
+								formWidth: form.width,
+								rowWidth: row.width,
+								previousWidth: previous.width,
+								nextWidth: next.width,
+								center,
+								expectedCenter:
+									(previous.left +
+										previous.width / 2 +
+										next.left +
+										next.width / 2) /
+									2,
+								resetBeforeBack:
+									!reset ||
+									reset.bottom <= previous.top ||
+									(rtl
+										? reset.left >= previous.right
+										: reset.right <= previous.left),
+								noOverflow:
+									document.documentElement.scrollWidth <=
+									innerWidth,
+							};
+						});
+					expect(layout.footerWidth).toBeCloseTo(layout.formWidth, 0);
+					expect(layout.rowWidth).toBeCloseTo(layout.footerWidth, 0);
+					expect(layout.previousWidth).toBeGreaterThan(0);
+					expect(layout.previousWidth).toBeCloseTo(
+						layout.nextWidth,
+						0,
+					);
+					expect(layout.center).toBeCloseTo(layout.expectedCenter, 0);
+					initialCenter ??= layout.center;
+					expect(layout.center).toBeCloseTo(initialCenter, 0);
+					expect(layout.resetBeforeBack).toBe(true);
+					expect(layout.noOverflow).toBe(true);
+					if (step === 0)
+						await expect(
+							page.locator('[data-fieldset-progress-previous]'),
+						).toBeHidden();
+					else
+						await expect(
+							page.locator('[data-fieldset-progress-previous]'),
+						).toBeVisible();
+				}
+			}
+		}
+	});
+}
+
+test('demo field spacing keeps labels close and separates successive fields', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	const spacing = await page.locator('#basic').evaluate((element) => {
+		const first = element
+			.querySelector('#applicant-name')
+			.getBoundingClientRect();
+		const nextLabel = element
+			.querySelector('[for=applicant-email]')
+			.getBoundingClientRect();
+		const nextInput = element
+			.querySelector('#applicant-email')
+			.getBoundingClientRect();
+		const labelSize = parseFloat(
+			getComputedStyle(element.querySelector('[for=applicant-email]'))
+				.fontSize,
+		);
+		return {
+			fieldGap: nextLabel.top - first.bottom,
+			labelGap: nextInput.top - nextLabel.bottom,
+			labelSize,
+		};
+	});
+	expect(spacing.fieldGap).toBeGreaterThanOrEqual(spacing.labelSize);
+	expect(spacing.labelGap).toBeLessThan(spacing.fieldGap);
+});
+
+test('default reset hoisting preserves inherited fieldset disabling', async ({
+	page,
+}) => {
+	await page.locator(host).evaluate((element) => {
+		element.remove();
+		const fieldset = element.querySelector('#contact');
+		fieldset.disabled = true;
+		const reset = document.createElement('button');
+		reset.type = 'reset';
+		reset.id = 'disabled-reset';
+		reset.textContent = 'Clear contact';
+		fieldset.append(reset);
+		document.body.append(element);
+	});
+	await expect(page.locator('#contact > #disabled-reset')).toHaveCount(1);
+	await expect(page.locator('#disabled-reset')).toBeDisabled();
+});

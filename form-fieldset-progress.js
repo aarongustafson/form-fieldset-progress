@@ -310,16 +310,50 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			this._set(fieldset, 'tabindex', '-1');
 		for (const submit of this._submits)
 			this._set(submit, `${prefix}submit`, '');
+		const submitContainer = references.some((name) =>
+			this.hasAttribute(name),
+		)
+			? this._navigation
+			: this._buildDefaultControls();
 		if (!authoredNext) {
 			for (const submit of this._submits) {
-				const marker = this.ownerDocument.createComment(
-					'fieldset-progress submit',
-				);
-				submit.before(marker);
-				this._moves.push({ element: submit, marker });
-				this._navigation.append(submit);
+				this._move(submit, submitContainer);
 			}
 		}
+	}
+
+	_buildDefaultControls() {
+		const controls = this._create('div', 'controls', this._navigation);
+		const resets = Array.from(this._form.elements).filter(
+			(control) =>
+				['button', 'input'].includes(control.localName) &&
+				control.type === 'reset' &&
+				!control.closest('[hidden]') &&
+				!control.matches(':disabled'),
+		);
+		if (resets.length) {
+			controls.setAttribute(`${prefix}has-reset`, '');
+			const resetSlot = this._create('div', 'reset-slot', controls);
+			for (const reset of resets) {
+				this._set(reset, `${prefix}reset`, '');
+				this._move(reset, resetSlot);
+			}
+		}
+		const previousSlot = this._create('div', 'previous-slot', controls);
+		previousSlot.append(this._previous);
+		controls.append(this._progress);
+		const nextSlot = this._create('div', 'next-slot', controls);
+		nextSlot.append(this._next);
+		return nextSlot;
+	}
+
+	_move(element, parent) {
+		const marker = this.ownerDocument.createComment(
+			'fieldset-progress control',
+		);
+		element.before(marker);
+		this._moves.push({ element, marker });
+		parent.append(element);
 	}
 
 	_create(tagName, hook, parent) {

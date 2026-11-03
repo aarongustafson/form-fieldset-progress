@@ -17,7 +17,7 @@ import '@aarongustafson/form-fieldset-progress/define.js';
 import '@aarongustafson/form-fieldset-progress/form-fieldset-progress.css';
 ```
 
-The stylesheet is optional but supplies the default flex layout and distinct
+The stylesheet is optional but supplies the full-width default footer and distinct
 secondary Back/primary Next treatments. Without a bundler, copy the package
 files and load `define.js` as a module and the CSS with a stylesheet link.
 
@@ -69,6 +69,13 @@ The first step hides Back. The last hides Next and shows the original submit
 buttons. A single-step form shows its submit buttons immediately. No submit
 button is synthesized: authored names, values, labels, listeners, and submission
 overrides remain intact.
+
+With no reference attributes, the default footer also moves any authored, visible,
+enabled Reset controls to inline start, before Back. Reset keeps its native
+behavior and authored label; the component never creates a Reset button. Hidden
+or disabled reset controls stay where authored so moving them cannot change
+inherited fieldset disabling. Only include Reset when discarding entered answers
+is an intentional part of the form.
 
 ## Navigation and validation
 
@@ -215,6 +222,13 @@ its navigation row and restores their positions on teardown. With an authored
 Next button, submit controls stay where authored. Supplying all three control
 references avoids a generated navigation wrapper.
 
+Defining **any** reference attribute (`previous-ref`, `next-ref`, `progress-ref`,
+or `progress-label-ref`) opts out of automatic Reset relocation and the default
+reserved-slot layout. The author then controls Reset placement, even when some
+navigation controls are still generated. Moved submit and reset controls retain
+their node identity, form behavior, and listeners; disconnection or `refresh()`
+restores their authored positions before any new setup.
+
 See the [English custom-layout demo](demo/index.html#custom-layout) for progress
 above the form and buttons below it, with no reset button. Its external buttons
 use `form="english-application"` to keep their native form association. No new
@@ -252,13 +266,29 @@ document-level listener before importing `define.js`.
 
 ## Styling
 
-The optional stylesheet uses flexbox, logical spacing, wrapping, system colors,
-and visible focus outlines. It does not use shadow DOM or a CSS framework.
+The optional stylesheet uses a full-width flex footer, logical spacing, system
+colors, and visible focus outlines. A grid row inside the default footer reserves
+equal-width Back and Next/Submit slots and centers progress between them. The
+Back slot remains in the layout when its button is hidden, so progress does not
+shift as sections change. This uses CSS rather than measuring button widths in
+JavaScript.
+
+An optional Reset slot sits at inline start, before Back. On narrow footers
+(24rem or less), Reset wraps onto its own row ahead of the balanced navigation
+row. The footer and controls row fill their available inline width; the progress
+bar still respects `--fieldset-progress-width`. Custom reference-based markup
+keeps its authored layout. No shadow DOM or CSS framework is required.
 
 Hooks: `data-fieldset-progress-navigation`, `data-fieldset-progress-previous`,
 `data-fieldset-progress-next`, `data-fieldset-progress-progress`,
 `data-fieldset-progress-status`, and `data-fieldset-progress-submit`.
 `data-fieldset-progress-label` is an authored text-container hook.
+
+Default-layout hooks: `data-fieldset-progress-controls`,
+`data-fieldset-progress-previous-slot`, `data-fieldset-progress-next-slot`,
+`data-fieldset-progress-reset-slot`, and `data-fieldset-progress-reset`.
+The controls row has `data-fieldset-progress-has-reset` when a Reset slot exists.
+Slot wrappers are layout-only elements, not additional focus targets or controls.
 
 | CSS custom property          | Default     |
 | ---------------------------- | ----------- |

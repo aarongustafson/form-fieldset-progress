@@ -26,7 +26,11 @@
 					Next validates the current section. Back never does. Enter
 					in a single-line field also advances. The original submit
 					button appears on the final screen, and Start over resets
-					the form and step.
+					the form and step. With no reference attributes, Start over
+					moves into the full-width footer before Back. Equal Back and
+					Next slots keep progress centered between them, including
+					when Back is hidden. On narrow forms, Start over wraps above
+					the navigation row.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;

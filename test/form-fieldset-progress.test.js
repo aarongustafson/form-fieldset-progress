@@ -265,6 +265,147 @@ describe('progressive enhancement', () => {
 		expect(host.stepIndex).toBe(1);
 	});
 
+	it('hoists the authored reset before a persistent Back slot in the default footer', async () => {
+		const host = await fixture('no-validation');
+		const reset = host.querySelector('[type=reset]');
+		const controls = host.querySelector(
+			'[data-fieldset-progress-controls]',
+		);
+		const previousSlot = host.querySelector(
+			'[data-fieldset-progress-previous-slot]',
+		);
+		const nextSlot = host.querySelector(
+			'[data-fieldset-progress-next-slot]',
+		);
+		expect(controls).not.toBeNull();
+		expect(reset.parentElement).toBe(
+			controls.querySelector('[data-fieldset-progress-reset-slot]'),
+		);
+		expect(reset.parentElement.nextElementSibling).toBe(previousSlot);
+		expect(
+			previousSlot.querySelector('[data-fieldset-progress-previous]')
+				.hidden,
+		).toBe(true);
+		expect(
+			nextSlot.querySelector('[data-fieldset-progress-next]').hidden,
+		).toBe(false);
+		host.next();
+		expect(
+			host.querySelector('[data-fieldset-progress-previous-slot]'),
+		).toBe(previousSlot);
+		reset.click();
+		await tick();
+		expect(host.stepIndex).toBe(0);
+		host.remove();
+		expect(reset.parentElement.localName).toBe('form');
+		expect(reset.previousElementSibling.type).toBe('submit');
+		expect(reset.hasAttribute('data-fieldset-progress-reset')).toBe(false);
+	});
+
+	it.each([
+		[
+			'previous-ref="custom-back"',
+			'<button id="custom-back" type="button">Back</button>',
+		],
+		[
+			'next-ref="custom-next"',
+			'<button id="custom-next" type="button">Next</button>',
+		],
+		[
+			'progress-ref="custom-progress"',
+			'<progress id="custom-progress"></progress>',
+		],
+		[
+			'progress-label-ref="custom-status"',
+			'<span id="custom-status">Progress</span>',
+		],
+	])(
+		'keeps Reset authored when any reference is defined: %s',
+		async (attributes, content) => {
+			const host = await fixture(attributes, content);
+			const reset = host.querySelector('[type=reset]');
+			expect(host.state).toBe('ready');
+			expect(reset.parentElement).toBe(host.form);
+			expect(
+				host.querySelector('[data-fieldset-progress-reset-slot]'),
+			).toBeNull();
+			expect(
+				host.querySelector('[data-fieldset-progress-controls]'),
+			).toBeNull();
+		},
+	);
+
+	it('moves button/input resets without losing handlers, and restores nested positions', async () => {
+		const host = await fixture();
+		const fieldset = host.querySelector('#contact');
+		const input = document.createElement('input');
+		input.type = 'reset';
+		input.value = 'Clear answers';
+		fieldset.append(input);
+		const clicked = vi.fn();
+		input.addEventListener('click', clicked);
+		host.refresh();
+		expect(
+			host.querySelector('[data-fieldset-progress-reset-slot]').children,
+		).toHaveLength(2);
+		input.click();
+		expect(clicked).toHaveBeenCalledOnce();
+		host.remove();
+		expect(input.parentElement).toBe(fieldset);
+		expect(fieldset.lastElementChild).toBe(input);
+	});
+
+	it('does not hoist authored hidden resets or synthesize missing resets', async () => {
+		const host = await fixture();
+		const reset = host.querySelector('[type=reset]');
+		host.remove();
+		reset.hidden = true;
+		document.body.append(host);
+		await tick();
+		expect(reset.parentElement).toBe(host.form);
+		expect(reset.hidden).toBe(true);
+		expect(
+			host.querySelector('[data-fieldset-progress-reset-slot]'),
+		).toBeNull();
+		host.remove();
+		reset.remove();
+		document.body.append(host);
+		await tick();
+		expect(host.querySelector('[type=reset]')).toBeNull();
+		expect(
+			host.querySelector('[data-fieldset-progress-reset-slot]'),
+		).toBeNull();
+	});
+
+	it('restores a hoisted reset before switching to reference-based UI', async () => {
+		const host = await fixture(
+			'',
+			'<progress id="authored-progress"></progress>',
+		);
+		const reset = host.querySelector('[type=reset]');
+		expect(
+			reset.parentElement.hasAttribute(
+				'data-fieldset-progress-reset-slot',
+			),
+		).toBe(true);
+		host.setAttribute('progress-ref', 'authored-progress');
+		expect(host.state).toBe('ready');
+		expect(reset.parentElement).toBe(host.form);
+		expect(
+			host.querySelector('[data-fieldset-progress-reset-slot]'),
+		).toBeNull();
+	});
+
+	it('keeps disabled reset controls in their authored positions', async () => {
+		const host = await fixture(
+			'',
+			'<input type="reset" value="Unavailable reset" disabled>',
+		);
+		const reset = host.querySelector('input[type=reset]');
+		expect(reset.parentElement).toBe(host.form);
+		expect(reset.disabled).toBe(true);
+	});
+
 	it('respects novalidate and validates every traversed step for forward goTo', async () => {
 		const host = await fixture();
 		expect(host.goTo(2)).toBe(false);

@@ -15,12 +15,82 @@ form-fieldset-progress [hidden],
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-end;
+	box-sizing: border-box;
+	inline-size: 100%;
+	container-type: inline-size;
 	gap: var(--fieldset-progress-gap, 0.75rem);
 	margin-block-start: 1.5rem;
 }
 
 [data-fieldset-progress-status] {
 	flex-basis: 100%;
+}
+
+[data-fieldset-progress-navigation] > [data-fieldset-progress-status] {
+	margin: 0;
+}
+
+[data-fieldset-progress-controls] {
+	display: grid;
+	grid-template-columns: minmax(4.5rem, 1fr) minmax(0, 2fr) minmax(
+			4.5rem,
+			1fr
+		);
+	grid-template-areas: 'previous progress next';
+	align-items: center;
+	gap: var(--fieldset-progress-gap, 0.75rem);
+	inline-size: 100%;
+}
+
+[data-fieldset-progress-controls][data-fieldset-progress-has-reset] {
+	grid-template-columns:
+		fit-content(35%) minmax(4.5rem, 1fr) minmax(0, 2fr)
+		minmax(4.5rem, 1fr);
+	grid-template-areas: 'reset previous progress next';
+}
+
+[data-fieldset-progress-reset-slot] {
+	grid-area: reset;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--fieldset-progress-gap, 0.75rem);
+	min-inline-size: 0;
+	justify-self: start;
+}
+
+[data-fieldset-progress-previous-slot],
+[data-fieldset-progress-next-slot] {
+	display: flex;
+	flex-direction: column;
+	gap: var(--fieldset-progress-gap, 0.75rem);
+	min-inline-size: 0;
+}
+
+[data-fieldset-progress-previous-slot] {
+	grid-area: previous;
+}
+
+[data-fieldset-progress-next-slot] {
+	grid-area: next;
+}
+
+[data-fieldset-progress-previous-slot] > *,
+[data-fieldset-progress-next-slot] > *,
+[data-fieldset-progress-reset-slot] > * {
+	box-sizing: border-box;
+	min-inline-size: 0;
+	max-inline-size: 100%;
+	overflow-wrap: anywhere;
+}
+
+[data-fieldset-progress-next-slot] > [data-fieldset-progress-submit] {
+	margin-inline-start: 0;
+}
+
+[data-fieldset-progress-controls] > [data-fieldset-progress-progress] {
+	grid-area: progress;
+	justify-self: center;
+	inline-size: 100%;
 }
 
 [data-fieldset-progress-progress] {
@@ -31,7 +101,8 @@ form-fieldset-progress [hidden],
 }
 
 [data-fieldset-progress-previous],
-[data-fieldset-progress-next] {
+[data-fieldset-progress-next],
+[data-fieldset-progress-reset] {
 	font: inherit;
 	padding: 0.625em 0.875em;
 	border: 2px solid ButtonBorder;
@@ -39,7 +110,8 @@ form-fieldset-progress [hidden],
 	cursor: pointer;
 }
 
-[data-fieldset-progress-previous] {
+[data-fieldset-progress-previous],
+[data-fieldset-progress-reset] {
 	color: ButtonText;
 	background: ButtonFace;
 }
@@ -54,7 +126,20 @@ form-fieldset-progress [hidden],
 }
 
 [data-fieldset-progress-previous]:focus-visible,
-[data-fieldset-progress-next]:focus-visible {
+[data-fieldset-progress-next]:focus-visible,
+[data-fieldset-progress-reset]:focus-visible {
 	outline: 3px solid CanvasText;
 	outline-offset: 3px;
+}
+
+@container (max-width: 24rem) {
+	[data-fieldset-progress-controls][data-fieldset-progress-has-reset] {
+		grid-template-columns: minmax(4.5rem, 1fr) minmax(0, 2fr) minmax(
+				4.5rem,
+				1fr
+			);
+		grid-template-areas:
+			'reset reset reset'
+			'previous progress next';
+	}
 }

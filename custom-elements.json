@@ -8,7 +8,7 @@
 				{
 					"kind": "class",
 					"name": "FormFieldsetProgressElement",
-					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience.",
+					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience. With no reference attributes, the full-width footer reserves equal Back/Next slots around centered progress and relocates authored visible, enabled reset controls before Back. Any reference attribute preserves authored Reset placement and opts out of the default slot layout.",
 					"tagName": "form-fieldset-progress",
 					"customElement": true,
 					"superclass": { "name": "HTMLElement" },
@@ -163,7 +163,7 @@
 						{
 							"name": "--fieldset-progress-gap",
 							"default": "0.75rem",
-							"description": "Generated navigation spacing."
+							"description": "Generated navigation and control-slot spacing."
 						},
 						{
 							"name": "--fieldset-progress-width",
