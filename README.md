@@ -548,6 +548,15 @@ events, and the no-JavaScript fallback. There are no runtime dependencies.
 Manual screen-reader checks remain part of release review; automated checks
 alone do not establish conformance.
 
+## Publishing
+
+The template’s release hooks are retained. `npm version minor` updates the
+package version, updates and stages the pinned imports in
+[the esm.sh demo](demo/esm.html), and creates the version commit and tag.
+The `postversion` hook runs `git push --follow-tags`; the pushed version tag
+triggers the publishing workflow. Configure npm trusted publishing for
+`publish.yml` before running a release.
+
 ## License
 
 [MIT](LICENSE)

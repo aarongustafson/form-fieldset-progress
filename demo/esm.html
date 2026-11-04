@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>form-fieldset-progress via esm.sh</title>
+		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="../form-fieldset-progress.css" />
+	</head>
+	<body>
+		<header>
+			<h1>&lt;form-fieldset-progress&gt;</h1>
+			<p>
+				<a
+					href="https://github.com/aarongustafson/form-fieldset-progress#readme"
+					>README and API</a
+				>
+			</p>
+		</header>
+		<main>
+			<section class="demo-section">
+				<h2>Load the component from esm.sh</h2>
+				<p>
+					This example imports the published component class from
+					esm.sh and registers it manually. Both fieldsets remain
+					available if the CDN cannot load. The import is pinned to
+					the package version and is updated by the version script.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>import { FormFieldsetProgressElement } from
+  'https://esm.sh/@aarongustafson/form-fieldset-progress@0.1.0/form-fieldset-progress.js?bundle&amp;target=es2022';
+
+customElements.define(
+  'form-fieldset-progress',
+  FormFieldsetProgressElement,
+);</code></pre>
+					<div class="demo">
+						<form-fieldset-progress>
+							<form action="./esm.html" method="get">
+								<fieldset>
+									<legend>Contact details</legend>
+									<label>
+										Your name
+										<input
+											name="name"
+											autocomplete="name"
+											required
+										/>
+									</label>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label>
+										Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send application</button>
+								<p role="status" hidden>
+									Example submitted. No form data was sent.
+								</p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+			</p>
+		</footer>
+		<script type="module">
+			import { FormFieldsetProgressElement } from 'https://esm.sh/@aarongustafson/form-fieldset-progress@0.1.0/form-fieldset-progress.js?bundle&target=es2022';
+
+			if (!customElements.get('form-fieldset-progress')) {
+				customElements.define(
+					'form-fieldset-progress',
+					FormFieldsetProgressElement,
+				);
+			}
+		</script>
+		<script type="module">
+			document
+				.querySelector('form')
+				.addEventListener('submit', (event) => {
+					if (event.defaultPrevented) return;
+					event.preventDefault();
+					event.currentTarget.querySelector(
+						'[role="status"]',
+					).hidden = false;
+				});
+		</script>
+	</body>
+</html>

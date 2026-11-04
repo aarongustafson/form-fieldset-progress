@@ -65,7 +65,9 @@
 		"lint:eslint": "eslint .",
 		"format:eslint": "eslint . --fix",
 		"lint:prettier": "prettier \"**/*.{js,ts,css,html,md,json,yml}\" --check --ignore-path .gitignore",
-		"format:prettier": "prettier \"**/*.{js,ts,css,html,md,json,yml}\" --write --ignore-path .gitignore"
+		"format:prettier": "prettier \"**/*.{js,ts,css,html,md,json,yml}\" --write --ignore-path .gitignore",
+		"version": "node scripts/update-demo-versions.js && git add demo/esm.html",
+		"postversion": "git push --follow-tags"
 	},
 	"devDependencies": {
 		"@open-wc/eslint-config": "^13.1.0",
