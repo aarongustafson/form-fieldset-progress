@@ -13,9 +13,14 @@ createServer(async (request, response) => {
 	let path;
 	try {
 		const url = new URL(request.url, 'http://localhost');
+		const pathname = decodeURIComponent(url.pathname);
+		if (pathname.includes('\0')) {
+			response.writeHead(400).end('Bad request');
+			return;
+		}
 		path = resolve(
 			root,
-			`.${decodeURIComponent(url.pathname)}`,
+			`.${pathname}`,
 			url.pathname.endsWith('/') ? 'index.html' : '',
 		);
 	} catch (error) {

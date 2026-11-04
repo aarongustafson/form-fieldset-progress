@@ -257,7 +257,7 @@
 				{
 					"kind": "function",
 					"name": "defineFormFieldsetProgress",
-					"description": "Register the default tag on import. Imports are safe without DOM globals; return false when no browser registry is available. The helper is idempotent for the same class and tag; conflicting definitions throw.",
+					"description": "Register the default tag on import. Imports are safe without DOM globals; return false when no browser registry is available. The helper is idempotent for the same class and tag; conflicting definitions throw. Registration declarations include the element tag and event mappings.",
 					"parameters": [
 						{
 							"name": "tagName",

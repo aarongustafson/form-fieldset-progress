@@ -5,7 +5,13 @@ test('malformed URLs return 400 without stopping the demo server', async ({
 	baseURL,
 	request,
 }) => {
-	for (const path of ['/bad%zz', 'http://[']) {
+	for (const path of [
+		'/bad%zz',
+		'http://[',
+		'/bad%00path',
+		'/%00',
+		'/bad%00path/',
+	]) {
 		const status = await new Promise((resolve, reject) => {
 			const outgoing = get(
 				{ hostname: '127.0.0.1', port: new URL(baseURL).port, path },

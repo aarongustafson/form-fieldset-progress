@@ -23,6 +23,8 @@ import '@aarongustafson/form-fieldset-progress/define.js';
 import '@aarongustafson/form-fieldset-progress/form-fieldset-progress.css';
 ```
 
+The registration import also loads the TypeScript element and event mappings.
+
 Without a bundler, copy the package files into your project, load `define.js`
 with a module script, and link `form-fieldset-progress.css` as a stylesheet.
 
