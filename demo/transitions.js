@@ -4,8 +4,13 @@ const motion = matchMedia('(prefers-reduced-motion: no-preference)');
 let active = null;
 let updating = false;
 
-if (typeof document.startViewTransition === 'function')
-	toggle.closest('label').hidden = false;
+function updateAvailability() {
+	toggle.closest('label').hidden =
+		host.state !== 'ready' ||
+		typeof document.startViewTransition !== 'function';
+}
+
+updateAvailability();
 
 function cancelTransition() {
 	if (!active) return;
@@ -62,6 +67,13 @@ host.addEventListener('form-fieldset-progress:beforechange', (event) => {
 });
 
 toggle.addEventListener('change', cancelTransition);
-host.addEventListener('form-fieldset-progress:ready', cancelTransition);
+host.addEventListener('form-fieldset-progress:ready', () => {
+	cancelTransition();
+	updateAvailability();
+});
+host.addEventListener('form-fieldset-progress:error', () => {
+	cancelTransition();
+	updateAvailability();
+});
 host.querySelector('form').addEventListener('reset', cancelTransition);
 host.querySelector('form').addEventListener('invalid', cancelTransition, true);

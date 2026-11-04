@@ -462,6 +462,46 @@ Slot wrappers are light-DOM layout elements, not shadow slots. Do not override
 `[hidden]` to display inactive controls. Check contrast and visible focus when
 changing styles.
 
+## Reduce startup layout changes
+
+The full native form can appear before the component’s JavaScript arrives,
+then collapse to one section. Setup already runs together in a microtask;
+loading the module earlier reduces the time before that happens.
+
+Put the stylesheet and registration script in the document’s `<head>`.
+Preload the class module so it can download alongside the registration helper:
+
+```html
+<link
+  rel="stylesheet"
+  href="/components/form-fieldset-progress/form-fieldset-progress.css"
+/>
+<link
+  rel="modulepreload"
+  href="/components/form-fieldset-progress/form-fieldset-progress.js"
+/>
+<script
+  type="module"
+  src="/components/form-fieldset-progress/define.js"
+></script>
+```
+
+Adjust the URLs to match your deployment. Keep the module script’s normal
+deferred execution; adding `async` can run setup before the form is fully
+parsed. Load optional animation or other page scripts independently rather
+than making the component wait for them.
+
+Do not hide the host with `:not(:defined)`, or pre-hide its later fieldsets
+with CSS. If JavaScript is unavailable or fails to load, that CSS can leave
+the form or some fields inaccessible. `:defined` only means the element is
+registered, not that setup succeeded. Authored `hidden` fieldsets are excluded
+from ordinary steps, not automatically recovered as later sections.
+
+These loading hints reduce avoidable delay; they do not guarantee a flash-free
+first paint on a slow connection. The native form deliberately stays visible
+and usable while loading and after failure. The component adds no startup
+visibility mask or minimum loading delay.
+
 ## Accessibility and lifecycle
 
 Fieldsets retain their legends and native grouping semantics. Inactive sections
