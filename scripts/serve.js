@@ -10,12 +10,20 @@ const types = {
 };
 
 createServer(async (request, response) => {
-	const url = new URL(request.url, 'http://localhost');
-	const path = resolve(
-		root,
-		`.${decodeURIComponent(url.pathname)}`,
-		url.pathname.endsWith('/') ? 'index.html' : '',
-	);
+	let path;
+	try {
+		const url = new URL(request.url, 'http://localhost');
+		path = resolve(
+			root,
+			`.${decodeURIComponent(url.pathname)}`,
+			url.pathname.endsWith('/') ? 'index.html' : '',
+		);
+	} catch (error) {
+		if (!(error instanceof URIError) && error.code !== 'ERR_INVALID_URL')
+			throw error;
+		response.writeHead(400).end('Bad request');
+		return;
+	}
 	if (!path.startsWith(`${root}${sep}`)) {
 		response.writeHead(403).end('Forbidden');
 		return;

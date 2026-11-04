@@ -87,6 +87,67 @@ describe('PR review regressions', () => {
 		},
 	);
 
+	it('keeps an explicitly disabled submitter in its authored position', async () => {
+		const host = await fixture(
+			'',
+			'<div id="disabled-actions"><button type="submit" disabled>Unavailable</button></div>',
+		);
+		const submit = host.querySelector('[disabled]');
+		expect(host.state).toBe('ready');
+		expect(submit.parentElement.id).toBe('disabled-actions');
+		expect(submit.disabled).toBe(true);
+		host.remove();
+		expect(submit.parentElement.id).toBe('disabled-actions');
+	});
+
+	it.each(['native-step', 'native-review', 'explicit-review'])(
+		'rejects a %s progress label inside a section and restores authored content',
+		async (location) => {
+			const host = await fixture();
+			host.remove();
+			const form = host.querySelector('form');
+			const progress = document.createElement('progress');
+			progress.id = 'meter';
+			form.append(progress);
+			host.setAttribute('progress-ref', progress.id);
+			let section = form.querySelector('fieldset');
+			if (location !== 'native-step') {
+				section = document.createElement('fieldset');
+				section.id = 'summary';
+				section.hidden = true;
+				section.innerHTML = '<legend>Confirm</legend>';
+				form.append(section);
+				host.setAttribute('review-ref', section.id);
+			}
+			const label = document.createElement(
+				location === 'explicit-review' ? 'p' : 'label',
+			);
+			label.id = 'status';
+			label.textContent = 'Authored progress';
+			if (location === 'explicit-review')
+				host.setAttribute('progress-label-ref', label.id);
+			else label.htmlFor = progress.id;
+			section.append(label);
+			const error = vi.fn();
+			host.addEventListener('form-fieldset-progress:error', error);
+			document.body.append(host);
+			await tick();
+			expect(host.state).toBe('error');
+			expect(error).toHaveBeenCalledOnce();
+			expect(error.mock.calls[0][0].detail.error.message).toMatch(
+				/progress UI outside the step fieldsets/,
+			);
+			expect(form.querySelector('fieldset').hidden).toBe(false);
+			expect(form.querySelector('[type=submit]').hidden).toBe(false);
+			expect(label.textContent).toBe('Authored progress');
+			expect(label.parentElement).toBe(section);
+			expect(section.hidden).toBe(location !== 'native-step');
+			expect(
+				host.querySelector('[data-fieldset-progress-navigation]'),
+			).toBeNull();
+		},
+	);
+
 	it('retains a nonempty datalist answer when the matching option has only a value', async () => {
 		const host = await fixture(
 			'review-panel',

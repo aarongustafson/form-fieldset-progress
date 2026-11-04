@@ -194,7 +194,9 @@ After successful setup, each is revealed when useful; single-section progress
 stays hidden. Hide the referenced elements themselves, not their ancestors.
 Leave Submit visible for the native fallback. Original hidden attributes
 are restored on teardown or setup failure.
-With a generated Next button, it moves authored submit controls into its footer.
+With a generated Next button, it moves enabled authored submit controls into its
+footer. Disabled submit controls stay where authored, preserving disabled states
+inherited from fieldsets.
 With a referenced Next button, submit controls stay where authored. Any control reference
 attribute opts out of the default reserved-slot layout and Reset relocation.
 
@@ -204,7 +206,9 @@ button’s entire content with its label. Navigation buttons must not use
 `aria-labelledby`; the label templates supply their accessible names.
 
 Without `progress-label-ref`, the component uses the progress element’s first
-associated label or creates one. A wrapping label needs a separate
+associated label or creates one. Both referenced and automatically selected
+labels must remain outside all sections, including an authored review.
+A wrapping label needs a separate
 `data-fieldset-progress-label` text container that does not contain progress.
 Neither the wrapper nor its text container may enclose the host, controlled
 form, links, or other form controls; only its own wrapped progress is allowed.

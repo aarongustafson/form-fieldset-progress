@@ -8,7 +8,7 @@
 				{
 					"kind": "class",
 					"name": "FormFieldsetProgressElement",
-					"description": "Enhances outermost fieldsets in one form into a light-DOM, validated step-by-step experience. Optional generated or referenced review adds a final fieldset with safe labeled values in a definition list. Progress is the current one-based section number out of the total, including review; a single-section form hides progress and its labels. Referenced enhancement-only controls are revealed when useful and authored visibility restores on teardown. With no control reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Review references do not customize this footer.",
+					"description": "Enhances outermost fieldsets in one form into a light-DOM, validated step-by-step experience. Optional generated or referenced review adds a final fieldset with safe labeled values in a definition list. Progress is the current one-based section number out of the total, including review; a single-section form hides progress and its labels. Referenced enhancement-only controls are revealed when useful and authored visibility restores on teardown. With no control reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Review references do not customize this footer. With a generated Next button, enabled submit controls move to the footer; disabled submit controls stay where authored to preserve inherited disabled states.",
 					"tagName": "form-fieldset-progress",
 					"customElement": true,
 					"superclass": { "name": "HTMLElement" },
@@ -66,7 +66,7 @@
 						{
 							"name": "progress-label-ref",
 							"type": { "text": "string" },
-							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one. A wrapping container may contain its controlled progress and a marked text span, but must not enclose the host, controlled form, other form controls or links."
+							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one. Referenced and automatically selected labels must be outside all sections, including an authored review. A wrapping container may contain its controlled progress and a marked text span, but must not enclose the host, controlled form, other form controls or links."
 						},
 						{
 							"name": "previous-label",

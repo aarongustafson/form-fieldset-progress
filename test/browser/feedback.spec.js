@@ -1,5 +1,140 @@
 import { test, expect } from '@playwright/test';
 
+for (const type of ['button', 'submit', 'image']) {
+	for (const inherited of [false, true]) {
+		test(`${type} submitter with ${inherited ? 'inherited' : 'explicit'} disabled state stays unavailable`, async ({
+			page,
+		}) => {
+			await page.goto('/test/browser/fixture.html');
+			const example = page.locator('form-fieldset-progress');
+			await example.evaluate(
+				(element, config) => {
+					element.remove();
+					const actions = document.createElement('fieldset');
+					actions.id = 'disabled-actions';
+					actions.disabled = config.inherited;
+					actions.innerHTML = '<legend>Unavailable actions</legend>';
+					const submit = document.createElement(
+						config.type === 'button' ? 'button' : 'input',
+					);
+					submit.type =
+						config.type === 'button' ? 'submit' : config.type;
+					submit.id = 'disabled-submit';
+					submit.disabled = !config.inherited;
+					submit.setAttribute('form', 'application');
+					if (config.type === 'button')
+						submit.textContent = 'Unavailable';
+					else if (config.type === 'image')
+						submit.alt = 'Unavailable';
+					else submit.value = 'Unavailable';
+					actions.append(submit);
+					document.body.append(actions);
+					element
+						.querySelector('form')
+						.addEventListener('submit', (event) => {
+							event.preventDefault();
+							globalThis.lastSubmitter = event.submitter.id;
+						});
+					document.body.append(element);
+				},
+				{ type, inherited },
+			);
+			const submit = page.locator('#disabled-submit');
+			await expect(example).toHaveJSProperty('state', 'ready');
+			await expect(submit).toBeHidden();
+			await expect(submit).toBeDisabled();
+			await example.locator('[name=name]').fill('Ada');
+			await example.locator('[data-fieldset-progress-next]').click();
+			await example.locator('[name=city]').fill('London');
+			await example.locator('[data-fieldset-progress-next]').click();
+			await expect(submit).toBeVisible();
+			await expect(submit).toBeDisabled();
+			expect(
+				await submit.evaluate((control) => control.parentElement.id),
+			).toBe('disabled-actions');
+			await submit.evaluate((control) => control.click());
+			expect(
+				await page.evaluate(() => globalThis.lastSubmitter),
+			).toBeUndefined();
+			await example.evaluate((element) => element.refresh());
+			await expect(submit).toBeDisabled();
+			await example.evaluate((element) => element.remove());
+			await expect(submit).toBeVisible();
+			await expect(submit).toBeDisabled();
+			expect(
+				await submit.evaluate((control) => ({
+					parent: control.parentElement.id,
+					disabled: control.disabled,
+					owner: control.getAttribute('form'),
+				})),
+			).toEqual({
+				parent: 'disabled-actions',
+				disabled: !inherited,
+				owner: 'application',
+			});
+		});
+	}
+}
+
+for (const location of ['native-step', 'native-review', 'explicit-review']) {
+	test(`${location} progress label fails safely instead of disappearing with its section`, async ({
+		page,
+	}) => {
+		await page.goto('/test/browser/fixture.html');
+		const example = page.locator('form-fieldset-progress');
+		await example.evaluate((element, target) => {
+			element.remove();
+			const form = element.querySelector('form');
+			const progress = document.createElement('progress');
+			progress.id = 'meter';
+			form.append(progress);
+			element.setAttribute('progress-ref', progress.id);
+			const section = element.querySelector(
+				target === 'native-step' ? '#contact' : '#review',
+			);
+			if (target !== 'native-step') {
+				section.querySelector('label').remove();
+				section.hidden = true;
+				element.setAttribute('review-ref', section.id);
+			}
+			const label = document.createElement(
+				target === 'explicit-review' ? 'p' : 'label',
+			);
+			label.id = 'status';
+			label.textContent = 'Authored progress';
+			if (target === 'explicit-review')
+				element.setAttribute('progress-label-ref', label.id);
+			else label.htmlFor = progress.id;
+			section.append(label);
+			element.addEventListener(
+				'form-fieldset-progress:error',
+				(event) => {
+					globalThis.setupError = event.detail.error.message;
+				},
+			);
+			document.body.append(element);
+		}, location);
+		await expect(example).toHaveJSProperty('state', 'error');
+		expect(await page.evaluate(() => globalThis.setupError)).toMatch(
+			/progress UI outside the step fieldsets/,
+		);
+		await expect(example.locator('#contact')).toBeVisible();
+		await expect(example.locator('#address')).toBeVisible();
+		await expect(
+			example.getByRole('button', {
+				name: 'Send application',
+				exact: true,
+			}),
+		).toBeVisible();
+		await expect(example.locator('#status')).toHaveText(
+			'Authored progress',
+		);
+		await expect(
+			example.locator('[data-fieldset-progress-navigation]'),
+		).toHaveCount(0);
+	});
+}
+
 for (const external of [false, true]) {
 	for (const imageOnly of [false, true]) {
 		test(`${external ? 'external' : 'internal'} image submit ${imageOnly ? 'alone' : 'alongside a button'} follows section visibility and native submission`, async ({

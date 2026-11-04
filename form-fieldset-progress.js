@@ -500,6 +500,13 @@ export class FormFieldsetProgressElement extends HTMLElementBase {
 			}
 		}
 		this._progressLabelContainer = this._progressLabel;
+		if (
+			this._steps.some(({ fieldset }) =>
+				fieldset.contains(this._progressLabelContainer),
+			)
+		) {
+			throw new Error('Place progress UI outside the step fieldsets.');
+		}
 		const controls =
 			'form, fieldset, legend, button, input, select, textarea, progress, a[href], [contenteditable]';
 		if (
@@ -537,7 +544,8 @@ export class FormFieldsetProgressElement extends HTMLElementBase {
 			: this._buildDefaultControls();
 		if (!authoredNext) {
 			for (const submit of this._submits) {
-				this._move(submit, submitContainer);
+				if (!submit.matches(':disabled'))
+					this._move(submit, submitContainer);
 			}
 		}
 	}
