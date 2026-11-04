@@ -1,6 +1,6 @@
 {
 	"name": "@aarongustafson/form-fieldset-progress",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Progressively enhance fieldsets into a validated step-by-step form.",
 	"keywords": [
 		"html",
