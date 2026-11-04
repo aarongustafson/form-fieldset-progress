@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>form-fieldset-progress demos</title>
+		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="../form-fieldset-progress.css" />
+		<link rel="modulepreload" href="../form-fieldset-progress.js" />
+		<link rel="modulepreload" href="../define.js" />
+		<script type="module" src="./demo.js"></script>
+		<script type="module" src="./transitions.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>&lt;form-fieldset-progress&gt;</h1>
+			<p>
+				Turn a form’s fieldsets into steps, with Back, Next, and
+				progress.
+				<a
+					href="https://github.com/aarongustafson/form-fieldset-progress#readme"
+					>README and API</a
+				>
+			</p>
+		</header>
+		<main>
+			<section class="demo-section" id="getting-started">
+				<h2>Start with a form and fieldsets</h2>
+				<p>
+					Wrap a form in <code>form-fieldset-progress</code>. Each
+					outermost <code>fieldset</code> becomes a step, named by its
+					<code>legend</code>. The component adds the navigation
+					buttons and progress indicator; no configuration attributes
+					are needed.
+				</p>
+				<p>
+					Fill out Contact details and choose Next to reach Delivery
+					address. Next checks the current section’s fields before
+					advancing. Back returns to the previous section without
+					validating it. On Delivery notes, the form’s submit button
+					replaces Next. These demos show a submission result without
+					sending form data.
+				</p>
+				<p>
+					Progress shows the current section’s position: Contact
+					details is 1 of 3, so the bar is one-third full. Delivery
+					notes is 3 of 3, so the bar is full.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form action="/apply" method="post"&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Contact details&lt;/legend&gt;
+      &lt;label&gt;Your name
+        &lt;input name="name" required
+          autocomplete="name" /&gt;
+      &lt;/label&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required
+          autocomplete="email" /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Delivery address&lt;/legend&gt;
+      &lt;label&gt;City
+        &lt;input name="city" required
+          autocomplete="address-level2" /&gt;
+      &lt;/label&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;Delivery preference&lt;/legend&gt;
+        &lt;label&gt;&lt;input name="delivery" type="radio"
+          value="standard" checked /&gt; Standard&lt;/label&gt;
+        &lt;label&gt;&lt;input name="delivery" type="radio"
+          value="express" /&gt; Express&lt;/label&gt;
+      &lt;/fieldset&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Delivery notes (optional)
+        &lt;textarea name="notes"&gt;&lt;/textarea&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit" name="action" value="apply"&gt;
+      Send application
+    &lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="basic">
+							<form action="/apply" method="post">
+								<fieldset>
+									<legend>Contact details</legend>
+									<label for="applicant-name"
+										>Your name</label
+									>
+									<input
+										id="applicant-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+									<label for="applicant-email">Email</label>
+									<input
+										id="applicant-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery address</legend>
+									<label for="delivery-city">City</label>
+									<input
+										id="delivery-city"
+										name="city"
+										autocomplete="address-level2"
+										required
+									/>
+									<fieldset class="radio-group">
+										<legend>Delivery preference</legend>
+										<label
+											><input
+												name="delivery"
+												type="radio"
+												value="standard"
+												checked
+											/>
+											Standard</label
+										>
+										<label
+											><input
+												name="delivery"
+												type="radio"
+												value="express"
+											/>
+											Express</label
+										>
+									</fieldset>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label for="delivery-notes"
+										>Delivery notes (optional)</label
+									>
+									<textarea
+										id="delivery-notes"
+										name="notes"
+									></textarea>
+								</fieldset>
+								<button
+									type="submit"
+									name="action"
+									value="apply"
+								>
+									Send application
+								</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="single-section">
+				<h2>Accidentally wrapped a single fieldset? No worries.</h2>
+				<p>
+					With one fieldset, the component shows the submit button
+					immediately. Back and Next are hidden because there is no
+					other section to visit. Progress and its label are also
+					hidden.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Newsletter&lt;/legend&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="single">
+							<form action="/subscribe" method="post">
+								<fieldset>
+									<legend>Newsletter</legend>
+									<label for="newsletter-email">Email</label>
+									<input
+										id="newsletter-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<button type="submit">Subscribe</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="labels">
+				<h2>Customize the labels</h2>
+				<p>
+					<code>previous-label</code> and
+					<code>next-label</code> change the button text.
+					<code>progress-label</code> changes the text beside
+					progress. Here, <code>{current}</code> is the current
+					section number, <code>{total}</code> is the number of
+					sections, and <code>{legend}</code> is the current section’s
+					legend.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-label="Previous"
+  next-label="Continue"
+  progress-label="Section {current} of {total}: {legend}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="short-labels"
+							previous-label="Previous"
+							next-label="Continue"
+							progress-label="Section {current} of {total}: {legend}"
+						>
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="short-name">Name</label>
+									<input
+										id="short-name"
+										name="name"
+										autocomplete="name"
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+				<h3>Customize more: include section names in the buttons</h3>
+				<p>
+					In a button label, <code>{legend}</code> is the destination
+					section’s name. Because these visible labels already name
+					the destination, the buttons use that text as their
+					accessible names without adding an <code>aria-label</code>.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-label="Back to {legend}"
+  next-label="Continue to {legend}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="legend-labels"
+							previous-label="Back to {legend}"
+							next-label="Continue to {legend}"
+						>
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="legend-name">Name</label>
+									<input
+										id="legend-name"
+										name="name"
+										autocomplete="name"
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="custom-layout">
+				<h2>BYOM: Bring your own markup</h2>
+				<p>
+					The <code>*-ref</code> attributes identify existing elements
+					by ID instead of generating them. This example places
+					progress above the form and buttons below it.
+					<code>previous-ref</code> identifies Back,
+					<code>next-ref</code> identifies Next, and
+					<code>progress-ref</code> and
+					<code>progress-label-ref</code>
+					identify progress and its label.
+				</p>
+				<p>
+					Each button outside the form uses
+					<code>form="english-application"</code> to associate it with
+					that form. The component updates these controls’ labels and
+					visibility just as it does for generated controls.
+				</p>
+				<p>
+					Author enhancement-only controls with <code>hidden</code>.
+					The component reveals each control when it is useful after
+					setup succeeds, and restores its authored visibility on
+					disconnect or setup failure. Leave Submit visible so the
+					form works without JavaScript. Hide controls themselves, not
+					an ancestor that also contains the native form.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-ref="english-back"
+  next-ref="english-next"
+  progress-ref="english-progress"
+  progress-label-ref="english-status"&gt;
+  &lt;div class="custom-progress"&gt;
+    &lt;label id="english-status"
+      for="english-progress" hidden&gt;Application sections&lt;/label&gt;
+    &lt;progress id="english-progress"
+      value="1" max="3" hidden&gt;&lt;/progress&gt;
+  &lt;/div&gt;
+  &lt;form id="english-application"
+    action="/volunteer" method="post"&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Availability&lt;/legend&gt;
+      &lt;label&gt;Hours available each week
+        &lt;input name="hours" type="number"
+          min="1" max="40" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Experience&lt;/legend&gt;
+      &lt;label&gt;Relevant experience
+        &lt;textarea name="experience"&gt;&lt;/textarea&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+  &lt;/form&gt;
+  &lt;nav class="custom-actions"
+    aria-label="Application sections"&gt;
+    &lt;button id="english-back" type="button"
+      form="english-application" hidden&gt;Back&lt;/button&gt;
+    &lt;button id="english-next" type="button"
+      form="english-application" hidden&gt;Next&lt;/button&gt;
+    &lt;button type="submit"
+      form="english-application"&gt;Send application&lt;/button&gt;
+  &lt;/nav&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="english-custom"
+							previous-ref="english-back"
+							next-ref="english-next"
+							progress-ref="english-progress"
+							progress-label-ref="english-status"
+						>
+							<div class="custom-progress">
+								<label
+									id="english-status"
+									for="english-progress"
+									hidden
+									>Application sections</label
+								>
+								<progress
+									id="english-progress"
+									value="1"
+									max="3"
+									hidden
+								></progress>
+							</div>
+							<form
+								id="english-application"
+								action="/volunteer"
+								method="post"
+							>
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="volunteer-email">Email</label>
+									<input
+										id="volunteer-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Availability</legend>
+									<label for="volunteer-hours"
+										>Hours available each week</label
+									>
+									<input
+										id="volunteer-hours"
+										name="hours"
+										type="number"
+										min="1"
+										max="40"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Experience</legend>
+									<label
+										>Relevant experience
+										<textarea name="experience"></textarea>
+									</label>
+								</fieldset>
+								<p role="status" data-result></p>
+							</form>
+							<nav
+								class="custom-actions"
+								aria-label="Application sections"
+							>
+								<button
+									id="english-back"
+									type="button"
+									form="english-application"
+									hidden
+								>
+									Back
+								</button>
+								<button
+									id="english-next"
+									type="button"
+									form="english-application"
+									hidden
+								>
+									Next
+								</button>
+								<button
+									type="submit"
+									form="english-application"
+								>
+									Send application
+								</button>
+							</nav>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="translated-controls">
+				<h2>Translate labels, maintain button icons</h2>
+				<p>
+					This example combines the label templates and ID references
+					above. The legends, submit button, and navigation templates
+					are in French. Each navigation button uses a
+					<code>data-fieldset-progress-label</code> span so the
+					component updates the text without replacing its arrow.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-ref="custom-back"
+  next-ref="custom-next"
+  progress-ref="custom-progress"
+  progress-label-ref="custom-status"
+  previous-label="Retour : {legend}"
+  next-label="Continuer : {legend}"
+  progress-label="Étape {current}/{total} : {legend}"
+  previous-aria-label="{label}, étape {current}"
+  next-aria-label="{label}, étape {current}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Coordonnées&lt;/legend&gt;
+      &lt;label&gt;Votre nom
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Commentaires&lt;/legend&gt;
+      &lt;label&gt;Votre message &lt;textarea name="message"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;nav aria-label="Sections du formulaire"&gt;
+      &lt;label id="custom-status"
+        for="custom-progress" hidden&gt;Progression&lt;/label&gt;
+      &lt;button id="custom-back" type="button" hidden&gt;
+        &lt;span aria-hidden="true"&gt;←&lt;/span&gt;
+        &lt;span data-fieldset-progress-label&gt;Retour&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;progress id="custom-progress" value="1" max="2" hidden&gt;&lt;/progress&gt;
+      &lt;button id="custom-next" type="button" hidden&gt;
+        &lt;span data-fieldset-progress-label&gt;Continuer&lt;/span&gt;
+        &lt;span aria-hidden="true"&gt;→&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;button type="submit"&gt;Envoyer&lt;/button&gt;
+    &lt;/nav&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo" lang="fr">
+						<form-fieldset-progress
+							id="authored"
+							previous-ref="custom-back"
+							next-ref="custom-next"
+							progress-ref="custom-progress"
+							progress-label-ref="custom-status"
+							previous-label="Retour : {legend}"
+							next-label="Continuer : {legend}"
+							progress-label="Étape {current}/{total} : {legend}"
+							previous-aria-label="{label}, étape {current}"
+							next-aria-label="{label}, étape {current}"
+						>
+							<form action="/inscription" method="post">
+								<fieldset>
+									<legend>Coordonnées</legend>
+									<label for="french-name">Votre nom</label>
+									<input
+										id="french-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Commentaires</legend>
+									<label
+										>Votre message
+										<textarea name="message"></textarea>
+									</label>
+								</fieldset>
+								<nav
+									class="authored-navigation"
+									aria-label="Sections du formulaire"
+								>
+									<label
+										id="custom-status"
+										for="custom-progress"
+										hidden
+										>Progression</label
+									>
+									<button
+										id="custom-back"
+										type="button"
+										hidden
+									>
+										<span aria-hidden="true">←</span>
+										<span data-fieldset-progress-label
+											>Retour</span
+										>
+									</button>
+									<progress
+										id="custom-progress"
+										value="1"
+										max="2"
+										hidden
+									></progress>
+									<button
+										id="custom-next"
+										type="button"
+										hidden
+									>
+										<span data-fieldset-progress-label
+											>Continuer</span
+										>
+										<span aria-hidden="true">→</span>
+									</button>
+									<button type="submit">Envoyer</button>
+								</nav>
+								<p
+									role="status"
+									data-result
+									data-success="Démonstration terminée. Aucune donnée envoyée."
+								></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>RTL is supported by default</h2>
+				<p>
+					This Arabic example uses the same label templates with
+					<code>dir="rtl"</code>. The generated navigation follows the
+					reading direction, and longer button labels wrap within
+					their available space.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress lang="ar" dir="rtl"
+  previous-label="العودة إلى {legend}"
+  next-label="المتابعة إلى {legend}"
+  progress-label="الخطوة {current} من {total}: {legend}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;بيانات الاتصال&lt;/legend&gt;
+      &lt;label&gt;الاسم &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;تفاصيل الطلب وتفضيلات التسليم والملاحظات الإضافية&lt;/legend&gt;
+      &lt;label&gt;تفاصيل الطلب &lt;textarea name="details"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;ملاحظات إضافية&lt;/legend&gt;
+      &lt;label&gt;الملاحظات &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;إرسال&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo" lang="ar" dir="rtl">
+						<form-fieldset-progress
+							id="rtl"
+							previous-label="العودة إلى {legend}"
+							next-label="المتابعة إلى {legend}"
+							progress-label="الخطوة {current} من {total}: {legend}"
+						>
+							<form action="/application" method="post">
+								<fieldset>
+									<legend>بيانات الاتصال</legend>
+									<label>الاسم <input name="name" /></label>
+								</fieldset>
+								<fieldset>
+									<legend>
+										تفاصيل الطلب وتفضيلات التسليم والملاحظات
+										الإضافية
+									</legend>
+									<label
+										>تفاصيل الطلب
+										<textarea name="details"></textarea>
+									</label>
+								</fieldset>
+								<fieldset>
+									<legend>ملاحظات إضافية</legend>
+									<label
+										>الملاحظات
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">إرسال</button>
+								<p
+									role="status"
+									data-result
+									data-success="اكتمل المثال. لم يتم إرسال أي بيانات."
+								></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="review-panel">
+				<h2>Add a "review" screen</h2>
+				<p>
+					<code>review-panel</code> adds a final fieldset after the
+					authored sections. Its definition list pairs field labels
+					with the current answers. Selects show option labels;
+					checkbox and radio groups show the selected choices. The
+					review counts as a section in progress, and Submit appears
+					there instead of Next.
+				</p>
+				<p>
+					Complete Contact and Delivery, then continue to Check your
+					answers. Use Back to change an answer and return: the
+					summary updates each time you enter review. Native
+					validation runs before entering review and again on
+					submission. Passwords, hidden inputs, and disabled controls
+					are omitted.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress review-panel
+  review-label="Check your answers"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery&lt;/legend&gt;
+      &lt;label for="review-country"&gt;Country&lt;/label&gt;
+      &lt;select id="review-country" name="country"&gt;
+        &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
+        &lt;option value="ca"&gt;Canada&lt;/option&gt;
+      &lt;/select&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Updates&lt;/legend&gt;
+        &lt;label&gt;&lt;input type="checkbox" name="updates"
+          value="email" checked /&gt; Email&lt;/label&gt;
+        &lt;label&gt;&lt;input type="checkbox" name="updates"
+          value="sms" /&gt; SMS&lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+      &lt;label&gt;Attachments &lt;input type="file" name="files" multiple /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="generated-review"
+							review-panel
+							review-label="Check your answers"
+						>
+							<form action="/delivery" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label
+										>Name
+										<input
+											name="name"
+											autocomplete="name"
+											required
+									/></label>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery</legend>
+									<label for="review-country">Country</label>
+									<select id="review-country" name="country">
+										<option value="uk">
+											United Kingdom
+										</option>
+										<option value="ca">Canada</option>
+									</select>
+									<fieldset class="radio-group">
+										<legend>Updates</legend>
+										<label
+											><input
+												type="checkbox"
+												name="updates"
+												value="email"
+												checked
+											/>
+											Email</label
+										>
+										<label
+											><input
+												type="checkbox"
+												name="updates"
+												value="sms"
+											/>
+											SMS</label
+										>
+									</fieldset>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+									<label
+										>Attachments
+										<input
+											type="file"
+											name="files"
+											multiple
+									/></label>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+				<h3>BYORF: Bring your own review fieldset</h3>
+				<p>
+					Use <code>review-ref</code> instead of
+					<code>review-panel</code> to identify an outermost fieldset
+					in the same form. Give it a legend and <code>hidden</code>;
+					the component makes it the final screen and reveals it
+					there. An existing direct <code>dl</code> receives the
+					summary; otherwise one is created. Keep the review
+					read-only, without form controls or links. Your legend
+					supplies its title.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress review-ref="answers"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset id="answers" hidden&gt;
+      &lt;legend&gt;Confirm your details&lt;/legend&gt;
+      &lt;p&gt;Check these answers before sending.&lt;/p&gt;
+      &lt;dl&gt;&lt;/dl&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="authored-review"
+							review-ref="answers"
+						>
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label
+										>Name
+										<input
+											name="name"
+											autocomplete="name"
+											required
+									/></label>
+								</fieldset>
+								<fieldset id="answers" hidden>
+									<legend>Confirm your details</legend>
+									<p>Check these answers before sending.</p>
+									<dl></dl>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+				<p>
+					<code>review-label</code> sets the generated title.
+					<code>review-empty-label</code>,
+					<code>review-checked-label</code>, and
+					<code>review-unchecked-label</code> translate “Not
+					provided,” “Selected,” and “Not selected.” These messages
+					are plain text. Without JavaScript, the generated screen
+					does not exist and the authored hidden review remains
+					hidden; Submit still works.
+				</p>
+			</section>
+			<section class="demo-section" id="section-events">
+				<h2>Listen for section changes</h2>
+				<p>
+					<code>form-fieldset-progress:change</code> fires after the
+					active section changes. Its detail includes
+					<code>previousIndex</code>, <code>stepIndex</code>,
+					<code>stepCount</code>, and the active
+					<code>fieldset</code> element. Indices start at zero.
+				</p>
+				<p>
+					Enter a name and choose Next, then Back. The output below
+					shows the latest event, using the fieldset’s ID to represent
+					the element. A failed validation does not switch this form’s
+					section or emit a change event.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress id="events"&gt;
+  &lt;form&gt;
+    &lt;fieldset id="event-contact"&gt;
+      &lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset id="event-notes"&gt;
+      &lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+&lt;pre id="section-event"&gt;No section change yet.&lt;/pre&gt;
+
+const element = document.querySelector('#events');
+const output = document.querySelector('#section-event');
+element.addEventListener('form-fieldset-progress:change',
+  ({ detail }) =&gt; {
+    output.textContent = JSON.stringify({
+      previousIndex: detail.previousIndex,
+      stepIndex: detail.stepIndex,
+      stepCount: detail.stepCount,
+      fieldset: detail.fieldset.id
+    }, null, 2);
+  });</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="events">
+							<form action="/example" method="post">
+								<fieldset id="event-contact">
+									<legend>Contact</legend>
+									<label for="event-name">Name</label>
+									<input
+										id="event-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset id="event-notes">
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+						<h3>Latest change event</h3>
+						<pre id="section-event">No section change yet.</pre>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="section-transitions">
+				<h2>You can also animate section changes</h2>
+				<p>
+					<code>form-fieldset-progress:beforechange</code> fires after
+					navigation checks, before the section changes. Unlike
+					<code>change</code>, it can be canceled. This example’s
+					script uses that event and the
+					<a
+						href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API"
+						>View Transition API</a
+					>
+					to slide between sections while keeping navigation in place.
+					Animation is supplied by the demo script, not a component
+					attribute.
+				</p>
+				<p>
+					Use Next and Back to see the slide direction change. Uncheck
+					the animation option for immediate navigation. The example
+					also uses immediate navigation when the browser does not
+					support View Transitions or requests reduced motion. The
+					code below shows excerpts from the
+					<a href="./transitions.js">complete animation script</a>
+					and <a href="./styles.css">demo styles</a>.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;label id="animation-option" hidden&gt;
+  &lt;input id="enable-transitions" type="checkbox" checked /&gt;
+  Animate section changes when motion is allowed
+&lt;/label&gt;
+&lt;form-fieldset-progress id="animated"&gt;
+  &lt;form&gt;
+    &lt;div class="transition-pages"&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+        &lt;label&gt;Email
+          &lt;input name="email" type="email" required /&gt;
+        &lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Delivery&lt;/legend&gt;
+        &lt;label&gt;City &lt;input name="city" required /&gt;&lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+        &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+      &lt;/fieldset&gt;
+    &lt;/div&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+
+&lt;!-- This example adds animation in a separate script. --&gt;
+&lt;script type="module" src="./transitions.js"&gt;&lt;/script&gt;</code></pre>
+					<div class="demo">
+						<label id="animation-option" hidden>
+							<input
+								type="checkbox"
+								id="enable-transitions"
+								checked
+							/>
+							Animate section changes when motion is allowed
+						</label>
+						<form-fieldset-progress id="animated">
+							<form action="/delivery" method="post">
+								<div class="transition-pages">
+									<fieldset>
+										<legend>Contact</legend>
+										<label for="animated-email"
+											>Email</label
+										>
+										<input
+											id="animated-email"
+											name="email"
+											type="email"
+											autocomplete="email"
+											required
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Delivery</legend>
+										<label for="animated-city">City</label>
+										<input
+											id="animated-city"
+											name="city"
+											autocomplete="address-level2"
+											required
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Delivery notes</legend>
+										<label
+											>Notes
+											<textarea name="notes"></textarea>
+										</label>
+									</fieldset>
+								</div>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="optional-reset">
+				<h2>Form reset is supported too</h2>
+				<p>
+					An authored <code>type="reset"</code> button restores the
+					form controls’ default values and returns to the first
+					section. Enter a name, advance to Delivery notes, and choose
+					Start over to try it.
+				</p>
+				<p>
+					With no control reference attributes, the component moves
+					this button before Back in the footer. With any control
+					reference attribute, Reset stays where it was authored. The
+					component does not create a Reset button.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;button type="reset"&gt;Start over&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="reset-demo">
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="reset-name">Name</label>
+									<input
+										id="reset-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send</button>
+								<button type="reset">Start over</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="validation-option">
+				<h2>You can disable per-section validation</h2>
+				<p>
+					<strong
+						>I highly recommend keeping per-section validation
+						enabled.</strong
+					>
+					If you really want to turn it off,
+					<code>no-validation</code> removes the checks on forward
+					navigation, but does not turn off native submit validation.
+				</p>
+				<p>
+					Even with this feature disabled, when a field is found to be
+					invalid on submit, the component will display the correct
+					panel automatically so the user can see the issue.
+				</p>
+				<p>
+					In this example, Next reaches Delivery notes even with an
+					empty Name field. Choosing Send profile then reveals the
+					first section so the browser can report the required field.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress no-validation&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Profile&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="skip-validation"
+							no-validation
+						>
+							<form action="/profile" method="post">
+								<fieldset>
+									<legend>Profile</legend>
+									<label for="profile-name">Name</label
+									><input
+										id="profile-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send profile</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>Recover from a setup error</h2>
+				<p>
+					Here, <code>next-ref="missing"</code> points to an element
+					that does not exist. Setup emits
+					<code>form-fieldset-progress:error</code> and leaves both
+					fieldsets visible. Repair configuration removes that
+					reference and calls <code>refresh()</code> to try setup
+					again.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;First section&lt;/legend&gt;
+      &lt;p&gt;This remains visible when setup fails.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Second section&lt;/legend&gt;
+      &lt;p&gt;So does this section.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send example&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+
+// After reporting the setup error:
+const element = document.querySelector('#failure');
+element.removeAttribute('next-ref');
+element.refresh();</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="failure" next-ref="missing">
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>First section</legend>
+									<p>
+										This remains visible when setup fails.
+									</p>
+								</fieldset>
+								<fieldset>
+									<legend>Second section</legend>
+									<p>So does this section.</p>
+								</fieldset>
+								<button type="submit">Send example</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+						<p role="status" id="setup-error"></p>
+						<button type="button" id="repair">
+							Repair configuration
+						</button>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section">
+				<h2>See the form without JavaScript</h2>
+				<p>
+					This embedded example loads no component script. Both
+					fieldsets and the submit button remain visible; Back, Next,
+					and progress are not generated.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;!-- no-script.html omits the component script. --&gt;
+&lt;dialog open aria-label="Native form example"&gt;
+  &lt;form-fieldset-progress&gt;
+    &lt;form method="dialog"&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+        &lt;label&gt;Name
+          &lt;input name="name" autocomplete="name" required /&gt;
+        &lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+        &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/form-fieldset-progress&gt;
+&lt;/dialog&gt;</code></pre>
+					<div class="demo">
+						<iframe
+							title="Form without JavaScript"
+							src="./no-script.html"
+						></iframe>
+					</div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+			</p>
+		</footer>
+	</body>
+</html>

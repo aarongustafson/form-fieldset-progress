@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Form progression browser fixture</title>
+		<link rel="stylesheet" href="../../form-fieldset-progress.css" />
+	</head>
+	<body>
+		<form-fieldset-progress>
+			<form id="application" action="/submitted" method="post">
+				<fieldset id="contact">
+					<legend>Contact</legend>
+					<label
+						>Name <input name="name" required autocomplete="name"
+					/></label>
+				</fieldset>
+				<fieldset id="address">
+					<legend>Address</legend>
+					<label
+						>City
+						<input
+							name="city"
+							required
+							autocomplete="address-level2"
+					/></label>
+				</fieldset>
+				<fieldset id="review">
+					<legend>Review</legend>
+					<label>Notes <textarea name="notes"></textarea></label>
+				</fieldset>
+				<button type="submit" name="action" value="send">
+					Send application
+				</button>
+				<button
+					type="submit"
+					name="action"
+					value="draft"
+					formnovalidate
+				>
+					Save draft
+				</button>
+				<button type="reset">Start over</button>
+			</form>
+		</form-fieldset-progress>
+		<script type="module" src="./fixture.js"></script>
+	</body>
+</html>

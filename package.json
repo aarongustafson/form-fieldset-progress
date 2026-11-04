@@ -1,0 +1,88 @@
+{
+	"name": "@aarongustafson/form-fieldset-progress",
+	"version": "0.0.1",
+	"description": "Progressively enhance fieldsets into a validated step-by-step form.",
+	"keywords": [
+		"html",
+		"custom element",
+		"web component"
+	],
+	"author": "Aaron Gustafson <aaron@easy-designs.net> (https://www.aaron-gustafson.com/)",
+	"license": "MIT",
+	"homepage": "https://github.com/aarongustafson/form-fieldset-progress#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aarongustafson/form-fieldset-progress.git"
+	},
+	"bugs": {
+		"url": "https://github.com/aarongustafson/form-fieldset-progress/issues"
+	},
+	"type": "module",
+	"main": "index.js",
+	"module": "form-fieldset-progress.js",
+	"customElements": "custom-elements.json",
+	"types": "form-fieldset-progress.d.ts",
+	"exports": {
+		".": {
+			"types": "./form-fieldset-progress.d.ts",
+			"import": "./index.js"
+		},
+		"./form-fieldset-progress.js": {
+			"types": "./form-fieldset-progress.d.ts",
+			"import": "./form-fieldset-progress.js"
+		},
+		"./define.js": {
+			"types": "./define.d.ts",
+			"import": "./define.js"
+		},
+		"./form-fieldset-progress.css": "./form-fieldset-progress.css",
+		"./custom-elements.json": "./custom-elements.json"
+	},
+	"files": [
+		"form-fieldset-progress.js",
+		"form-fieldset-progress.d.ts",
+		"form-fieldset-progress.css",
+		"define.js",
+		"define.d.ts",
+		"index.js",
+		"custom-elements.json",
+		"README.md",
+		"LICENSE"
+	],
+	"engines": {
+		"node": ">=22.0.0"
+	},
+	"packageManager": "npm@11.15.0",
+	"scripts": {
+		"test": "vitest",
+		"test:ui": "vitest --ui",
+		"test:run": "vitest run",
+		"test:coverage": "vitest run --coverage",
+		"test:types": "tsc --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext test/types.ts && tsc --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext test/types-define.ts",
+		"test:browser": "playwright test",
+		"lint": "npm run lint:eslint && npm run lint:prettier",
+		"format": "npm run format:eslint && npm run format:prettier",
+		"lint:eslint": "eslint .",
+		"format:eslint": "eslint . --fix",
+		"lint:prettier": "prettier \"**/*.{js,ts,css,html,md,json,yml}\" --check --ignore-path .gitignore",
+		"format:prettier": "prettier \"**/*.{js,ts,css,html,md,json,yml}\" --write --ignore-path .gitignore"
+	},
+	"devDependencies": {
+		"@open-wc/eslint-config": "^13.1.0",
+		"@playwright/test": "^1.64.1",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/user-event": "^14.6.7",
+		"@vitest/coverage-v8": "^5.0.5",
+		"@vitest/ui": "^5.0.5",
+		"eslint": "^10.12.0",
+		"eslint-config-prettier": "^10.1.8",
+		"happy-dom": "^21.0.4",
+		"marked": "18.1.0",
+		"prettier": "^3.9.9",
+		"typescript": "^7.0.2",
+		"vitest": "^5.0.5"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

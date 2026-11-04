@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Native form fallback</title>
+		<link rel="stylesheet" href="./styles.css" />
+	</head>
+	<body>
+		<dialog open aria-label="Native form example">
+			<form-fieldset-progress>
+				<form method="dialog">
+					<fieldset>
+						<legend>Contact</legend>
+						<label for="fallback-name">Name</label
+						><input
+							id="fallback-name"
+							name="name"
+							autocomplete="name"
+							required
+						/>
+					</fieldset>
+					<fieldset>
+						<legend>Delivery notes</legend>
+						<label>Notes <textarea name="notes"></textarea></label>
+					</fieldset>
+					<button type="submit">Send</button>
+				</form>
+			</form-fieldset-progress>
+		</dialog>
+	</body>
+</html>

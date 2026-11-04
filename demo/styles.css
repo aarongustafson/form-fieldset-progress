@@ -1,0 +1,255 @@
+:root {
+	color-scheme: light dark;
+	font-family: system-ui, sans-serif;
+	line-height: 1.6;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background: Canvas;
+	color: CanvasText;
+	max-inline-size: 90rem;
+	margin: auto;
+	padding: 1rem;
+}
+
+header,
+footer {
+	padding-block: 1rem;
+}
+footer {
+	border-block-start: 1px solid;
+	margin-block-start: 2rem;
+}
+a {
+	color: LinkText;
+}
+h1 {
+	overflow-wrap: anywhere;
+}
+h2 {
+	font-size: 1.4rem;
+	margin-block-start: 0;
+}
+code {
+	font-family: ui-monospace, monospace;
+}
+
+.demo-section {
+	padding: clamp(0.75rem, 2vw, 1.5rem);
+	border: 1px solid ButtonBorder;
+	border-radius: 0.5rem;
+	margin-block: 1.5rem;
+}
+
+.code-demo-pair {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1.5rem;
+}
+
+.code-demo-pair > * {
+	min-inline-size: 0;
+}
+pre {
+	margin: 0;
+	padding: 1rem;
+	overflow: auto;
+	background: ButtonFace;
+	color: ButtonText;
+	border-radius: 0.25rem;
+	line-height: 1.4;
+	font-size: 0.875rem;
+}
+
+.demo {
+	padding: 1rem;
+	border: 1px solid ButtonBorder;
+	border-radius: 0.25rem;
+}
+
+fieldset {
+	margin: 0;
+	border: 0;
+	padding: 0;
+	min-inline-size: 0;
+}
+:not([hidden]) + fieldset {
+	margin-block-start: 1.5rem;
+}
+legend {
+	padding: 0;
+	margin-block-end: 0.5rem;
+	font-size: 1.25rem;
+	font-weight: bold;
+	line-height: 1.4;
+	max-inline-size: 100%;
+}
+.radio-group > legend {
+	font-size: 1rem;
+}
+label {
+	display: block;
+	margin-block: 1rem 0.375rem;
+}
+legend + label,
+.custom-progress > label {
+	margin-block-start: 0;
+}
+.radio-group > label {
+	margin-block: 0.375rem;
+}
+input:not(
+	[type='radio'],
+	[type='checkbox'],
+	[type='button'],
+	[type='submit'],
+	[type='reset'],
+	[type='image']
+),
+textarea {
+	display: block;
+	inline-size: 100%;
+	padding: 0.5rem;
+	font: inherit;
+	color: FieldText;
+	background: Field;
+	border: 1px solid ButtonBorder;
+}
+
+button {
+	font: inherit;
+	padding: 0.625em 0.875em;
+	cursor: pointer;
+}
+[type='submit'] {
+	background: Highlight;
+	color: HighlightText;
+	border: 2px solid ButtonBorder;
+}
+:focus-visible {
+	outline: 3px solid CanvasText;
+	outline-offset: 3px;
+}
+[role='status']:empty {
+	display: none;
+}
+
+.authored-navigation {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+}
+
+.authored-navigation label {
+	flex-basis: 100%;
+}
+.authored-navigation progress {
+	flex: 1 1 4rem;
+	min-inline-size: 0;
+}
+.custom-progress {
+	margin-block-end: 1.5rem;
+}
+.custom-progress progress {
+	inline-size: 100%;
+	max-inline-size: none;
+}
+.custom-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 0.75rem;
+	margin-block-start: 1.5rem;
+}
+.custom-actions [data-fieldset-progress-submit] {
+	margin-inline-start: 0;
+}
+#animation-option[hidden] {
+	display: none;
+}
+.transition-pages {
+	min-block-size: 10rem;
+}
+
+:root[data-section-transition] {
+	view-transition-name: none;
+	--demo-slide-direction: 1;
+}
+:root[data-section-transition='backward'] {
+	--demo-slide-direction: -1;
+}
+:root[data-section-transition]::view-transition {
+	pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:root[data-section-transition]
+		#animated
+		.transition-pages
+		> fieldset:not([hidden]) {
+		view-transition-name: demo-section;
+	}
+	::view-transition-group(demo-section) {
+		animation-duration: 240ms;
+	}
+	::view-transition-old(demo-section) {
+		animation: demo-section-out 240ms ease both;
+	}
+	::view-transition-new(demo-section) {
+		animation: demo-section-in 240ms ease both;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(demo-section),
+	::view-transition-old(demo-section),
+	::view-transition-new(demo-section) {
+		animation: none;
+	}
+}
+@keyframes demo-section-in {
+	from {
+		opacity: 0;
+		transform: translateX(calc(var(--demo-slide-direction) * 1.5rem));
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+@keyframes demo-section-out {
+	from {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateX(calc(var(--demo-slide-direction) * -1.5rem));
+	}
+}
+iframe {
+	border: 0;
+	inline-size: 100%;
+	block-size: 25rem;
+}
+dialog[open] {
+	position: static;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: Canvas;
+	color: CanvasText;
+}
+
+@media (min-width: 55rem) {
+	.code-demo-pair {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: start;
+	}
+}

@@ -1,0 +1,292 @@
+{
+	"schemaVersion": "1.0.0",
+	"modules": [
+		{
+			"kind": "javascript-module",
+			"path": "form-fieldset-progress.js",
+			"declarations": [
+				{
+					"kind": "class",
+					"name": "FormFieldsetProgressElement",
+					"description": "Enhances outermost fieldsets in one form into a light-DOM, validated step-by-step experience. Optional generated or referenced review adds a final fieldset with safe labeled values in a definition list. Progress is the current one-based section number out of the total, including review; a single-section form hides progress and its labels. Referenced enhancement-only controls are revealed when useful and authored visibility restores on teardown. With no control reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Review references do not customize this footer. With a generated Next button, enabled submit controls move to the footer; disabled submit controls stay where authored to preserve inherited disabled states.",
+					"tagName": "form-fieldset-progress",
+					"customElement": true,
+					"superclass": { "name": "HTMLElement" },
+					"attributes": [
+						{
+							"name": "review-panel",
+							"type": { "text": "boolean" },
+							"default": "false",
+							"description": "Generate a final review fieldset with dl > div > dt/dd entries from enabled named native fields. Mutually exclusive with review-ref. Omit passwords, hidden inputs and disabled controls; insert labels and values as plain text. Rebuild on entry."
+						},
+						{
+							"name": "review-ref",
+							"type": { "text": "string" },
+							"description": "ID of an outermost read-only fieldset in the controlled form, with a direct nonempty legend and no hidden ancestor. Use it as the final review section and populate its first direct dl or generate one. Mutually exclusive with review-panel; does not customize footer placement. Restore authored nodes and visibility on teardown."
+						},
+						{
+							"name": "review-label",
+							"type": { "text": "string" },
+							"default": "\"Review\"",
+							"description": "Nonempty literal generated review legend. An authored review uses its own legend. Changing review configuration restarts setup."
+						},
+						{
+							"name": "review-empty-label",
+							"type": { "text": "string" },
+							"default": "\"Not provided\"",
+							"description": "Nonempty plain text for empty review values and unselected choice groups."
+						},
+						{
+							"name": "review-checked-label",
+							"type": { "text": "string" },
+							"default": "\"Selected\"",
+							"description": "Nonempty plain text for checked standalone checkboxes in review."
+						},
+						{
+							"name": "review-unchecked-label",
+							"type": { "text": "string" },
+							"default": "\"Not selected\"",
+							"description": "Nonempty plain text for unchecked standalone checkboxes in review."
+						},
+						{
+							"name": "previous-ref",
+							"type": { "text": "string" },
+							"description": "ID of a type=button previous button owned by the form."
+						},
+						{
+							"name": "next-ref",
+							"type": { "text": "string" },
+							"description": "ID of a type=button next button owned by the form."
+						},
+						{
+							"name": "progress-ref",
+							"type": { "text": "string" },
+							"description": "ID of an authored progress element."
+						},
+						{
+							"name": "progress-label-ref",
+							"type": { "text": "string" },
+							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one. Referenced and automatically selected labels must be outside all sections, including an authored review. A wrapping container may contain its controlled progress and a marked text span, but must not enclose the host, controlled form, other form controls or links."
+						},
+						{
+							"name": "previous-label",
+							"type": { "text": "string" },
+							"default": "\"Back\"",
+							"description": "Short visible Back label; supports destination-template tokens."
+						},
+						{
+							"name": "next-label",
+							"type": { "text": "string" },
+							"default": "\"Next\"",
+							"description": "Short visible Next label; supports destination-template tokens."
+						},
+						{
+							"name": "progress-label",
+							"type": { "text": "string" },
+							"default": "\"Step {current} of {total}: {legend}\"",
+							"description": "Visible current-step template. Supports {current}, {total}, and {legend}, using the active fieldset's legend."
+						},
+						{
+							"name": "previous-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label} to {legend}\"",
+							"description": "Distinct Back accessible-name template; visible wording is retained. No aria-label is emitted when the name matches the visible text. Without an override, visible templates containing {legend} use native button naming."
+						},
+						{
+							"name": "next-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label} to {legend}\"",
+							"description": "Distinct Next accessible-name template; visible wording is retained. No aria-label is emitted when the name matches the visible text. Without an override, visible templates containing {legend} use native button naming."
+						},
+						{
+							"name": "progress-aria-label",
+							"type": { "text": "string" },
+							"default": "\"{label}\"",
+							"description": "Optional distinct progress accessible-name template. The default uses the visible label through native association or aria-labelledby, without duplicating its text in aria-label."
+						},
+						{
+							"name": "no-validation",
+							"type": { "text": "boolean" },
+							"default": "false",
+							"description": "Discouraged opt-out of forward-step validation; delays error feedback until submission. Final native validation remains enabled."
+						}
+					],
+					"members": [
+						{
+							"kind": "field",
+							"name": "state",
+							"readonly": true,
+							"type": { "text": "'idle' | 'ready' | 'error'" },
+							"description": "Enhancement state."
+						},
+						{
+							"kind": "field",
+							"name": "form",
+							"readonly": true,
+							"type": { "text": "HTMLFormElement | null" },
+							"description": "Controlled form while ready, otherwise null."
+						},
+						{
+							"kind": "field",
+							"name": "stepIndex",
+							"readonly": true,
+							"type": { "text": "number" },
+							"description": "Zero-based active step, reset to 0 on teardown."
+						},
+						{
+							"kind": "field",
+							"name": "stepCount",
+							"readonly": true,
+							"type": { "text": "number" },
+							"description": "Number of available steps, including optional final review."
+						},
+						{
+							"kind": "method",
+							"name": "refresh",
+							"description": "Restore authored markup and reinitialize at the first step. Report setup failures through the error event.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "next",
+							"description": "Validate and advance. Return false at the boundary, before readiness, on validation failure, or when beforechange is canceled.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "previous",
+							"description": "Go back without validation; return false at the boundary, before readiness, or when beforechange is canceled.",
+							"return": { "type": { "text": "boolean" } }
+						},
+						{
+							"kind": "method",
+							"name": "goTo",
+							"description": "Navigate synchronously to a zero-based step, validating sections crossed forward. Return false when beforechange is canceled. Throw RangeError for an unavailable index.",
+							"parameters": [
+								{
+									"name": "index",
+									"type": { "text": "number" }
+								}
+							],
+							"return": { "type": { "text": "boolean" } }
+						}
+					],
+					"events": [
+						{
+							"name": "form-fieldset-progress:beforechange",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressChangeDetail>"
+							},
+							"description": "Bubbling, cancelable navigation event after applicable validation and before rendering or focus changes. Detail describes the destination: stepIndex, stepCount, fieldset, and previousIndex. Cancellation returns false without navigating. Not emitted for setup, reset, invalid-field recovery, or requests for the active step."
+						},
+						{
+							"name": "form-fieldset-progress:ready",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressStepDetail>"
+							},
+							"description": "Bubbling event after successful setup; detail: stepIndex, stepCount, fieldset."
+						},
+						{
+							"name": "form-fieldset-progress:change",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressChangeDetail>"
+							},
+							"description": "Bubbling event after a step changes; detail also includes previousIndex."
+						},
+						{
+							"name": "form-fieldset-progress:error",
+							"type": {
+								"text": "CustomEvent<FieldsetProgressErrorDetail>"
+							},
+							"description": "Bubbling setup failure event with detail.error; fallback markup is restored first."
+						}
+					],
+					"cssProperties": [
+						{
+							"name": "--fieldset-progress-gap",
+							"default": "0.75rem",
+							"description": "Generated navigation and control-slot spacing."
+						},
+						{
+							"name": "--fieldset-progress-width",
+							"default": "16rem",
+							"description": "Maximum progress width."
+						},
+						{
+							"name": "--fieldset-progress-radius",
+							"default": "0.25rem",
+							"description": "Navigation button corner radius."
+						},
+						{
+							"name": "--fieldset-progress-accent",
+							"default": "Highlight",
+							"description": "Progress and primary navigation color; ensure contrast with HighlightText."
+						}
+					]
+				}
+			],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "FormFieldsetProgressElement",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "index.js",
+			"exports": [
+				{
+					"kind": "js",
+					"name": "FormFieldsetProgressElement",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "define.js",
+			"declarations": [
+				{
+					"kind": "function",
+					"name": "defineFormFieldsetProgress",
+					"description": "Register the default tag on import. Imports are safe without DOM globals; return false when no browser registry is available. The helper is idempotent for the same class and tag; conflicting definitions throw. Registration declarations include the element tag and event mappings.",
+					"parameters": [
+						{
+							"name": "tagName",
+							"default": "\"form-fieldset-progress\"",
+							"optional": true,
+							"type": { "text": "string" }
+						}
+					],
+					"return": { "type": { "text": "boolean" } }
+				}
+			],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "defineFormFieldsetProgress",
+					"declaration": {
+						"name": "defineFormFieldsetProgress",
+						"module": "define.js"
+					}
+				},
+				{
+					"kind": "custom-element-definition",
+					"name": "form-fieldset-progress",
+					"declaration": {
+						"name": "FormFieldsetProgressElement",
+						"module": "form-fieldset-progress.js"
+					}
+				}
+			]
+		}
+	]
+}
