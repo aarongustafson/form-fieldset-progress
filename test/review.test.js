@@ -25,6 +25,27 @@ const entries = (host) =>
 afterEach(() => document.body.replaceChildren());
 
 describe('opt-in review', () => {
+	it('reads authored label text without constructing clones of nested custom elements', async () => {
+		let constructions = 0;
+		customElements.define(
+			'review-label-decoration',
+			class extends HTMLElement {
+				constructor() {
+					super();
+					constructions += 1;
+				}
+			},
+		);
+		const host = await fixture(
+			'review-panel',
+			'<label>Contact <review-label-decoration>e</review-label-decoration>mail <input name="decorated" value="example"></label>',
+		);
+		constructions = 0;
+		host.goTo(2);
+		expect(constructions).toBe(0);
+		expect(entries(host)).toContainEqual(['Contact email', 'example']);
+	});
+
 	it('adds no review by default', async () => {
 		const host = await fixture();
 		expect(host.stepCount).toBe(2);

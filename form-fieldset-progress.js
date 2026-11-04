@@ -30,12 +30,19 @@ const references = [
 let sequence = 0;
 
 function reviewText(element) {
-	const copy = element.cloneNode(true);
-	for (const child of copy.querySelectorAll(
-		'input, select, textarea, button, script, style, [aria-hidden="true"]',
-	))
-		child.remove();
-	return copy.textContent.replace(/\s+/g, ' ').trim();
+	const walker = element.ownerDocument.createTreeWalker(
+		element,
+		NodeFilter.SHOW_TEXT,
+	);
+	const text = [];
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const excluded = node.parentElement.closest(
+			'input, select, textarea, button, script, style, [aria-hidden="true"]',
+		);
+		if (!excluded || excluded === element || !element.contains(excluded))
+			text.push(node.textContent);
+	}
+	return text.join('').replace(/\s+/g, ' ').trim();
 }
 
 function optionLabel(option) {

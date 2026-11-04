@@ -132,6 +132,25 @@ test('native review uses radio group legends and boolean messages while excludin
 			<input type="hidden" name="token" value="private">
 			<fieldset disabled><legend>Disabled</legend><label>Disabled input <input name="disabled" value="private"></label></fieldset>`;
 		element.querySelector('form').append(choices);
+		globalThis.reviewDecorations = 0;
+		customElements.define(
+			'review-probe-label',
+			class extends HTMLElement {
+				constructor() {
+					super();
+					globalThis.reviewDecorations += 1;
+				}
+			},
+		);
+		const label = document.createElement('label');
+		const decoration = document.createElement('review-probe-label');
+		decoration.textContent = 'e';
+		const input = document.createElement('input');
+		input.name = 'decorated';
+		input.value = 'example';
+		label.append('Contact ', decoration, 'mail ', input);
+		element.querySelector('form').append(label);
+		globalThis.reviewDecorations = 0;
 		document.body.append(element);
 	});
 	await example.locator('[name=name]').fill('Ada');
@@ -146,6 +165,8 @@ test('native review uses radio group legends and boolean messages while excludin
 	await expect(summary).toContainText('Oui');
 	await expect(summary).toContainText('Non');
 	await expect(summary).not.toContainText('private');
+	await expect(summary).toContainText('Contact email');
+	expect(await page.evaluate(() => globalThis.reviewDecorations)).toBe(0);
 	await expect(
 		example.getByRole('group', { name: 'Vérification', exact: true }),
 	).toBeFocused();
