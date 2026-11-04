@@ -64,9 +64,7 @@ for (const fallback of [
 			.getByLabel('Email', { exact: true })
 			.fill('ada@example.test');
 		await example.getByLabel('Email', { exact: true }).press('Enter');
-		await expect(
-			example.getByRole('group', { name: 'Delivery', exact: true }),
-		).toBeFocused();
+		await expect(example.getByLabel('City', { exact: true })).toBeFocused();
 		expect(await page.evaluate(() => window.transitionCalls)).toBe(0);
 		await expect(page.locator('html')).not.toHaveAttribute(
 			'data-section-transition',
@@ -103,9 +101,7 @@ test('native transitions animate only section snapshots and keep controls statio
 	const supported = await page.evaluate(
 		() => typeof document.startViewTransition === 'function',
 	);
-	await expect(
-		example.getByRole('group', { name: 'Delivery', exact: true }),
-	).toBeFocused();
+	await expect(example.getByLabel('City', { exact: true })).toBeFocused();
 	if (!supported) {
 		expect(failures).toEqual([]);
 		return;
@@ -148,9 +144,7 @@ test('native transitions animate only section snapshots and keep controls statio
 		.locator('[data-fieldset-progress-navigation]')
 		.boundingBox();
 	await example.locator('[data-fieldset-progress-next]').click();
-	await expect(
-		example.getByRole('group', { name: 'Delivery notes', exact: true }),
-	).toBeFocused();
+	await expect(example.getByLabel('Notes', { exact: true })).toBeFocused();
 	await page.evaluate(async () => {
 		await window.sectionTransitions[1].finished;
 	});
@@ -171,9 +165,7 @@ test('native transitions animate only section snapshots and keep controls statio
 	await page.locator('#enable-transitions').check();
 	await example.locator('[data-fieldset-progress-next]').click();
 	await page.emulateMedia({ reducedMotion: 'reduce' });
-	await expect(
-		example.getByRole('group', { name: 'Delivery notes', exact: true }),
-	).toBeFocused();
+	await expect(example.getByLabel('Notes', { exact: true })).toBeFocused();
 	await expect(page.locator('html')).not.toHaveAttribute(
 		'data-section-transition',
 	);
@@ -213,9 +205,7 @@ test('interrupting a pending snapshot does not replay stale navigation', async (
 	await example.locator('[data-fieldset-progress-next]').click();
 	await example.locator('[data-fieldset-progress-previous]').click();
 	await page.evaluate(() => window.pendingTransitions[1].update());
-	await expect(
-		example.getByRole('group', { name: 'Contact', exact: true }),
-	).toBeFocused();
+	await expect(example.getByLabel('Email', { exact: true })).toBeFocused();
 	expect(
 		await page.evaluate(() => window.pendingTransitions[1].skipped),
 	).toBe(true);

@@ -149,19 +149,19 @@
 						{
 							"kind": "method",
 							"name": "next",
-							"description": "Validate and advance. Return false at the boundary, before readiness, on validation failure, or when beforechange is canceled.",
+							"description": "Validate and advance, focusing the destination's first available input, select, or textarea, or its fieldset when none can receive focus. Return false at the boundary, before readiness, on validation failure, or when beforechange is canceled.",
 							"return": { "type": { "text": "boolean" } }
 						},
 						{
 							"kind": "method",
 							"name": "previous",
-							"description": "Go back without validation; return false at the boundary, before readiness, or when beforechange is canceled.",
+							"description": "Go back without validation, focusing the destination's first available input, select, or textarea, or its fieldset when none can receive focus. Return false at the boundary, before readiness, or when beforechange is canceled.",
 							"return": { "type": { "text": "boolean" } }
 						},
 						{
 							"kind": "method",
 							"name": "goTo",
-							"description": "Navigate synchronously to a zero-based step, validating sections crossed forward. Return false when beforechange is canceled. Throw RangeError for an unavailable index.",
+							"description": "Navigate synchronously to a zero-based step, validating sections crossed forward and focusing the destination's first available input, select, or textarea, or its fieldset when none can receive focus. The active-step no-op does not move focus. Return false when beforechange is canceled. Throw RangeError for an unavailable index.",
 							"parameters": [
 								{
 									"name": "index",

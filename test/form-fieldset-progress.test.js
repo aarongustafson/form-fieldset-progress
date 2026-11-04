@@ -144,6 +144,92 @@ describe('progressive enhancement', () => {
 		expect(host.stepIndex).toBe(0);
 	});
 
+	it('focuses the first field on Next, Back, and goTo, before emitting change', async () => {
+		const host = await fixture('no-validation');
+		expect(document.activeElement).toBe(document.body);
+		const focused = [];
+		host.addEventListener('form-fieldset-progress:change', () => {
+			focused.push(document.activeElement);
+		});
+		expect(host.next()).toBe(true);
+		expect(document.activeElement).toBe(host.querySelector('[name=city]'));
+		expect(host.previous()).toBe(true);
+		expect(document.activeElement).toBe(host.querySelector('[name=name]'));
+		expect(host.goTo(2)).toBe(true);
+		expect(document.activeElement).toBe(host.querySelector('#review'));
+		expect(focused).toEqual([
+			host.querySelector('[name=city]'),
+			host.querySelector('[name=name]'),
+			host.querySelector('#review'),
+		]);
+	});
+
+	it.each([
+		'<input name="first">',
+		'<select name="first"><option>One</option></select>',
+		'<textarea name="first"></textarea>',
+		'<input name="first" type="radio">',
+	])('focuses a first field authored as %s', async (markup) => {
+		const host = await fixture('no-validation');
+		host.querySelector('#address').insertAdjacentHTML('beforeend', markup);
+		host.querySelector('[name=city]').remove();
+		host.next();
+		expect(document.activeElement).toBe(host.querySelector('[name=first]'));
+	});
+
+	it('skips hidden, disabled, inert, aria-hidden, and button-like fields', async () => {
+		const host = await fixture('no-validation');
+		host.querySelector('#address').insertAdjacentHTML(
+			'afterbegin',
+			`<input type="hidden"><input disabled><input hidden>
+			<div hidden><input></div><div inert><input></div>
+			<div aria-hidden="true"><input></div>
+			<input type="button" value="Action"><input type="reset">
+			<button type="button">Action</button>`,
+		);
+		host.next();
+		expect(document.activeElement).toBe(host.querySelector('[name=city]'));
+	});
+
+	it('does not steal focus on refresh or reset', async () => {
+		const host = await fixture('no-validation');
+		const outside = document.createElement('button');
+		document.body.append(outside);
+		host.goTo(1);
+		outside.focus();
+		host.refresh();
+		expect(document.activeElement).toBe(outside);
+		host.goTo(1);
+		outside.focus();
+		host.form.reset();
+		await tick();
+		expect(host.stepIndex).toBe(0);
+		expect(document.activeElement).toBe(outside);
+	});
+
+	it('does not emit a stale change when a field focus handler disconnects the host', async () => {
+		const host = await fixture('no-validation');
+		const change = vi.fn();
+		host.addEventListener('form-fieldset-progress:change', change);
+		host.querySelector('[name=city]').addEventListener('focus', () =>
+			host.remove(),
+		);
+		expect(() => host.next()).not.toThrow();
+		expect(host.state).toBe('idle');
+		expect(change).not.toHaveBeenCalled();
+	});
+
+	it('respects a field focus handler that redirects focus', async () => {
+		const host = await fixture('no-validation');
+		const city = host.querySelector('[name=city]');
+		city.insertAdjacentHTML('beforebegin', '<input name="first">');
+		host.querySelector('[name=first]').addEventListener('focus', () =>
+			city.focus(),
+		);
+		host.next();
+		expect(document.activeElement).toBe(city);
+	});
+
 	it('offers validated navigation before rendering and allows cancellation', async () => {
 		const host = await fixture();
 		const before = vi.fn((event) => {
@@ -464,7 +550,7 @@ describe('progressive enhancement', () => {
 		const submit = host.querySelector('[type=submit]');
 		const reset = host.querySelector('[type=reset]');
 		host.next();
-		expect(document.activeElement).toBe(host.querySelector('#address'));
+		expect(document.activeElement).toBe(host.querySelector('[name=city]'));
 		host.remove();
 		expect(host.state).toBe('idle');
 		expect(

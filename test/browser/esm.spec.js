@@ -30,7 +30,7 @@ test('the versioned CDN demo validates, navigates, submits, and reflows', async 
 	await next.focus();
 	await page.keyboard.press('Enter');
 	await expect(element).toHaveJSProperty('stepIndex', 1);
-	await expect(element.locator('fieldset').last()).toBeFocused();
+	await expect(element.getByRole('textbox', { name: 'Notes' })).toBeFocused();
 	await element
 		.getByRole('button', { name: 'Back to Contact details' })
 		.click();

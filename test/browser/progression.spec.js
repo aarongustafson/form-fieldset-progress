@@ -25,7 +25,7 @@ test('native validity, keyboard progression, focus, FormData, and final submit',
 	await page
 		.getByRole('textbox', { name: 'Name', exact: true })
 		.press('Enter');
-	await expect(page.locator('#address')).toBeFocused();
+	await expect(page.locator('[name=city]')).toBeFocused();
 	await expect(
 		page.getByRole('group', { name: 'Contact', exact: true }),
 	).toHaveCount(0);
@@ -38,7 +38,7 @@ test('native validity, keyboard progression, focus, FormData, and final submit',
 	await page
 		.getByRole('textbox', { name: 'City', exact: true })
 		.press('Enter');
-	await expect(page.locator('#review')).toBeFocused();
+	await expect(page.locator('[name=notes]')).toBeFocused();
 	await expect(
 		page.getByRole('button', { name: 'Send application', exact: true }),
 	).toBeVisible();
@@ -331,9 +331,7 @@ test('English authored UI places progress above the form and actions below witho
 	await example.locator('[name=email]').fill('ada@example.test');
 	await example.locator('#english-next').focus();
 	await page.keyboard.press('Enter');
-	await expect(
-		example.getByRole('group', { name: 'Availability', exact: true }),
-	).toBeFocused();
+	await expect(example.locator('[name=hours]')).toBeFocused();
 	await expect(example.locator('#english-back')).toHaveText('Back');
 	await expect(example.locator('#english-back')).toHaveAccessibleName(
 		'Back to Contact',

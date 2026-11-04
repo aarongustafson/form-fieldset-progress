@@ -720,11 +720,40 @@ export class FormFieldsetProgressElement extends HTMLElementBase {
 
 	_show(index, focus) {
 		const previousIndex = this._index;
+		const step = this._steps[index];
 		this._index = index;
 		this._render();
-		if (focus) this._steps[index].fieldset.focus();
+		if (focus) this._focusStep(step.fieldset);
+		if (this._index !== index || this._steps[index] !== step) return;
 		if (index !== previousIndex)
 			this._emit('change', { ...this._detail(), previousIndex });
+	}
+
+	_focusStep(fieldset) {
+		const root = fieldset.getRootNode();
+		for (const control of fieldset.querySelectorAll(
+			'input, select, textarea',
+		)) {
+			if (
+				control.form !== this._form ||
+				control.matches(':disabled') ||
+				control.closest('[hidden], [inert], [aria-hidden="true"]') ||
+				['hidden', 'button', 'reset', 'submit', 'image'].includes(
+					control.type,
+				)
+			)
+				continue;
+			const previous = root.activeElement;
+			control.focus();
+			if (
+				this._state !== 'ready' ||
+				this._steps[this._index]?.fieldset !== fieldset ||
+				root.activeElement === control ||
+				root.activeElement !== previous
+			)
+				return;
+		}
+		fieldset.focus();
 	}
 
 	_render() {
