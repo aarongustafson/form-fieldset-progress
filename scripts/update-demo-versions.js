@@ -13,7 +13,10 @@ const esmPath = join(rootDir, 'demo', 'esm.html');
 let esmContent = readFileSync(esmPath, 'utf-8');
 
 esmContent = esmContent.replace(
-	new RegExp(`${packageName}@[\\d.]+\\/`, 'g'),
+	new RegExp(
+		`${packageName}@[0-9.]+(?:-[0-9A-Za-z.-]+)?(?:[+][0-9A-Za-z.-]+)?/`,
+		'g',
+	),
 	`${packageName}@${version}/`,
 );
 
