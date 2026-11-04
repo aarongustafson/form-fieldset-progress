@@ -22,11 +22,11 @@ export declare class FormFieldsetProgressElement extends HTMLElement {
 	readonly stepCount: number;
 	/** Restore authored markup, re-read configuration, and start at the first step. */
 	refresh(): boolean;
-	/** Validate the current section and advance; return false when canceled. */
+	/** Validate and advance, focusing the first available field or the fieldset; return false when canceled. */
 	next(): boolean;
-	/** Go back without validation; return false when canceled. */
+	/** Go back without validation, focusing the first available field or the fieldset; return false when canceled. */
 	previous(): boolean;
-	/** Validate sections crossed forward; return false when canceled. Throws RangeError for an invalid index. */
+	/** Validate sections crossed forward and focus the destination's first available field or fieldset. Return false when canceled. Throws RangeError for an invalid index. */
 	goTo(index: number): boolean;
 }
 

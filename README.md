@@ -58,7 +58,8 @@ button outside the fieldsets:
 - Nested fieldsets stay within their outermost section. Fieldsets marked
   `hidden`, or inside a `[hidden]` ancestor, are excluded at setup.
 - Inactive sections are hidden, not disabled. Their values remain in `FormData`.
-- Navigation focuses the destination fieldset, named by its legend.
+- Navigation focuses the destination’s first available input, select, or textarea.
+  If no field can receive focus, it focuses the fieldset, named by its legend.
 - Progress’s value is the current section number, starting at one; its maximum
   is the section count. Section 1 of 3 is one-third full, and section 3 of 3 is
   full. This shows position in the form, not successful submission.
@@ -512,8 +513,17 @@ visibility mask or minimum loading delay.
 
 Fieldsets retain their legends and native grouping semantics. Inactive sections
 leave the focus order and accessibility tree. Temporary `tabindex="-1"` lets
-navigation focus the destination fieldset. Progress has visible text and an
-accessible name. There is no additional live announcement of section changes.
+navigation focus the destination fieldset when it has no focusable fields,
+including read-only review sections. Otherwise, navigation focuses its first
+available input, select, or textarea in markup order. Hidden, disabled, inert,
+and `aria-hidden` fields are skipped, as are button-like inputs and controls
+owned by another form. The browser determines whether a field hidden by CSS
+can receive focus. Setup, refresh, and reset do not move focus; validation
+failures still focus the invalid field.
+Authored field focus handlers can redirect focus, including back to a
+navigation control.
+Progress has visible text and an accessible name. There is no additional live
+announcement of section changes.
 
 Supply labeled fields, meaningful legends, visible focus styles, and accessible
 custom controls. Conditional fields within a section must manage their native
@@ -547,6 +557,15 @@ The browser tests cover validation, focus, submission, keyboard use, layout,
 events, and the no-JavaScript fallback. There are no runtime dependencies.
 Manual screen-reader checks remain part of release review; automated checks
 alone do not establish conformance.
+
+## Publishing
+
+The template’s release hooks are retained. `npm version minor` updates the
+package version, updates and stages the pinned imports in
+[the esm.sh demo](demo/esm.html), and creates the version commit and tag.
+The `postversion` hook runs `git push --follow-tags`; the pushed version tag
+triggers the publishing workflow. Configure npm trusted publishing for
+`publish.yml` before running a release.
 
 ## License
 
