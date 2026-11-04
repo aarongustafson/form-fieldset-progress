@@ -272,14 +272,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				if (this._progress.parentElement === this._navigation)
 					this._navigation.prepend(this._progressLabel);
 				else this._progress.before(this._progressLabel);
-				if (!this._progress.id) {
-					let id;
-					do {
-						id = `fieldset-progress-${++sequence}`;
-					} while (this.ownerDocument.getElementById(id));
-					this._set(this._progress, 'id', id);
-				}
-				this._progressLabel.htmlFor = this._progress.id;
+				this._progressLabel.htmlFor = this._identify(this._progress);
 			}
 		}
 		if (this._progressLabel.contains(this._progress)) {
@@ -361,6 +354,16 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		this._generated.push(element);
 		parent?.append(element);
 		return element;
+	}
+
+	_identify(element) {
+		if (element.id) return element.id;
+		let id;
+		do {
+			id = `fieldset-progress-${++sequence}`;
+		} while (this.ownerDocument.getElementById(id));
+		this._set(element, 'id', id);
+		return id;
 	}
 
 	_listen() {
@@ -506,8 +509,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			);
 		}
 		this._set(this._progress, 'max', String(this.stepCount));
-		// Count sections left behind, not a successfully submitted application.
-		this._set(this._progress, 'value', String(this._index));
+		this._set(this._progress, 'value', String(this._index + 1));
 		this._label(this._previous, 'previous', Math.max(0, this._index - 1));
 		this._label(
 			this._next,
@@ -516,23 +518,59 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		);
 		const text = this._template('progress-label', this._index);
 		this._text(this._progressLabel, text);
+		const accessible = this._template(
+			'progress-aria-label',
+			this._index,
+			text,
+		);
 		this._set(
 			this._progress,
 			'aria-label',
-			this._template('progress-aria-label', this._index, text),
+			accessible === text ? null : accessible,
 		);
-		this._set(this._progress, 'aria-valuetext', text);
+		const nativeLabel = Array.from(this._progress.labels).some(
+			(label) =>
+				label.contains(this._progressLabel) &&
+				!label.closest('[hidden]'),
+		);
+		this._set(
+			this._progress,
+			'aria-labelledby',
+			accessible === text && !nativeLabel
+				? this._identify(this._progressLabel)
+				: null,
+		);
+		this._set(this._progress, 'aria-valuetext', null);
+		if (this.stepCount === 1) {
+			this._set(this._progress, 'hidden', '');
+			for (const label of new Set([
+				this._progressLabel,
+				...this._progress.labels,
+			])) {
+				this._set(label, `${prefix}status`, '');
+				this._set(label, 'hidden', '');
+			}
+		}
 	}
 
 	_label(button, name, index) {
 		const text = this._template(`${name}-label`, index);
 		const label = button.querySelector(`[${prefix}label]`) || button;
 		this._text(label, text);
-		const accessible = this._template(`${name}-aria-label`, index, text);
+		const destinationVisible = this.getAttribute(`${name}-label`)?.includes(
+			'{legend}',
+		);
+		const accessible =
+			!this.hasAttribute(`${name}-aria-label`) && destinationVisible
+				? text
+				: this._template(`${name}-aria-label`, index, text);
+		const accessibleName = accessible.includes(text)
+			? accessible
+			: `${text}: ${accessible}`;
 		this._set(
 			button,
 			'aria-label',
-			accessible.includes(text) ? accessible : `${text}: ${accessible}`,
+			accessibleName === text ? null : accessibleName,
 		);
 	}
 

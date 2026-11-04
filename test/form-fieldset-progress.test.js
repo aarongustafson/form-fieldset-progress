@@ -30,6 +30,68 @@ afterEach(() => {
 });
 
 describe('progressive enhancement', () => {
+	it.each([
+		['generated', '', ''],
+		[
+			'referenced',
+			'progress-ref="meter" progress-label-ref="status"',
+			'<label id="status" for="meter">Authored progress</label><progress id="meter"></progress>',
+		],
+		[
+			'wrapping',
+			'progress-ref="meter"',
+			'<label id="status"><span id="status-text" data-fieldset-progress-label>Authored progress</span><progress id="meter"></progress></label>',
+		],
+	])(
+		'hides single-section progress and its %s label, restoring them for multiple sections',
+		async (_name, attributes, contents) => {
+			const host = await fixture(attributes, contents);
+			host.querySelector('#address').remove();
+			host.querySelector('#review').remove();
+			host.refresh();
+			const progress = host.querySelector('progress');
+			expect(host.stepCount).toBe(1);
+			expect(progress.hidden).toBe(true);
+			for (const label of host.querySelectorAll(
+				'[data-fieldset-progress-status]',
+			))
+				expect(label.hidden).toBe(true);
+			for (const label of progress.labels)
+				expect(label.hidden).toBe(true);
+			expect(host.querySelector('[type=submit]').hidden).toBe(false);
+			const second = document.createElement('fieldset');
+			second.innerHTML = '<legend>Second section</legend>';
+			host.form.append(second);
+			host.refresh();
+			expect(host.stepCount).toBe(2);
+			expect(host.querySelector('progress').hidden).toBe(false);
+			for (const label of host.querySelectorAll(
+				'[data-fieldset-progress-status]',
+			))
+				expect(label.hidden).toBe(false);
+			for (const label of host.querySelector('progress').labels)
+				expect(label.hidden).toBe(false);
+		},
+	);
+
+	it('restores authored progress visibility on teardown without unhiding authored multi-section UI', async () => {
+		const host = await fixture(
+			'progress-ref="meter" progress-label-ref="status"',
+			'<label id="status" for="meter" hidden>Authored progress</label><progress id="meter" hidden></progress>',
+		);
+		expect(host.querySelector('#meter').hidden).toBe(true);
+		expect(host.querySelector('#status').hidden).toBe(true);
+		host.querySelector('#address').remove();
+		host.querySelector('#review').remove();
+		host.refresh();
+		const progress = host.querySelector('#meter');
+		const label = host.querySelector('#status');
+		host.remove();
+		expect(progress.hidden).toBe(true);
+		expect(label.hidden).toBe(true);
+		expect(label.textContent).toBe('Authored progress');
+	});
+
 	it('enhances outermost fieldsets in light DOM without disabling fields', async () => {
 		const host = await fixture();
 		expect(host).toBeInstanceOf(FormFieldsetProgressElement);
@@ -56,10 +118,16 @@ describe('progressive enhancement', () => {
 		).toBe('Next to Address');
 		expect(host.querySelector('[type=submit]').hidden).toBe(true);
 		expect(host.querySelector('progress').max).toBe(3);
-		expect(host.querySelector('progress').value).toBe(0);
+		expect(host.querySelector('progress').value).toBe(1);
 		expect(host.querySelector('progress').getAttribute('aria-label')).toBe(
+			null,
+		);
+		expect(host.querySelector('progress').labels[0].textContent).toBe(
 			'Step 1 of 3: Contact',
 		);
+		expect(
+			host.querySelector('progress').hasAttribute('aria-valuetext'),
+		).toBe(false);
 	});
 
 	it('validates current fields before advancing but never validates Back', async () => {
@@ -104,7 +172,7 @@ describe('progressive enhancement', () => {
 		expect(change).not.toHaveBeenCalled();
 		expect(document.activeElement).toBe(next);
 		expect(host.stepIndex).toBe(0);
-		expect(host.querySelector('progress').value).toBe(0);
+		expect(host.querySelector('progress').value).toBe(1);
 		host.removeEventListener('form-fieldset-progress:beforechange', before);
 		expect(host.next()).toBe(true);
 		expect(host.stepIndex).toBe(1);
@@ -185,7 +253,7 @@ describe('progressive enhancement', () => {
 		expect(submit.hidden).toBe(false);
 		expect(submit.name).toBe('action');
 		expect(submit.value).toBe('send');
-		expect(host.querySelector('progress').value).toBe(2);
+		expect(host.querySelector('progress').value).toBe(3);
 		expect(events[1]).toMatchObject({
 			previousIndex: 1,
 			stepIndex: 2,
@@ -211,6 +279,9 @@ describe('progressive enhancement', () => {
 			host.querySelector('[data-fieldset-progress-next] b'),
 		).toBeNull();
 		expect(host.querySelector('progress').getAttribute('aria-label')).toBe(
+			null,
+		);
+		expect(host.querySelector('progress').labels[0].textContent).toBe(
 			'Étape 1/3 : Contact',
 		);
 	});
@@ -246,7 +317,83 @@ describe('progressive enhancement', () => {
 		expect(next.textContent).toBe('Continue');
 		expect(next.getAttribute('aria-label')).toBe('Continue to Address');
 		host.setAttribute('next-aria-label', '');
-		expect(next.getAttribute('aria-label')).toBe('Continue');
+		expect(next.getAttribute('aria-label')).toBeNull();
+	});
+
+	it('counts the current section in progress, including a full final section', async () => {
+		const host = await fixture('no-validation');
+		const progress = host.querySelector('progress');
+		for (const [index, percent] of [
+			[0, 100 / 3],
+			[1, 200 / 3],
+			[2, 100],
+		]) {
+			host.goTo(index);
+			expect(progress.value).toBe(index + 1);
+			expect(progress.max).toBe(3);
+			expect((progress.value / progress.max) * 100).toBeCloseTo(
+				percent,
+				10,
+			);
+		}
+		host.previous();
+		expect(progress.value).toBe(2);
+	});
+
+	it('links progress to a non-label text container without copying its accessible name', async () => {
+		const host = await fixture(
+			'progress-ref="meter" progress-label-ref="status"',
+			'<p id="status">Authored progress</p><progress id="meter"></progress>',
+		);
+		const progress = host.querySelector('#meter');
+		expect(progress.getAttribute('aria-label')).toBeNull();
+		expect(progress.getAttribute('aria-labelledby')).toBe('status');
+		host.setAttribute('progress-label', 'Section {current}: {legend}');
+		expect(host.querySelector('#status').textContent).toBe(
+			'Section 1: Contact',
+		);
+		expect(progress.getAttribute('aria-label')).toBeNull();
+		host.setAttribute(
+			'progress-aria-label',
+			'Current section {current} of {total}',
+		);
+		expect(progress.getAttribute('aria-label')).toBe(
+			'Current section 1 of 3',
+		);
+		expect(progress.getAttribute('aria-labelledby')).toBeNull();
+		host.setAttribute('progress-aria-label', '{label}');
+		expect(progress.getAttribute('aria-label')).toBeNull();
+		expect(progress.getAttribute('aria-labelledby')).toBe('status');
+	});
+
+	it('identifies a wrapping non-label text span and restores authored naming on teardown', async () => {
+		const host = await fixture(
+			'progress-ref="meter" progress-label-ref="wrapper"',
+			'<div id="wrapper"><span data-fieldset-progress-label>Authored progress</span><progress id="meter" aria-label="Old name" aria-labelledby="old-label" aria-valuetext="Old value"></progress></div>',
+		);
+		const progress = host.querySelector('#meter');
+		const text = host.querySelector('#wrapper span');
+		expect(text.id).not.toBe('');
+		expect(progress.getAttribute('aria-labelledby')).toBe(text.id);
+		expect(progress.hasAttribute('aria-label')).toBe(false);
+		expect(progress.hasAttribute('aria-valuetext')).toBe(false);
+		host.remove();
+		expect(text.id).toBe('');
+		expect(text.textContent).toBe('Authored progress');
+		expect(progress.getAttribute('aria-label')).toBe('Old name');
+		expect(progress.getAttribute('aria-labelledby')).toBe('old-label');
+		expect(progress.getAttribute('aria-valuetext')).toBe('Old value');
+	});
+
+	it('uses native button text when the visible template names the destination', async () => {
+		const host = await fixture('next-label="Continue to {legend}"');
+		const next = host.querySelector('[data-fieldset-progress-next]');
+		expect(next.textContent).toBe('Continue to Address');
+		expect(next.getAttribute('aria-label')).toBeNull();
+		host.setAttribute('next-label', 'Continue');
+		expect(next.getAttribute('aria-label')).toBe('Continue to Address');
+		host.setAttribute('next-aria-label', '{label}');
+		expect(next.getAttribute('aria-label')).toBeNull();
 	});
 
 	it('uses authored controls without duplicating or destroying their icons', async () => {

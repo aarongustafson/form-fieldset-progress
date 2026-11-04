@@ -222,6 +222,13 @@ test('demos: authored icons, error recovery, single step, responsive layout, and
 		page.locator('#single [data-fieldset-progress-next]'),
 	).toBeHidden();
 	await expect(page.locator('#single [type=submit]')).toBeVisible();
+	await expect(page.locator('#single progress')).toBeHidden();
+	await expect(
+		page.locator('#single [data-fieldset-progress-status]'),
+	).toBeHidden();
+	await expect(page.locator('#single').getByRole('progressbar')).toHaveCount(
+		0,
+	);
 	await page.locator('#french-name').fill('Camille');
 	await page.locator('#custom-next').click();
 	await expect(page.locator('#custom-back [aria-hidden=true]')).toHaveText(
@@ -574,7 +581,7 @@ test('the walkthrough introduces default behavior and labels before custom navig
 		'Continue',
 	);
 	await expect(labels.getByRole('progressbar')).toHaveAccessibleName(
-		'Section 1 of 2',
+		'Section 1 of 2: Contact',
 	);
 	await labels.locator('[data-fieldset-progress-next]').click();
 	await expect(
@@ -606,6 +613,7 @@ test('the event example reports completed section changes rather than invalid na
 		stepCount: 2,
 		fieldset: 'event-review',
 	});
+
 	await example.locator('[data-fieldset-progress-previous]').click();
 	expect(JSON.parse(await output.textContent())).toEqual({
 		previousIndex: 1,
@@ -614,3 +622,95 @@ test('the event example reports completed section changes rather than invalid na
 		fieldset: 'event-contact',
 	});
 });
+
+test('progress represents the current section and uses its visible label as the accessible name', async ({
+	page,
+}) => {
+	const example = page.locator('form-fieldset-progress');
+	const progress = example.getByRole('progressbar');
+	for (const [index, legend] of [
+		[0, 'Contact'],
+		[1, 'Address'],
+		[2, 'Review'],
+	]) {
+		await example.evaluate((element, step) => {
+			element.form.noValidate = true;
+			element.goTo(step);
+		}, index);
+		await expect(progress).toHaveAccessibleName(
+			`Step ${index + 1} of 3: ${legend}`,
+		);
+		await expect(progress).not.toHaveAttribute('aria-label');
+		await expect(progress).not.toHaveAttribute('aria-valuetext');
+		const ratio = await progress.evaluate(
+			(element) => element.value / element.max,
+		);
+		expect(ratio).toBeCloseTo((index + 1) / 3, 10);
+	}
+});
+
+test('single-section external and wrapping progress labels remain hidden and restore on disconnect', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	await page.locator('#single').evaluate((element) => {
+		element.remove();
+		element.setAttribute('progress-ref', 'external-meter');
+		element.setAttribute('progress-label-ref', 'external-text');
+		const label = document.createElement('label');
+		label.id = 'external-status';
+		label.innerHTML =
+			'<span id="external-text" data-fieldset-progress-label>Form progress</span><progress id="external-meter"></progress>';
+		document.body.append(label, element);
+	});
+	await expect(page.locator('#external-meter')).toBeHidden();
+	await expect(page.locator('#external-status')).toBeHidden();
+	await expect(page.locator('#external-text')).toBeHidden();
+	await expect(
+		page.getByRole('progressbar', { name: 'Form progress' }),
+	).toHaveCount(0);
+	await page.locator('#single').evaluate((element) => element.remove());
+	await expect(page.locator('#external-status')).toBeVisible();
+	await expect(page.locator('#external-text')).toHaveText('Form progress');
+	await expect(page.locator('#external-meter')).toBeVisible();
+});
+
+for (const wrapping of [false, true]) {
+	test(`progress names a ${wrapping ? 'wrapping' : 'separate'} text container by reference`, async ({
+		page,
+	}) => {
+		await page
+			.locator('form-fieldset-progress')
+			.evaluate((element, wrap) => {
+				element.remove();
+				element.setAttribute('progress-ref', 'named-meter');
+				element.setAttribute('progress-label-ref', 'named-status');
+				const container = document.createElement('div');
+				container.innerHTML = wrap
+					? '<div id="named-status"><span data-fieldset-progress-label>Progress</span><progress id="named-meter"></progress></div>'
+					: '<p id="named-status">Progress</p><progress id="named-meter"></progress>';
+				element.querySelector('form').prepend(container);
+				document.body.append(element);
+			}, wrapping);
+		const example = page.locator('form-fieldset-progress');
+		const progress = example.getByRole('progressbar');
+		await expect(progress).toHaveAccessibleName('Step 1 of 3: Contact');
+		await expect(progress).not.toHaveAttribute('aria-label');
+		await expect(progress).toHaveAttribute('aria-labelledby');
+		await example.evaluate((element) =>
+			element.setAttribute(
+				'progress-label',
+				'Section {current}: {legend}',
+			),
+		);
+		await expect(progress).toHaveAccessibleName('Section 1: Contact');
+		await example.evaluate((element) =>
+			element.setAttribute(
+				'progress-aria-label',
+				'Current section {current} of {total}',
+			),
+		);
+		await expect(progress).toHaveAccessibleName('Current section 1 of 3');
+		await expect(progress).not.toHaveAttribute('aria-labelledby');
+	});
+}

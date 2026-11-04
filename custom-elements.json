@@ -8,7 +8,7 @@
 				{
 					"kind": "class",
 					"name": "FormFieldsetProgressElement",
-					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience. With no reference attributes, the full-width footer reserves equal Back/Next slots around centered progress and relocates authored visible, enabled reset controls before Back. Any reference attribute preserves authored Reset placement and opts out of the default slot layout.",
+					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience. Progress is the current one-based section number out of the total; a single-section form hides progress and its labels. With no reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Any reference attribute preserves authored Reset placement and opts out of the default slot layout.",
 					"tagName": "form-fieldset-progress",
 					"customElement": true,
 					"superclass": { "name": "HTMLElement" },
@@ -49,25 +49,25 @@
 							"name": "progress-label",
 							"type": { "text": "string" },
 							"default": "\"Step {current} of {total}: {legend}\"",
-							"description": "Visible current-step template."
+							"description": "Visible current-step template. Supports {current}, {total}, and {legend}, using the active fieldset's legend."
 						},
 						{
 							"name": "previous-aria-label",
 							"type": { "text": "string" },
 							"default": "\"{label} to {legend}\"",
-							"description": "Long destination-aware Back accessible-name template; visible wording is retained."
+							"description": "Distinct Back accessible-name template; visible wording is retained. No aria-label is emitted when the name matches the visible text. Without an override, visible templates containing {legend} use native button naming."
 						},
 						{
 							"name": "next-aria-label",
 							"type": { "text": "string" },
 							"default": "\"{label} to {legend}\"",
-							"description": "Long destination-aware Next accessible-name template; visible wording is retained."
+							"description": "Distinct Next accessible-name template; visible wording is retained. No aria-label is emitted when the name matches the visible text. Without an override, visible templates containing {legend} use native button naming."
 						},
 						{
 							"name": "progress-aria-label",
 							"type": { "text": "string" },
 							"default": "\"{label}\"",
-							"description": "Progress accessible-name template."
+							"description": "Optional distinct progress accessible-name template. The default uses the visible label through native association or aria-labelledby, without duplicating its text in aria-label."
 						},
 						{
 							"name": "no-validation",

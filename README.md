@@ -51,13 +51,15 @@ button outside the fieldsets:
 
 - Next validates the current section before advancing. Back does not validate.
 - Back is hidden on the first section. On the last section, the authored submit
-  button replaces Next. A one-section form shows Submit immediately.
+  button replaces Next. A one-section form shows Submit immediately and hides
+  Back, Next, progress, and the progress label.
 - Nested fieldsets stay within their outermost section. Fieldsets marked
   `hidden`, or inside a `[hidden]` ancestor, are excluded at setup.
 - Inactive sections are hidden, not disabled. Their values remain in `FormData`.
 - Navigation focuses the destination fieldset, named by its legend.
-- Progress counts sections left behind: its value is the zero-based step index
-  and its maximum is the section count. It does not represent successful submission.
+- Progress’s value is the current section number, starting at one; its maximum
+  is the section count. Section 1 of 3 is one-third full, and section 3 of 3 is
+  full. This shows position in the form, not successful submission.
 
 Setup runs in a microtask after connection. The authored sections remain visible
 until setup succeeds.
@@ -70,7 +72,7 @@ Use label attributes without changing the generated markup:
 <form-fieldset-progress
   previous-label="Previous"
   next-label="Continue"
-  progress-label="Section {current} of {total}"
+  progress-label="Section {current} of {total}: {legend}"
 >
   <form>
     <fieldset>
@@ -93,7 +95,7 @@ Use label attributes without changing the generated markup:
 | `progress-label`      | `Step {current} of {total}: {legend}` |
 | `previous-aria-label` | `{label} to {legend}`                 |
 | `next-aria-label`     | `{label} to {legend}`                 |
-| `progress-aria-label` | `{label}`                             |
+| `progress-aria-label` | Uses the visible progress label       |
 
 Visible templates accept `{legend}`, `{current}`, and `{total}`. For navigation
 buttons, the tokens describe the destination section. For progress, they
@@ -101,10 +103,14 @@ describe the current section. `{current}` is one-based.
 
 Accessible-name templates also accept `{label}`, the rendered visible label.
 To include a section name in the visible button, use
-`next-label="Continue to {legend}"` and `next-aria-label="{label}"`.
+`next-label="Continue to {legend}"`. Without an accessible-name override,
+visible button templates containing `{legend}` use native button naming.
+Short buttons receive the destination-aware accessible names listed above.
 
 Labels are plain text, not HTML. Visible templates must produce nonempty text.
-An empty accessible-name template uses the visible label. When a button’s
+An empty accessible-name template uses the visible label. The component does
+not add `aria-label` when the accessible name matches that visible text.
+When a button’s
 accessible-name override omits its visible wording, the component prefixes that
 wording to keep the visible label in the accessible name.
 
@@ -168,7 +174,7 @@ Reference existing controls by ID to replace the generated ones:
       <label id="application-status" for="application-progress"
         >Form progress</label
       >
-      <progress id="application-progress" value="0" max="2"></progress>
+      <progress id="application-progress" value="1" max="2"></progress>
       <button id="forward" type="button" hidden>Next</button>
       <button type="submit">Send application</button>
     </nav>
@@ -196,8 +202,11 @@ Without `progress-label-ref`, the component uses the progress element’s first
 associated label or creates one. A wrapping label needs a separate
 `data-fieldset-progress-label` text container that does not contain progress.
 Text containers must not contain links or form controls. During enhancement,
-progress uses `aria-label` and `aria-valuetext` instead of authored
-`aria-labelledby`.
+progress gets its name from an associated label, or from `aria-labelledby`
+when the visible text is not a native label. A distinct `progress-aria-label`
+template supplies an override; matching text is not copied into `aria-label`.
+The component uses native progress values instead of a repeated `aria-valuetext`.
+Authored naming attributes are restored on teardown.
 
 See [custom control placement](demo/index.html#custom-layout) and
 [icons with translated labels](demo/index.html#translated-controls).

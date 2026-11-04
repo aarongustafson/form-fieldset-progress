@@ -38,6 +38,11 @@
 					Next. These demos show a submission result without sending
 					form data.
 				</p>
+				<p>
+					Progress shows the current section’s position: Contact
+					details is 1 of 3, so the bar is one-third full. Review is 3
+					of 3, so the bar is full.
+				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
   &lt;form action="/apply" method="post"&gt;
@@ -163,7 +168,8 @@
 				<p>
 					With one fieldset, the component shows the submit button
 					immediately. Back and Next are hidden because there is no
-					other section to visit.
+					other section to visit. Progress and its label are also
+					hidden.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
@@ -205,14 +211,15 @@
 					<code>next-label</code> change the button text.
 					<code>progress-label</code> changes the text beside
 					progress. Here, <code>{current}</code> is the current
-					section number and <code>{total}</code> is the number of
-					sections.
+					section number, <code>{total}</code> is the number of
+					sections, and <code>{legend}</code> is the current section’s
+					legend.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress
   previous-label="Previous"
   next-label="Continue"
-  progress-label="Section {current} of {total}"&gt;
+  progress-label="Section {current} of {total}: {legend}"&gt;
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
@@ -228,7 +235,7 @@
 							id="short-labels"
 							previous-label="Previous"
 							next-label="Continue"
-							progress-label="Section {current} of {total}"
+							progress-label="Section {current} of {total}: {legend}"
 						>
 							<form action="/example" method="post">
 								<fieldset>
@@ -253,16 +260,14 @@
 				<h3>Include section names in the buttons</h3>
 				<p>
 					In a button label, <code>{legend}</code> is the destination
-					section’s name. The <code>*-aria-label</code> attributes set
-					accessible names. Using <code>{label}</code> here makes the
-					accessible name match the visible button text.
+					section’s name. Because these visible labels already name
+					the destination, the buttons use that text as their
+					accessible names without adding an <code>aria-label</code>.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress
   previous-label="Back to {legend}"
-  next-label="Continue to {legend}"
-  previous-aria-label="{label}"
-  next-aria-label="{label}"&gt;
+  next-label="Continue to {legend}"&gt;
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
@@ -278,8 +283,6 @@
 							id="legend-labels"
 							previous-label="Back to {legend}"
 							next-label="Continue to {legend}"
-							previous-aria-label="{label}"
-							next-aria-label="{label}"
 						>
 							<form action="/example" method="post">
 								<fieldset>
@@ -330,7 +333,7 @@
     &lt;label id="english-status"
       for="english-progress"&gt;Application sections&lt;/label&gt;
     &lt;progress id="english-progress"
-      value="0" max="3"&gt;&lt;/progress&gt;
+      value="1" max="3"&gt;&lt;/progress&gt;
   &lt;/div&gt;
   &lt;form id="english-application"
     action="/volunteer" method="post"&gt;
@@ -375,7 +378,7 @@
 								>
 								<progress
 									id="english-progress"
-									value="0"
+									value="1"
 									max="3"
 								></progress>
 							</div>
@@ -468,8 +471,7 @@
   next-label="Continuer : {legend}"
   progress-label="Étape {current}/{total} : {legend}"
   previous-aria-label="{label}, étape {current}"
-  next-aria-label="{label}, étape {current}"
-  progress-aria-label="{label}"&gt;
+  next-aria-label="{label}, étape {current}"&gt;
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Coordonnées&lt;/legend&gt;
       &lt;label&gt;Votre nom
@@ -486,7 +488,7 @@
         &lt;span aria-hidden="true"&gt;←&lt;/span&gt;
         &lt;span data-fieldset-progress-label&gt;Retour&lt;/span&gt;
       &lt;/button&gt;
-      &lt;progress id="custom-progress"&gt;&lt;/progress&gt;
+      &lt;progress id="custom-progress" value="1" max="2"&gt;&lt;/progress&gt;
       &lt;button id="custom-next" type="button"&gt;
         &lt;span data-fieldset-progress-label&gt;Continuer&lt;/span&gt;
         &lt;span aria-hidden="true"&gt;→&lt;/span&gt;
@@ -507,7 +509,6 @@
 							progress-label="Étape {current}/{total} : {legend}"
 							previous-aria-label="{label}, étape {current}"
 							next-aria-label="{label}, étape {current}"
-							progress-aria-label="{label}"
 						>
 							<form action="/inscription" method="post">
 								<fieldset>
@@ -544,7 +545,7 @@
 									</button>
 									<progress
 										id="custom-progress"
-										value="0"
+										value="1"
 										max="2"
 									></progress>
 									<button id="custom-next" type="button">
@@ -577,8 +578,6 @@
 					<pre><code>&lt;form-fieldset-progress lang="ar" dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
-  previous-aria-label="{label}"
-  next-aria-label="{label}"
   progress-label="الخطوة {current} من {total}: {legend}"&gt;
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;بيانات الاتصال&lt;/legend&gt;
@@ -599,8 +598,6 @@
 							id="rtl"
 							previous-label="العودة إلى {legend}"
 							next-label="المتابعة إلى {legend}"
-							previous-aria-label="{label}"
-							next-aria-label="{label}"
 							progress-label="الخطوة {current} من {total}: {legend}"
 						>
 							<form action="/application" method="post">

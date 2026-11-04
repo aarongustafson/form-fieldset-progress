@@ -6,7 +6,9 @@ form-fieldset-progress[hidden],
 form-fieldset-progress [hidden],
 [data-fieldset-progress-previous][hidden],
 [data-fieldset-progress-next][hidden],
-[data-fieldset-progress-submit][hidden] {
+[data-fieldset-progress-submit][hidden],
+[data-fieldset-progress-progress][hidden],
+[data-fieldset-progress-status][hidden] {
 	display: none !important;
 }
 
