@@ -159,7 +159,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="single-section">
-				<h2>Use a single section</h2>
+				<h2>Accidentally wrapped a single fieldset? No worries.</h2>
 				<p>
 					With one fieldset, the component shows the submit button
 					immediately. Back and Next are hidden because there is no
@@ -200,7 +200,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="labels">
-				<h2>Change the labels</h2>
+				<h2>Customize the labels</h2>
 				<p>
 					<code>previous-label</code> and
 					<code>next-label</code> change the button text.
@@ -255,7 +255,7 @@
 						</form-fieldset-progress>
 					</div>
 				</div>
-				<h3>Include section names in the buttons</h3>
+				<h3>Customize more: include section names in the buttons</h3>
 				<p>
 					In a button label, <code>{legend}</code> is the destination
 					section’s name. Because these visible labels already name
@@ -307,7 +307,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="custom-layout">
-				<h2>Place your own navigation controls</h2>
+				<h2>BYOM: Bring your own markup</h2>
 				<p>
 					The <code>*-ref</code> attributes identify existing elements
 					by ID instead of generating them. This example places
@@ -466,7 +466,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="translated-controls">
-				<h2>Translate labels and keep button icons</h2>
+				<h2>Translate labels, maintain button icons</h2>
 				<p>
 					This example combines the label templates and ID references
 					above. The legends, submit button, and navigation templates
@@ -590,7 +590,7 @@
 				</div>
 			</section>
 			<section class="demo-section">
-				<h2>Use right-to-left navigation</h2>
+				<h2>RTL is supported by default</h2>
 				<p>
 					This Arabic example uses the same label templates with
 					<code>dir="rtl"</code>. The generated navigation follows the
@@ -657,7 +657,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="review-panel">
-				<h2>Add a review screen</h2>
+				<h2>Add a "review" screen</h2>
 				<p>
 					<code>review-panel</code> adds a final fieldset after the
 					authored sections. Its definition list pairs field labels
@@ -763,7 +763,7 @@
 						</form-fieldset-progress>
 					</div>
 				</div>
-				<h3>Use an authored review fieldset</h3>
+				<h3>BYORF: Bring your own review fieldset</h3>
 				<p>
 					Use <code>review-ref</code> instead of
 					<code>review-panel</code> to identify an outermost fieldset
@@ -898,7 +898,7 @@ element.addEventListener('form-fieldset-progress:change',
 				</div>
 			</section>
 			<section class="demo-section" id="section-transitions">
-				<h2>Animate section changes</h2>
+				<h2>You can also animate section changes</h2>
 				<p>
 					<code>form-fieldset-progress:beforechange</code> fires after
 					navigation checks, before the section changes. Unlike
@@ -998,7 +998,7 @@ element.addEventListener('form-fieldset-progress:change',
 				</div>
 			</section>
 			<section class="demo-section" id="optional-reset">
-				<h2>Reset the form</h2>
+				<h2>Form reset is supported too</h2>
 				<p>
 					An authored <code>type="reset"</code> button restores the
 					form controls’ default values and returns to the first
@@ -1055,12 +1055,17 @@ element.addEventListener('form-fieldset-progress:change',
 				</div>
 			</section>
 			<section class="demo-section" id="validation-option">
-				<h2>Turn off section validation</h2>
+				<h2>You can disable per-section validation</h2>
 				<p>
-					<strong>Keep per-section validation enabled.</strong>
+					<strong>I highly recommend keeping per-section validation 
+					enabled.</strong> If you really want to turn it off,
 					<code>no-validation</code> removes the checks on forward
 					navigation, but does not turn off native submit validation.
-					It is not a replacement for validating each section.
+				</p>
+				<p>
+					Even with this feature disabled, when a field is found to
+					be invalid on submit, the component will display the 
+					correct panel automatically so the user can see the issue.
 				</p>
 				<p>
 					In this example, Next reaches Delivery notes even with an
