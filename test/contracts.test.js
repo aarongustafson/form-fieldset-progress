@@ -7,6 +7,17 @@ const pathFor = (path) => resolve(process.cwd(), path);
 const json = (path) => JSON.parse(readFileSync(pathFor(path), 'utf8'));
 
 describe('published API contracts', () => {
+	it('links README examples to existing demo sections', () => {
+		const readme = readFileSync(pathFor('README.md'), 'utf8');
+		const demo = document.createElement('div');
+		demo.innerHTML = readFileSync(pathFor('demo/index.html'), 'utf8');
+		const ids = new Set(
+			Array.from(demo.querySelectorAll('[id]'), (element) => element.id),
+		);
+		for (const [, id] of readme.matchAll(/\(demo\/index\.html#([^)]+)\)/g))
+			expect(ids.has(id), `Missing demo section: ${id}`).toBe(true);
+	});
+
 	it('documents every observed attribute and public method', () => {
 		const manifest = json('custom-elements.json');
 		const declaration = manifest.modules[0].declarations[0];

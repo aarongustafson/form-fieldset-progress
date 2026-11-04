@@ -552,3 +552,65 @@ test('default reset hoisting preserves inherited fieldset disabling', async ({
 	await expect(page.locator('#contact > #disabled-reset')).toHaveCount(1);
 	await expect(page.locator('#disabled-reset')).toBeDisabled();
 });
+
+test('the walkthrough introduces default behavior and labels before custom navigation and animation', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	const sections = await page
+		.locator('main > .demo-section')
+		.evaluateAll((elements) => elements.map((element) => element.id));
+	expect(sections.indexOf('getting-started')).toBe(0);
+	expect(sections.indexOf('single-section')).toBe(1);
+	expect(sections.indexOf('labels')).toBeGreaterThan(1);
+	expect(sections.indexOf('labels')).toBeLessThan(
+		sections.indexOf('custom-layout'),
+	);
+	expect(sections.indexOf('section-events')).toBeLessThan(
+		sections.indexOf('section-transitions'),
+	);
+	const labels = page.locator('#short-labels');
+	await expect(labels.locator('[data-fieldset-progress-next]')).toHaveText(
+		'Continue',
+	);
+	await expect(labels.getByRole('progressbar')).toHaveAccessibleName(
+		'Section 1 of 2',
+	);
+	await labels.locator('[data-fieldset-progress-next]').click();
+	await expect(
+		labels.locator('[data-fieldset-progress-previous]'),
+	).toHaveText('Previous');
+	const legends = page.locator('#legend-labels');
+	await expect(legends.locator('[data-fieldset-progress-next]')).toHaveText(
+		'Continue to Review',
+	);
+	await expect(
+		legends.locator('[data-fieldset-progress-next]'),
+	).toHaveAccessibleName('Continue to Review');
+});
+
+test('the event example reports completed section changes rather than invalid navigation', async ({
+	page,
+}) => {
+	await page.goto('/demo/');
+	const example = page.locator('#events');
+	const output = page.locator('#section-event');
+	await expect(output).toHaveText('No section change yet.');
+	await example.locator('[data-fieldset-progress-next]').click();
+	await expect(output).toHaveText('No section change yet.');
+	await example.getByLabel('Name', { exact: true }).fill('Ada');
+	await example.getByLabel('Name', { exact: true }).press('Enter');
+	expect(JSON.parse(await output.textContent())).toEqual({
+		previousIndex: 0,
+		stepIndex: 1,
+		stepCount: 2,
+		fieldset: 'event-review',
+	});
+	await example.locator('[data-fieldset-progress-previous]').click();
+	expect(JSON.parse(await output.textContent())).toEqual({
+		previousIndex: 1,
+		stepIndex: 0,
+		stepCount: 2,
+		fieldset: 'event-contact',
+	});
+});

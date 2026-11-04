@@ -12,7 +12,8 @@
 		<header>
 			<h1>&lt;form-fieldset-progress&gt;</h1>
 			<p>
-				One section at a time, with native fieldsets and validation.
+				Turn a form’s fieldsets into steps, with Back, Next, and
+				progress.
 				<a
 					href="https://github.com/aarongustafson/form-fieldset-progress#readme"
 					>README and API</a
@@ -20,15 +21,22 @@
 			</p>
 		</header>
 		<main>
-			<section class="demo-section">
-				<h2>Generated navigation and section validation</h2>
+			<section class="demo-section" id="getting-started">
+				<h2>Start with a form and fieldsets</h2>
 				<p>
-					Next validates the current section. Back never does. Enter
-					in a single-line field also advances. The original submit
-					button appears on the final screen. Equal Back and Next
-					slots keep progress centered between them, including when
-					Back is hidden. Reset is optional and appears in a later
-					example.
+					Wrap a form in <code>form-fieldset-progress</code>. Each
+					outermost <code>fieldset</code> becomes a step, named by its
+					<code>legend</code>. The component adds the navigation
+					buttons and progress indicator; no configuration attributes
+					are needed.
+				</p>
+				<p>
+					Fill out Contact details and choose Next to reach Delivery
+					address. Next checks the current section’s fields before
+					advancing. Back returns to the previous section without
+					validating it. On Review, the form’s submit button replaces
+					Next. These demos show a submission result without sending
+					form data.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
@@ -39,16 +47,35 @@
         &lt;input name="name" required
           autocomplete="name" /&gt;
       &lt;/label&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required
+          autocomplete="email" /&gt;
+      &lt;/label&gt;
     &lt;/fieldset&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Delivery address&lt;/legend&gt;
-      &lt;!-- Labeled, required address fields --&gt;
+      &lt;label&gt;City
+        &lt;input name="city" required
+          autocomplete="address-level2" /&gt;
+      &lt;/label&gt;
+      &lt;fieldset&gt;
+        &lt;legend&gt;Delivery preference&lt;/legend&gt;
+        &lt;label&gt;&lt;input name="delivery" type="radio"
+          value="standard" checked /&gt; Standard&lt;/label&gt;
+        &lt;label&gt;&lt;input name="delivery" type="radio"
+          value="express" /&gt; Express&lt;/label&gt;
+      &lt;/fieldset&gt;
     &lt;/fieldset&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Review&lt;/legend&gt;
-      &lt;!-- Review instructions --&gt;
+      &lt;p&gt;Use Back to check your answers.&lt;/p&gt;
+      &lt;label&gt;Delivery notes (optional)
+        &lt;textarea name="notes"&gt;&lt;/textarea&gt;
+      &lt;/label&gt;
     &lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Send application&lt;/button&gt;
+    &lt;button type="submit" name="action" value="apply"&gt;
+      Send application
+    &lt;/button&gt;
   &lt;/form&gt;
 &lt;/form-fieldset-progress&gt;</code></pre>
 					<div class="demo">
@@ -131,15 +158,167 @@
 					</div>
 				</div>
 			</section>
-			<section class="demo-section" id="custom-layout">
-				<h2>English custom UI: progress above, buttons below</h2>
+			<section class="demo-section" id="single-section">
+				<h2>Use a single section</h2>
 				<p>
-					ID references let you place progress above the form and the
-					buttons below it. Each external button uses
-					<code>form</code>
-					to keep its native form association. Short visible labels
-					default to “Back” and “Next”; longer accessible names
-					identify the destination. This example has no reset button.
+					With one fieldset, the component shows the submit button
+					immediately. Back and Next are hidden because there is no
+					other section to visit.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Newsletter&lt;/legend&gt;
+      &lt;label&gt;Email
+        &lt;input name="email" type="email" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="single">
+							<form action="/subscribe" method="post">
+								<fieldset>
+									<legend>Newsletter</legend>
+									<label for="newsletter-email">Email</label>
+									<input
+										id="newsletter-email"
+										name="email"
+										type="email"
+										autocomplete="email"
+										required
+									/>
+								</fieldset>
+								<button type="submit">Subscribe</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="labels">
+				<h2>Change the labels</h2>
+				<p>
+					<code>previous-label</code> and
+					<code>next-label</code> change the button text.
+					<code>progress-label</code> changes the text beside
+					progress. Here, <code>{current}</code> is the current
+					section number and <code>{total}</code> is the number of
+					sections.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-label="Previous"
+  next-label="Continue"
+  progress-label="Section {current} of {total}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;
+      &lt;p&gt;Use Previous to check your name.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="short-labels"
+							previous-label="Previous"
+							next-label="Continue"
+							progress-label="Section {current} of {total}"
+						>
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="short-name">Name</label>
+									<input
+										id="short-name"
+										name="name"
+										autocomplete="name"
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>Use Previous to check your name.</p>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+				<h3>Include section names in the buttons</h3>
+				<p>
+					In a button label, <code>{legend}</code> is the destination
+					section’s name. The <code>*-aria-label</code> attributes set
+					accessible names. Using <code>{label}</code> here makes the
+					accessible name match the visible button text.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress
+  previous-label="Back to {legend}"
+  next-label="Continue to {legend}"
+  previous-aria-label="{label}"
+  next-aria-label="{label}"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;
+      &lt;p&gt;Use Back to check your name.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="legend-labels"
+							previous-label="Back to {legend}"
+							next-label="Continue to {legend}"
+							previous-aria-label="{label}"
+							next-aria-label="{label}"
+						>
+							<form action="/example" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label for="legend-name">Name</label>
+									<input
+										id="legend-name"
+										name="name"
+										autocomplete="name"
+									/>
+								</fieldset>
+								<fieldset>
+									<legend>Review</legend>
+									<p>Use Back to check your name.</p>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="custom-layout">
+				<h2>Place your own navigation controls</h2>
+				<p>
+					The <code>*-ref</code> attributes identify existing elements
+					by ID instead of generating them. This example places
+					progress above the form and buttons below it.
+					<code>previous-ref</code> identifies Back,
+					<code>next-ref</code> identifies Next, and
+					<code>progress-ref</code> and
+					<code>progress-label-ref</code>
+					identify progress and its label.
+				</p>
+				<p>
+					Each button outside the form uses
+					<code>form="english-application"</code> to associate it with
+					that form. The component updates these controls’ labels and
+					visibility just as it does for generated controls.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress
@@ -161,10 +340,13 @@
       &lt;/label&gt;
     &lt;/fieldset&gt;
     &lt;fieldset&gt;&lt;legend&gt;Availability&lt;/legend&gt;
-      &lt;!-- Labeled hours input, required --&gt;
+      &lt;label&gt;Hours available each week
+        &lt;input name="hours" type="number"
+          min="1" max="40" required /&gt;
+      &lt;/label&gt;
     &lt;/fieldset&gt;
     &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;
-      &lt;!-- Review instructions --&gt;
+      &lt;p&gt;Use Back to check your details before sending.&lt;/p&gt;
     &lt;/fieldset&gt;
   &lt;/form&gt;
   &lt;nav class="custom-actions"
@@ -267,14 +449,14 @@
 					</div>
 				</div>
 			</section>
-			<section class="demo-section">
-				<h2>Authored controls and translated labels</h2>
+			<section class="demo-section" id="translated-controls">
+				<h2>Translate labels and keep button icons</h2>
 				<p>
-					Use ID references to own the navigation markup. Text spans
-					with
-					<code>data-fieldset-progress-label</code> preserve
-					decorative icons. Visible and accessible label templates are
-					independently configurable.
+					This example combines the label templates and ID references
+					above. The legends, submit button, and navigation templates
+					are in French. Each navigation button uses a
+					<code>data-fieldset-progress-label</code> span so the
+					component updates the text without replacing its arrow.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress
@@ -289,7 +471,14 @@
   next-aria-label="{label}, étape {current}"
   progress-aria-label="{label}"&gt;
   &lt;form&gt;
-    &lt;!-- Fieldsets --&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Coordonnées&lt;/legend&gt;
+      &lt;label&gt;Votre nom
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Confirmation&lt;/legend&gt;
+      &lt;p&gt;Vérifiez votre nom avant d’envoyer.&lt;/p&gt;
+    &lt;/fieldset&gt;
     &lt;nav aria-label="Sections du formulaire"&gt;
       &lt;label id="custom-status"
         for="custom-progress"&gt;Progression&lt;/label&gt;
@@ -377,20 +566,31 @@
 				</div>
 			</section>
 			<section class="demo-section">
-				<h2>Long section names and right-to-left layout</h2>
+				<h2>Use right-to-left navigation</h2>
 				<p>
-					The default navigation wraps. Logical spacing follows the
-					reading direction.
+					This Arabic example uses the same label templates with
+					<code>dir="rtl"</code>. The generated navigation follows the
+					reading direction, and longer button labels wrap within
+					their available space.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress dir="rtl"
+					<pre><code>&lt;form-fieldset-progress lang="ar" dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
   previous-aria-label="{label}"
   next-aria-label="{label}"
   progress-label="الخطوة {current} من {total}: {legend}"&gt;
   &lt;form&gt;
-    &lt;!-- Fieldsets with Arabic legends --&gt;
+    &lt;fieldset&gt;&lt;legend&gt;بيانات الاتصال&lt;/legend&gt;
+      &lt;p&gt;يمكنك المتابعة دون إدخال بيانات في هذا المثال.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;تفاصيل الطلب وتفضيلات التسليم والملاحظات الإضافية&lt;/legend&gt;
+      &lt;p&gt;استخدم زر العودة لمراجعة القسم السابق.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;مراجعة الطلب&lt;/legend&gt;
+      &lt;p&gt;أرسل النموذج لإكمال المثال.&lt;/p&gt;
+    &lt;/fieldset&gt;
     &lt;button type="submit"&gt;إرسال&lt;/button&gt;
   &lt;/form&gt;
 &lt;/form-fieldset-progress&gt;</code></pre>
@@ -435,41 +635,113 @@
 					</div>
 				</div>
 			</section>
-			<section class="demo-section" id="section-transitions">
-				<h2>Optional section transitions</h2>
+			<section class="demo-section" id="section-events">
+				<h2>Listen for section changes</h2>
 				<p>
-					The cancelable <code>beforechange</code> event runs after
-					validation, before the next section is shown. This example
-					uses the
+					<code>form-fieldset-progress:change</code> fires after the
+					active section changes. Its detail includes
+					<code>previousIndex</code>, <code>stepIndex</code>,
+					<code>stepCount</code>, and the active
+					<code>fieldset</code> element. Indices start at zero.
+				</p>
+				<p>
+					Enter a name and choose Next, then Back. The output below
+					shows the latest event, using the fieldset’s ID to represent
+					the element. A failed validation does not switch this form’s
+					section or emit a change event.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;form-fieldset-progress id="events"&gt;
+  &lt;form&gt;
+    &lt;fieldset id="event-contact"&gt;
+      &lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset id="event-review"&gt;
+      &lt;legend&gt;Review&lt;/legend&gt;
+      &lt;p&gt;Use Back to check your name.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;
+&lt;pre id="section-event"&gt;No section change yet.&lt;/pre&gt;
+
+const element = document.querySelector('#events');
+const output = document.querySelector('#section-event');
+element.addEventListener('form-fieldset-progress:change',
+  ({ detail }) =&gt; {
+    output.textContent = JSON.stringify({
+      previousIndex: detail.previousIndex,
+      stepIndex: detail.stepIndex,
+      stepCount: detail.stepCount,
+      fieldset: detail.fieldset.id
+    }, null, 2);
+  });</code></pre>
+					<div class="demo">
+						<form-fieldset-progress id="events">
+							<form action="/example" method="post">
+								<fieldset id="event-contact">
+									<legend>Contact</legend>
+									<label for="event-name">Name</label>
+									<input
+										id="event-name"
+										name="name"
+										autocomplete="name"
+										required
+									/>
+								</fieldset>
+								<fieldset id="event-review">
+									<legend>Review</legend>
+									<p>Use Back to check your name.</p>
+								</fieldset>
+								<button type="submit">Send</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+						<h3>Latest change event</h3>
+						<pre id="section-event">No section change yet.</pre>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="section-transitions">
+				<h2>Animate section changes</h2>
+				<p>
+					<code>form-fieldset-progress:beforechange</code> fires after
+					navigation checks, before the section changes. Unlike
+					<code>change</code>, it can be canceled. This example’s
+					script uses that event and the
 					<a
 						href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API"
 						>View Transition API</a
 					>
-					to slide only the fieldset snapshots. Progress and buttons
-					stay outside the snapshots, and the section area reserves
-					space so the footer stays put.
+					to slide between sections while keeping navigation in place.
+					Animation is supplied by the demo script, not a component
+					attribute.
 				</p>
 				<p>
-					Animation runs only when enabled, supported, and
-					<code>prefers-reduced-motion: no-preference</code> matches.
-					Otherwise navigation is immediate. Back reverses the slide;
-					another navigation action interrupts it. Native validation
-					and focus behavior remain available. Native progress values
-					update without animation because fill animation is not
-					consistent across browsers. The code below shows markup and
-					styling excerpts; see the
+					Use Next and Back to see the slide direction change. Uncheck
+					the animation option for immediate navigation. The example
+					also uses immediate navigation when the browser does not
+					support View Transitions or requests reduced motion. The
+					code below shows excerpts from the
 					<a href="./transitions.js">complete animation script</a>
 					and <a href="./styles.css">demo styles</a>.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress id="animated"&gt;
+					<pre><code>&lt;label id="animation-option" hidden&gt;
+  &lt;input id="enable-transitions" type="checkbox" checked /&gt;
+  Animate section changes when motion is allowed
+&lt;/label&gt;
+&lt;form-fieldset-progress id="animated"&gt;
   &lt;form&gt;
     &lt;div class="transition-pages"&gt;
       &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
-        &lt;!-- Labeled, required email --&gt;
+        &lt;label&gt;Email
+          &lt;input name="email" type="email" required /&gt;
+        &lt;/label&gt;
       &lt;/fieldset&gt;
       &lt;fieldset&gt;&lt;legend&gt;Delivery&lt;/legend&gt;
-        &lt;!-- Labeled, required city --&gt;
+        &lt;label&gt;City &lt;input name="city" required /&gt;&lt;/label&gt;
       &lt;/fieldset&gt;
       &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;&lt;/fieldset&gt;
     &lt;/div&gt;
@@ -477,24 +749,8 @@
   &lt;/form&gt;
 &lt;/form-fieldset-progress&gt;
 
-/* Reserve space; don’t clip longer content. */
-.transition-pages { min-block-size: 10rem; }
-
-/* The script names only the active fieldset
-   and disables the root snapshot. */
-@media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(demo-section) {
-    animation: demo-section-out 240ms ease both;
-  }
-  ::view-transition-new(demo-section) {
-    animation: demo-section-in 240ms ease both;
-  }
-}
-
-// The demo script handles beforechange,
-// feature/preference checks, interruption,
-// cleanup, and guarded goTo() re-entry.
-import './transitions.js';</code></pre>
+&lt;!-- This example adds animation in a separate script. --&gt;
+&lt;script type="module" src="./transitions.js"&gt;&lt;/script&gt;</code></pre>
 					<div class="demo">
 						<label id="animation-option" hidden>
 							<input
@@ -546,15 +802,18 @@ import './transitions.js';</code></pre>
 				</div>
 			</section>
 			<section class="demo-section" id="optional-reset">
-				<h2>Optional Reset: start over</h2>
+				<h2>Reset the form</h2>
 				<p>
-					Most forms don’t need Reset. Include one only when
-					discarding entered answers is intentional. Without reference
-					attributes, the component moves an authored, visible,
-					enabled Reset control before Back in the footer. On narrow
-					forms, Reset wraps above navigation. Any reference attribute
-					keeps Reset where you authored it; the component never
-					creates a Reset button.
+					An authored <code>type="reset"</code> button restores the
+					form controls’ default values and returns to the first
+					section. Enter a name, advance to Review, and choose Start
+					over to try it.
+				</p>
+				<p>
+					With no reference attributes, the component moves this
+					button before Back in the footer. With any reference
+					attribute, Reset stays where it was authored. The component
+					does not create a Reset button.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress&gt;
@@ -597,21 +856,18 @@ import './transitions.js';</code></pre>
 					</div>
 				</div>
 			</section>
-			<section class="demo-section">
-				<h2>Why step validation should stay on</h2>
+			<section class="demo-section" id="validation-option">
+				<h2>Turn off section validation</h2>
 				<p>
 					<strong>Keep per-section validation enabled.</strong>
-					<code>no-validation</code> delays error feedback and can
-					send people back through sections they thought were
-					finished. Revealing invalid sections at submission is a
-					recovery measure, not a replacement for timely feedback.
-					Avoid this setting unless you provide an equivalent, tested
-					validation workflow.
+					<code>no-validation</code> removes the checks on forward
+					navigation, but does not turn off native submit validation.
+					It is not a replacement for validating each section.
 				</p>
 				<p>
-					This exception-only demo shows the recovery path. Try
-					sending without a name: final native validation reveals the
-					first section.
+					In this example, Next reaches Review even with an empty Name
+					field. Choosing Send profile then reveals the first section
+					so the browser can report the required field.
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;form-fieldset-progress no-validation&gt;
@@ -655,54 +911,30 @@ import './transitions.js';</code></pre>
 				</div>
 			</section>
 			<section class="demo-section">
-				<h2>A single section</h2>
-				<p>A one-step form needs no Back or Next action.</p>
-				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress&gt;
-  &lt;form&gt;
-    &lt;fieldset&gt;
-      &lt;legend&gt;Newsletter&lt;/legend&gt;
-      &lt;label&gt;Email
-        &lt;input name="email" type="email" required /&gt;
-      &lt;/label&gt;
-    &lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
-  &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
-					<div class="demo">
-						<form-fieldset-progress id="single">
-							<form action="/subscribe" method="post">
-								<fieldset>
-									<legend>Newsletter</legend>
-									<label for="newsletter-email">Email</label
-									><input
-										id="newsletter-email"
-										name="email"
-										type="email"
-										autocomplete="email"
-										required
-									/>
-								</fieldset>
-								<button type="submit">Subscribe</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
-					</div>
-				</div>
-			</section>
-			<section class="demo-section">
-				<h2>Configuration failure and recovery</h2>
+				<h2>Recover from a setup error</h2>
 				<p>
-					A missing reference leaves the whole form usable. The error
-					event explains the failure. Repairing the reference restarts
-					enhancement.
+					Here, <code>next-ref="missing"</code> points to an element
+					that does not exist. Setup emits
+					<code>form-fieldset-progress:error</code> and leaves both
+					fieldsets visible. Repair configuration removes that
+					reference and calls <code>refresh()</code> to try setup
+					again.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress next-ref="missing"&gt;
-  &lt;form&gt;&lt;!-- Fieldsets and Submit --&gt;&lt;/form&gt;
+					<pre><code>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;First section&lt;/legend&gt;
+      &lt;p&gt;This remains visible when setup fails.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Second section&lt;/legend&gt;
+      &lt;p&gt;So does this section.&lt;/p&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send example&lt;/button&gt;
+  &lt;/form&gt;
 &lt;/form-fieldset-progress&gt;
 
 // After reporting the setup error:
+const element = document.querySelector('#failure');
 element.removeAttribute('next-ref');
 element.refresh();</code></pre>
 					<div class="demo">
@@ -730,22 +962,29 @@ element.refresh();</code></pre>
 				</div>
 			</section>
 			<section class="demo-section">
-				<h2>No JavaScript and loading fallback</h2>
+				<h2>See the form without JavaScript</h2>
 				<p>
-					This embedded form loads no module. Before upgrade or while
-					a module loads, the same native form structure remains
-					visible. Submit in this example uses the browser’s local
-					dialog behavior.
+					This embedded example loads no component script. Both
+					fieldsets and the submit button remain visible; Back, Next,
+					and progress are not generated.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;!-- No module script: every section remains available. --&gt;
-&lt;form-fieldset-progress&gt;
-  &lt;form method="dialog"&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;…&lt;/fieldset&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;…&lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Send&lt;/button&gt;
-  &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+					<pre><code>&lt;!-- no-script.html omits the component script. --&gt;
+&lt;dialog open aria-label="Native form example"&gt;
+  &lt;form-fieldset-progress&gt;
+    &lt;form method="dialog"&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+        &lt;label&gt;Name
+          &lt;input name="name" autocomplete="name" required /&gt;
+        &lt;/label&gt;
+      &lt;/fieldset&gt;
+      &lt;fieldset&gt;&lt;legend&gt;Review&lt;/legend&gt;
+        &lt;p&gt;Both sections are available without JavaScript.&lt;/p&gt;
+      &lt;/fieldset&gt;
+      &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/form-fieldset-progress&gt;
+&lt;/dialog&gt;</code></pre>
 					<div class="demo">
 						<iframe
 							title="Form without JavaScript"

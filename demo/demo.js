@@ -11,6 +11,21 @@ document.addEventListener('form-fieldset-progress:error', (event) => {
 
 await import('../define.js');
 
+document
+	.querySelector('#events')
+	.addEventListener('form-fieldset-progress:change', ({ detail }) => {
+		document.querySelector('#section-event').textContent = JSON.stringify(
+			{
+				previousIndex: detail.previousIndex,
+				stepIndex: detail.stepIndex,
+				stepCount: detail.stepCount,
+				fieldset: detail.fieldset.id,
+			},
+			null,
+			2,
+		);
+	});
+
 for (const form of document.querySelectorAll('form')) {
 	form.addEventListener('submit', (event) => {
 		if (event.defaultPrevented) return;
