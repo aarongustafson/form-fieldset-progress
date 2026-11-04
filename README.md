@@ -206,7 +206,9 @@ button’s entire content with its label. Navigation buttons must not use
 Without `progress-label-ref`, the component uses the progress element’s first
 associated label or creates one. A wrapping label needs a separate
 `data-fieldset-progress-label` text container that does not contain progress.
-Text containers must not contain links or form controls. During enhancement,
+Neither the wrapper nor its text container may enclose the host, controlled
+form, links, or other form controls; only its own wrapped progress is allowed.
+During enhancement,
 progress gets its name from an associated label, or from `aria-labelledby`
 when the visible text is not a native label or multiple native labels would
 add unrelated wording. A distinct `progress-aria-label`
@@ -263,6 +265,7 @@ updates the summary. It does not mirror edits continuously while review is open.
   or their name if there is no nested group legend. Selected choices show their
   labels; standalone checkboxes show Selected or Not selected.
 - Selects and datalist choices use option labels rather than raw values.
+  A datalist option without label text keeps the input’s value.
   File inputs show filenames only. Other values are shown as stored by the
   native control; empty values show Not provided.
 - Multiple selections or files use a list inside the `<dd>`. Labels and values
@@ -379,6 +382,9 @@ customElements.define('form-fieldset-progress', FormFieldsetProgressElement);
 `defineFormFieldsetProgress()`. Repeating registration for the same class and tag
 is safe; conflicting definitions throw. To register a different tag, import the
 class without importing `define.js`. The supplied host CSS targets the default tag.
+Imports are safe without browser globals: the registration helper returns
+`false` when no browser custom-element registry exists. Constructing the
+element still requires a browser DOM and throws without one.
 
 ## Validation and submission
 
@@ -403,6 +409,9 @@ It is not a replacement for validating each section.
 - Final submission uses the authored submit control, preserving its name, value,
   label, listeners, and submission overrides. The component does not clear
   answers or mark submission complete.
+- Native image submit inputs are supported, including controls outside the form
+  associated through `form="..."`. They follow the same visibility and
+  restoration rules as submit buttons and retain native coordinate submission.
 - `form.submit()` bypasses validation and submit events. Use `requestSubmit()`
   when the component should participate.
 

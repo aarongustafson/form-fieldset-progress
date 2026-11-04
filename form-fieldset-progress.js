@@ -49,8 +49,16 @@ function optionLabel(option) {
 	return option.getAttribute('label') || reviewText(option);
 }
 
+const HTMLElementBase =
+	globalThis.HTMLElement ??
+	class {
+		constructor() {
+			throw new Error('form-fieldset-progress requires a browser DOM.');
+		}
+	};
+
 /** Progressively enhance a form's outermost fieldsets in light DOM. */
-export class FormFieldsetProgressElement extends HTMLElement {
+export class FormFieldsetProgressElement extends HTMLElementBase {
 	static get observedAttributes() {
 		return [
 			...references,
@@ -194,8 +202,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			this._review &&
 			(this._review.closest('form') !== this._form ||
 				this._review.parentElement.closest('fieldset') ||
-				(this._review.closest('[hidden]') &&
-					this._review.closest('[hidden]') !== this._review) ||
+				this._review.parentElement.closest('[hidden]') ||
 				this._review.querySelector(
 					'fieldset, input, select, textarea, button, progress, output, a[href], [contenteditable]',
 				))
@@ -221,9 +228,15 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				throw new Error('Every step needs a nonempty legend.');
 			return { fieldset, legend };
 		});
-		this._submits = Array.from(this._form.elements).filter(
+		this._submits = Array.from(
+			this._form
+				.getRootNode()
+				.querySelectorAll(
+					'button, input[type="submit"], input[type="image"]',
+				),
+		).filter(
 			(control) =>
-				['button', 'input'].includes(control.localName) &&
+				control.form === this._form &&
 				['submit', 'image'].includes(control.type) &&
 				!control.closest('[hidden]'),
 		);
@@ -421,7 +434,11 @@ export class FormFieldsetProgressElement extends HTMLElement {
 					Array.from(control.list.options).find(
 						(item) => item.value === control.value,
 					);
-				values = [option ? optionLabel(option) : control.value];
+				values = [
+					option
+						? optionLabel(option) || control.value
+						: control.value,
+				];
 			}
 			values = values.filter((value) => value !== '');
 			const entry = this.ownerDocument.createElement('div');
@@ -483,6 +500,20 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			}
 		}
 		this._progressLabelContainer = this._progressLabel;
+		const controls =
+			'form, fieldset, legend, button, input, select, textarea, progress, a[href], [contenteditable]';
+		if (
+			this._progressLabelContainer.contains(this._form) ||
+			this._progressLabelContainer.contains(this) ||
+			this._progressLabelContainer.matches(controls) ||
+			Array.from(
+				this._progressLabelContainer.querySelectorAll(controls),
+			).some((control) => control !== this._progress)
+		) {
+			throw new Error(
+				'The progress label must be a text container without form controls or links, except its own wrapped progress.',
+			);
+		}
 		if (this._progressLabel.contains(this._progress)) {
 			const labelText = this._progressLabel.querySelector(
 				`[${prefix}label]`,
@@ -493,17 +524,6 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				);
 			}
 			this._progressLabel = labelText;
-		}
-		const controls =
-			'form, fieldset, legend, button, input, select, textarea, progress, a[href], [contenteditable]';
-		if (
-			this._progressLabel.contains(this) ||
-			this._progressLabel.matches(controls) ||
-			this._progressLabel.querySelector(controls)
-		) {
-			throw new Error(
-				'The progress label must be a text container without form controls or links.',
-			);
 		}
 		this._set(this._progressLabel, `${prefix}status`, '');
 		for (const { fieldset } of this._steps)

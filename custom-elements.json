@@ -66,7 +66,7 @@
 						{
 							"name": "progress-label-ref",
 							"type": { "text": "string" },
-							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one."
+							"description": "ID of the progress text container. Otherwise reuse an associated label or generate one. A wrapping container may contain its controlled progress and a marked text span, but must not enclose the host, controlled form, other form controls or links."
 						},
 						{
 							"name": "previous-label",
@@ -257,7 +257,7 @@
 				{
 					"kind": "function",
 					"name": "defineFormFieldsetProgress",
-					"description": "Register the default tag on import. The helper is idempotent for the same class and tag; conflicting definitions throw.",
+					"description": "Register the default tag on import. Imports are safe without DOM globals; return false when no browser registry is available. The helper is idempotent for the same class and tag; conflicting definitions throw.",
 					"parameters": [
 						{
 							"name": "tagName",
