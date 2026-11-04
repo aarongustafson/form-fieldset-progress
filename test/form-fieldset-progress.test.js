@@ -74,13 +74,13 @@ describe('progressive enhancement', () => {
 		},
 	);
 
-	it('restores authored progress visibility on teardown without unhiding authored multi-section UI', async () => {
+	it('reveals authored multi-section progress and restores its original visibility on teardown', async () => {
 		const host = await fixture(
 			'progress-ref="meter" progress-label-ref="status"',
 			'<label id="status" for="meter" hidden>Authored progress</label><progress id="meter" hidden></progress>',
 		);
-		expect(host.querySelector('#meter').hidden).toBe(true);
-		expect(host.querySelector('#status').hidden).toBe(true);
+		expect(host.querySelector('#meter').hidden).toBe(false);
+		expect(host.querySelector('#status').hidden).toBe(false);
 		host.querySelector('#address').remove();
 		host.querySelector('#review').remove();
 		host.refresh();

@@ -10,6 +10,17 @@ const ariaDefaults = {
 	'next-aria-label': '{label} to {legend}',
 	'progress-aria-label': '{label}',
 };
+const reviewDefaults = {
+	'review-label': 'Review',
+	'review-empty-label': 'Not provided',
+	'review-checked-label': 'Selected',
+	'review-unchecked-label': 'Not selected',
+};
+const reviewAttributes = [
+	'review-panel',
+	'review-ref',
+	...Object.keys(reviewDefaults),
+];
 const references = [
 	'previous-ref',
 	'next-ref',
@@ -18,6 +29,19 @@ const references = [
 ];
 let sequence = 0;
 
+function reviewText(element) {
+	const copy = element.cloneNode(true);
+	for (const child of copy.querySelectorAll(
+		'input, select, textarea, button, script, style, [aria-hidden="true"]',
+	))
+		child.remove();
+	return copy.textContent.replace(/\s+/g, ' ').trim();
+}
+
+function optionLabel(option) {
+	return option.getAttribute('label') || reviewText(option);
+}
+
 /** Progressively enhance a form's outermost fieldsets in light DOM. */
 export class FormFieldsetProgressElement extends HTMLElement {
 	static get observedAttributes() {
@@ -25,6 +49,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			...references,
 			...Object.keys(defaults),
 			...Object.keys(ariaDefaults),
+			...reviewAttributes,
 			'no-validation',
 		];
 	}
@@ -72,7 +97,12 @@ export class FormFieldsetProgressElement extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (oldValue === newValue || this._state !== 'ready') return;
-		if (references.includes(name) || !this._labelsValid()) this.refresh();
+		if (
+			references.includes(name) ||
+			reviewAttributes.includes(name) ||
+			!this._labelsValid()
+		)
+			this.refresh();
 		else this._render();
 	}
 
@@ -147,10 +177,30 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		this._form = forms[0];
 		if (owners.has(this._form))
 			throw new Error('This form already has a progress controller.');
+		if (
+			this.hasAttribute('review-panel') &&
+			this.hasAttribute('review-ref')
+		)
+			throw new Error('Use either review-panel or review-ref, not both.');
+		this._review = this._reference('review-ref', 'fieldset');
+		if (
+			this._review &&
+			(this._review.closest('form') !== this._form ||
+				this._review.parentElement.closest('fieldset') ||
+				(this._review.closest('[hidden]') &&
+					this._review.closest('[hidden]') !== this._review) ||
+				this._review.querySelector(
+					'fieldset, input, select, textarea, button, progress, output, a[href], [contenteditable]',
+				))
+		)
+			throw new Error(
+				'The review reference must be an outermost, read-only fieldset in this form, without a hidden ancestor.',
+			);
 		const fieldsets = Array.from(
 			this._form.querySelectorAll('fieldset'),
 		).filter(
 			(fieldset) =>
+				fieldset !== this._review &&
 				!fieldset.parentElement.closest('fieldset') &&
 				!fieldset.closest('[hidden]'),
 		);
@@ -221,6 +271,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				);
 			}
 		}
+		this._buildReview();
 		if (!this._labelsValid())
 			throw new Error(
 				'Visible label templates must produce nonempty text.',
@@ -242,6 +293,155 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			);
 		}
 		return element;
+	}
+
+	_buildReview() {
+		if (!this._review && !this.hasAttribute('review-panel')) return;
+		for (const attribute of Object.keys(reviewDefaults)) {
+			if (!this._reviewMessage(attribute))
+				throw new Error(`${attribute} must contain nonempty text.`);
+		}
+		if (!this._review) {
+			this._review = this._create('fieldset', 'review-panel', this._form);
+			const legend = this._create('legend', 'review-title', this._review);
+			legend.textContent = this._reviewMessage('review-label');
+		}
+		const legend = Array.from(this._review.children).find(
+			(child) => child.localName === 'legend',
+		);
+		if (!legend?.textContent.trim())
+			throw new Error('The review fieldset needs a nonempty legend.');
+		this._set(this._review, `${prefix}review-panel`, '');
+		this._reviewList =
+			this._review.querySelector(':scope > dl') ||
+			this._create('dl', 'review', this._review);
+		this._set(this._reviewList, `${prefix}review`, '');
+		this._steps.push({ fieldset: this._review, legend });
+	}
+
+	_reviewMessage(attribute) {
+		return (
+			this.getAttribute(attribute) ?? reviewDefaults[attribute]
+		).trim();
+	}
+
+	_reviewLabel(control) {
+		const referenced = (control.getAttribute('aria-labelledby') || '')
+			.split(/\s+/)
+			.map((id) => this.ownerDocument.getElementById(id))
+			.filter(Boolean);
+		return (
+			referenced.map((element) => reviewText(element)).join(' ') ||
+			control.getAttribute('aria-label')?.trim() ||
+			Array.from(control.labels || [], (label) => reviewText(label))
+				.filter(Boolean)
+				.join(' ') ||
+			control.name
+		);
+	}
+
+	_renderReview() {
+		const groups = new Map();
+		for (const control of this._form.elements) {
+			if (
+				!['input', 'select', 'textarea'].includes(control.localName) ||
+				!control.name ||
+				control.matches(':disabled') ||
+				[
+					'hidden',
+					'password',
+					'submit',
+					'reset',
+					'button',
+					'image',
+				].includes(control.type) ||
+				(control.closest('fieldset') &&
+					!this._steps.some(
+						({ fieldset }) =>
+							fieldset !== this._review &&
+							fieldset.contains(control),
+					))
+			)
+				continue;
+			const key = ['radio', 'checkbox'].includes(control.type)
+				? `${control.type}:${control.name}`
+				: control;
+			if (!groups.has(key)) groups.set(key, []);
+			groups.get(key).push(control);
+		}
+		const entries = [];
+		for (const controls of groups.values()) {
+			const control = controls[0];
+			let label = this._reviewLabel(control);
+			let values;
+			if (
+				control.type === 'radio' ||
+				(control.type === 'checkbox' && controls.length > 1)
+			) {
+				const fieldset = control.closest('fieldset');
+				const legend =
+					fieldset &&
+					!this._steps.some((step) => step.fieldset === fieldset)
+						? Array.from(fieldset.children).find(
+								(child) => child.localName === 'legend',
+							)
+						: null;
+				label = legend ? reviewText(legend) : control.name;
+				values = controls
+					.filter((item) => item.checked)
+					.map((item) => this._reviewLabel(item));
+			} else if (control.type === 'checkbox') {
+				values = [
+					this._reviewMessage(
+						control.checked
+							? 'review-checked-label'
+							: 'review-unchecked-label',
+					),
+				];
+			} else if (control.localName === 'select') {
+				values = Array.from(control.selectedOptions)
+					.filter(
+						(option) =>
+							!option.disabled &&
+							!option.closest('optgroup[disabled]'),
+					)
+					.map((option) => optionLabel(option));
+			} else if (control.type === 'file') {
+				values = Array.from(control.files, (file) => file.name);
+			} else {
+				const option =
+					control.list &&
+					Array.from(control.list.options).find(
+						(item) => item.value === control.value,
+					);
+				values = [option ? optionLabel(option) : control.value];
+			}
+			values = values.filter((value) => value !== '');
+			const entry = this.ownerDocument.createElement('div');
+			const term = this.ownerDocument.createElement('dt');
+			const definition = this.ownerDocument.createElement('dd');
+			term.textContent = label;
+			if (values.length > 1) {
+				const list = this.ownerDocument.createElement('ul');
+				for (const value of values) {
+					const item = this.ownerDocument.createElement('li');
+					item.textContent = value;
+					list.append(item);
+				}
+				definition.append(list);
+			} else {
+				definition.textContent =
+					values[0] ?? this._reviewMessage('review-empty-label');
+			}
+			entry.append(term, definition);
+			entries.push(entry);
+		}
+		if (!this._contents.has(this._reviewList))
+			this._contents.set(
+				this._reviewList,
+				Array.from(this._reviewList.childNodes),
+			);
+		this._reviewList.replaceChildren(...entries);
 	}
 
 	_build() {
@@ -275,6 +475,7 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				this._progressLabel.htmlFor = this._identify(this._progress);
 			}
 		}
+		this._progressLabelContainer = this._progressLabel;
 		if (this._progressLabel.contains(this._progress)) {
 			const labelText = this._progressLabel.querySelector(
 				`[${prefix}label]`,
@@ -492,6 +693,8 @@ export class FormFieldsetProgressElement extends HTMLElement {
 	}
 
 	_render() {
+		if (this._review && this._steps[this._index].fieldset === this._review)
+			this._renderReview();
 		for (const [index, { fieldset }] of this._steps.entries()) {
 			this._set(fieldset, 'hidden', index === this._index ? null : '');
 		}
@@ -510,6 +713,17 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		}
 		this._set(this._progress, 'max', String(this.stepCount));
 		this._set(this._progress, 'value', String(this._index + 1));
+		this._set(this._progress, 'hidden', this.stepCount === 1 ? '' : null);
+		for (const label of new Set([
+			this._progressLabel,
+			this._progressLabelContainer,
+			...this._progress.labels,
+		])) {
+			if (this.stepCount !== 1 && !label.contains(this._progressLabel))
+				continue;
+			this._set(label, `${prefix}status`, '');
+			this._set(label, 'hidden', this.stepCount === 1 ? '' : null);
+		}
 		this._label(this._previous, 'previous', Math.max(0, this._index - 1));
 		this._label(
 			this._next,
@@ -528,11 +742,13 @@ export class FormFieldsetProgressElement extends HTMLElement {
 			'aria-label',
 			accessible === text ? null : accessible,
 		);
-		const nativeLabel = Array.from(this._progress.labels).some(
-			(label) =>
-				label.contains(this._progressLabel) &&
-				!label.closest('[hidden]'),
-		);
+		const nativeLabel =
+			this._progress.labels.length === 1 &&
+			Array.from(this._progress.labels).some(
+				(label) =>
+					label.contains(this._progressLabel) &&
+					!label.closest('[hidden]'),
+			);
 		this._set(
 			this._progress,
 			'aria-labelledby',
@@ -541,16 +757,6 @@ export class FormFieldsetProgressElement extends HTMLElement {
 				: null,
 		);
 		this._set(this._progress, 'aria-valuetext', null);
-		if (this.stepCount === 1) {
-			this._set(this._progress, 'hidden', '');
-			for (const label of new Set([
-				this._progressLabel,
-				...this._progress.labels,
-			])) {
-				this._set(label, `${prefix}status`, '');
-				this._set(label, 'hidden', '');
-			}
-		}
 	}
 
 	_label(button, name, index) {
@@ -670,6 +876,9 @@ export class FormFieldsetProgressElement extends HTMLElement {
 		this._next = null;
 		this._progress = null;
 		this._progressLabel = null;
+		this._progressLabelContainer = null;
+		this._review = null;
+		this._reviewList = null;
 		this._navigation = null;
 		this._submits = [];
 		this._state = 'idle';

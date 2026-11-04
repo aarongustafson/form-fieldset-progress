@@ -80,8 +80,8 @@ Use label attributes without changing the generated markup:
       <label>Name <input name="name" /></label>
     </fieldset>
     <fieldset>
-      <legend>Review</legend>
-      <p>Use Previous to check your name.</p>
+      <legend>Delivery notes</legend>
+      <label>Notes <textarea name="notes"></textarea></label>
     </fieldset>
     <button type="submit">Send</button>
   </form>
@@ -140,7 +140,7 @@ Translate the templates and the authored legends, fields, and submit labels:
 ```
 
 The component does not translate the browser’s validation messages.
-Label-attribute changes update in place.
+Navigation/progress label-attribute changes update in place.
 
 ## Supply your own controls
 
@@ -166,15 +166,15 @@ Reference existing controls by ID to replace the generated ones:
       <label>Name <input name="name" required /></label>
     </fieldset>
     <fieldset>
-      <legend>Review</legend>
-      <p>Use Back to check your name.</p>
+      <legend>Delivery notes</legend>
+      <label>Notes <textarea name="notes"></textarea></label>
     </fieldset>
     <nav aria-label="Application sections">
       <button id="back" type="button" hidden>Back</button>
-      <label id="application-status" for="application-progress"
+      <label id="application-status" for="application-progress" hidden
         >Form progress</label
       >
-      <progress id="application-progress" value="1" max="2"></progress>
+      <progress id="application-progress" value="1" max="2" hidden></progress>
       <button id="forward" type="button" hidden>Next</button>
       <button type="submit">Send application</button>
     </nav>
@@ -189,8 +189,13 @@ steps and must not belong to a different form.
 Changing a reference attribute restarts setup at the first section.
 
 The component updates referenced controls’ labels, progress, and visibility.
+Start enhancement-only Back, Next, progress, and progress labels with `hidden`.
+After successful setup, each is revealed when useful; single-section progress
+stays hidden. Hide the referenced elements themselves, not their ancestors.
+Leave Submit visible for the native fallback. Original hidden attributes
+are restored on teardown or setup failure.
 With a generated Next button, it moves authored submit controls into its footer.
-With a referenced Next button, submit controls stay where authored. Any reference
+With a referenced Next button, submit controls stay where authored. Any control reference
 attribute opts out of the default reserved-slot layout and Reset relocation.
 
 For a button with icons, put its text in a
@@ -203,13 +208,112 @@ associated label or creates one. A wrapping label needs a separate
 `data-fieldset-progress-label` text container that does not contain progress.
 Text containers must not contain links or form controls. During enhancement,
 progress gets its name from an associated label, or from `aria-labelledby`
-when the visible text is not a native label. A distinct `progress-aria-label`
+when the visible text is not a native label or multiple native labels would
+add unrelated wording. A distinct `progress-aria-label`
 template supplies an override; matching text is not copied into `aria-label`.
 The component uses native progress values instead of a repeated `aria-valuetext`.
 Authored naming attributes are restored on teardown.
 
 See [custom control placement](demo/index.html#custom-layout) and
 [icons with translated labels](demo/index.html#translated-controls).
+
+## Add a review screen
+
+Review is opt-in. `review-panel` generates a final fieldset; `review-ref`
+uses an authored one. Do not combine them.
+
+```html
+<form-fieldset-progress review-panel review-label="Check your answers">
+  <form action="/apply" method="post">
+    <fieldset>
+      <legend>Contact</legend>
+      <label>Name <input name="name" required /></label>
+    </fieldset>
+    <fieldset>
+      <legend>Delivery</legend>
+      <label
+        >Country
+        <select name="country">
+          <option value="uk">United Kingdom</option>
+          <option value="ca">Canada</option>
+        </select>
+      </label>
+    </fieldset>
+    <button type="submit">Send</button>
+  </form>
+</form-fieldset-progress>
+```
+
+The review participates in Back/Next, focus, events, and progress. Submit appears
+there. Forward navigation validates the input sections before reaching review;
+native final submission still validates the whole form.
+
+Every entry into review rebuilds a `<dl>` containing one `<div>` with a `<dt>`
+and `<dd>` per field or choice group. Changing answers with Back and returning
+updates the summary. It does not mirror edits continuously while review is open.
+
+- Include enabled, named native inputs, selects, and textareas in participating
+  sections, plus form-associated controls outside fieldsets.
+- Omit passwords, hidden inputs, buttons, and controls disabled directly or
+  through a fieldset. The summary is not a submission payload.
+- Use `aria-labelledby`, then `aria-label`, then associated native labels,
+  falling back to the control’s name. Input/select/textarea content is excluded
+  from wrapping label text.
+- Radio groups and shared-name checkbox groups use a nested fieldset’s legend,
+  or their name if there is no nested group legend. Selected choices show their
+  labels; standalone checkboxes show Selected or Not selected.
+- Selects and datalist choices use option labels rather than raw values.
+  File inputs show filenames only. Other values are shown as stored by the
+  native control; empty values show Not provided.
+- Multiple selections or files use a list inside the `<dd>`. Labels and values
+  are inserted as plain text, never interpreted as HTML.
+
+To supply a review fieldset, reference its ID:
+
+```html
+<form-fieldset-progress review-ref="answers">
+  <form action="/apply" method="post">
+    <fieldset>
+      <legend>Contact</legend>
+      <label>Name <input name="name" required /></label>
+    </fieldset>
+    <fieldset id="answers" hidden>
+      <legend>Confirm your details</legend>
+      <p>Check these answers before sending.</p>
+      <dl></dl>
+    </fieldset>
+    <button type="submit">Send</button>
+  </form>
+</form-fieldset-progress>
+```
+
+The referenced fieldset must be outermost in this form, with a nonempty direct
+legend and no hidden ancestor. Keep it read-only: no nested fieldsets, form
+controls, editable content, or links. The component makes it the final section,
+even if it appears earlier in the markup. Its first direct `<dl>` receives the
+summary, or a list is created. Other authored content stays in place.
+
+| Attribute                | Default / purpose                                                      |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `review-panel`           | Boolean opt-in to a generated final review fieldset                    |
+| `review-ref`             | ID of an authored review fieldset; does not customize footer placement |
+| `review-label`           | `Review`; literal generated legend text                                |
+| `review-empty-label`     | `Not provided`; empty fields and unselected groups                     |
+| `review-checked-label`   | `Selected`; checked standalone checkbox                                |
+| `review-unchecked-label` | `Not selected`; unchecked standalone checkbox                          |
+
+All review messages must be nonempty plain text. Authored legends and field/choice
+labels provide the rest of the localization. For example,
+`review-label="Vérification" review-empty-label="Non renseigné"
+review-checked-label="Oui" review-unchecked-label="Non"`.
+Changing a review attribute restarts setup at the first section, retaining
+native field values. Reset returns to the first section; the next review entry
+shows the reset values.
+
+Without JavaScript, no generated review exists; an authored hidden review stays
+hidden and the form can submit normally. Disconnect, refresh, or failed setup
+restores authored review nodes and hidden attributes and removes generated UI.
+See the [generated and authored review examples](demo/index.html#review-panel).
 
 ## JavaScript API
 
@@ -309,9 +413,9 @@ See the [section-validation opt-out example](demo/index.html#validation-option).
 An uncanceled native reset restores form controls’ default values and returns to
 the first section without moving focus. The component does not create Reset.
 
-With no reference attributes, it relocates authored button/input Reset controls
+With no control reference attributes, it relocates authored button/input Reset controls
 before Back in the footer, except controls hidden by a `[hidden]` ancestor or
-disabled directly or through a fieldset. With any reference attribute, Reset
+disabled directly or through a fieldset. With any control reference attribute, Reset
 stays where authored.
 
 See the [Reset example](demo/index.html#optional-reset).
@@ -322,6 +426,8 @@ The optional stylesheet provides a full-width footer, distinct Back/Next
 treatments, and equal reserved Back and Next/Submit slots around progress.
 Hiding Back does not collapse its slot. An authored Reset sits before Back and
 wraps above navigation when the footer is 24rem wide or narrower.
+Review styles distinguish field labels from values, preserve multiline answers,
+and allow long values to wrap.
 
 | CSS custom property          | Default                             |
 | ---------------------------- | ----------------------------------- |
@@ -335,6 +441,8 @@ Light-DOM styling hooks:
 - Controls: `data-fieldset-progress-previous`, `data-fieldset-progress-next`,
   `data-fieldset-progress-submit`, and `data-fieldset-progress-reset`.
 - Progress: `data-fieldset-progress-progress` and `data-fieldset-progress-status`.
+- Review: `data-fieldset-progress-review-panel`, `data-fieldset-progress-review`,
+  and the generated `data-fieldset-progress-review-title`.
 - Default layout: `data-fieldset-progress-navigation`,
   `data-fieldset-progress-controls`, `data-fieldset-progress-previous-slot`,
   `data-fieldset-progress-next-slot`, and `data-fieldset-progress-reset-slot`.

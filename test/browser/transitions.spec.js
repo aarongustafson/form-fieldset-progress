@@ -22,7 +22,7 @@ test('Reset is an optional later example rather than part of the introductory fo
 	await example.getByLabel('Name', { exact: true }).fill('Ada');
 	await example.locator('[data-fieldset-progress-next]').click();
 	await expect(
-		example.getByRole('group', { name: 'Review', exact: true }),
+		example.getByRole('group', { name: 'Delivery notes', exact: true }),
 	).toBeVisible();
 	await example
 		.getByRole('button', { name: 'Start over', exact: true })
@@ -149,7 +149,7 @@ test('native transitions animate only section snapshots and keep controls statio
 		.boundingBox();
 	await example.locator('[data-fieldset-progress-next]').click();
 	await expect(
-		example.getByRole('group', { name: 'Review', exact: true }),
+		example.getByRole('group', { name: 'Delivery notes', exact: true }),
 	).toBeFocused();
 	await page.evaluate(async () => {
 		await window.sectionTransitions[1].finished;
@@ -172,7 +172,7 @@ test('native transitions animate only section snapshots and keep controls statio
 	await example.locator('[data-fieldset-progress-next]').click();
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await expect(
-		example.getByRole('group', { name: 'Review', exact: true }),
+		example.getByRole('group', { name: 'Delivery notes', exact: true }),
 	).toBeFocused();
 	await expect(page.locator('html')).not.toHaveAttribute(
 		'data-section-transition',

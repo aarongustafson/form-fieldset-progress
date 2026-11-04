@@ -589,11 +589,11 @@ test('the walkthrough introduces default behavior and labels before custom navig
 	).toHaveText('Previous');
 	const legends = page.locator('#legend-labels');
 	await expect(legends.locator('[data-fieldset-progress-next]')).toHaveText(
-		'Continue to Review',
+		'Continue to Delivery notes',
 	);
 	await expect(
 		legends.locator('[data-fieldset-progress-next]'),
-	).toHaveAccessibleName('Continue to Review');
+	).toHaveAccessibleName('Continue to Delivery notes');
 });
 
 test('the event example reports completed section changes rather than invalid navigation', async ({
@@ -611,7 +611,7 @@ test('the event example reports completed section changes rather than invalid na
 		previousIndex: 0,
 		stepIndex: 1,
 		stepCount: 2,
-		fieldset: 'event-review',
+		fieldset: 'event-notes',
 	});
 
 	await example.locator('[data-fieldset-progress-previous]').click();

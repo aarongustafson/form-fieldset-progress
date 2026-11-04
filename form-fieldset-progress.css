@@ -134,6 +134,29 @@ form-fieldset-progress [hidden],
 	outline-offset: 3px;
 }
 
+[data-fieldset-progress-review] {
+	margin-block: 1rem;
+}
+
+[data-fieldset-progress-review] > div + div {
+	margin-block-start: 1rem;
+}
+
+[data-fieldset-progress-review] dt {
+	font-weight: bold;
+}
+
+[data-fieldset-progress-review] dd {
+	margin-inline-start: 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+[data-fieldset-progress-review] ul {
+	margin-block: 0;
+	padding-inline-start: 1.5rem;
+}
+
 @container (max-width: 24rem) {
 	[data-fieldset-progress-controls][data-fieldset-progress-has-reset] {
 		grid-template-columns: minmax(4.5rem, 1fr) minmax(0, 2fr) minmax(

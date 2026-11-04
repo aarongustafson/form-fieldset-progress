@@ -8,11 +8,46 @@
 				{
 					"kind": "class",
 					"name": "FormFieldsetProgressElement",
-					"description": "Enhances the outermost fieldsets in one wrapped form into a light-DOM, validated step-by-step experience. Progress is the current one-based section number out of the total; a single-section form hides progress and its labels. With no reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Any reference attribute preserves authored Reset placement and opts out of the default slot layout.",
+					"description": "Enhances outermost fieldsets in one form into a light-DOM, validated step-by-step experience. Optional generated or referenced review adds a final fieldset with safe labeled values in a definition list. Progress is the current one-based section number out of the total, including review; a single-section form hides progress and its labels. Referenced enhancement-only controls are revealed when useful and authored visibility restores on teardown. With no control reference attributes, the full-width footer reserves equal Back/Next slots around progress and relocates authored enabled reset controls not hidden by a hidden attribute before Back. Review references do not customize this footer.",
 					"tagName": "form-fieldset-progress",
 					"customElement": true,
 					"superclass": { "name": "HTMLElement" },
 					"attributes": [
+						{
+							"name": "review-panel",
+							"type": { "text": "boolean" },
+							"default": "false",
+							"description": "Generate a final review fieldset with dl > div > dt/dd entries from enabled named native fields. Mutually exclusive with review-ref. Omit passwords, hidden inputs and disabled controls; insert labels and values as plain text. Rebuild on entry."
+						},
+						{
+							"name": "review-ref",
+							"type": { "text": "string" },
+							"description": "ID of an outermost read-only fieldset in the controlled form, with a direct nonempty legend and no hidden ancestor. Use it as the final review section and populate its first direct dl or generate one. Mutually exclusive with review-panel; does not customize footer placement. Restore authored nodes and visibility on teardown."
+						},
+						{
+							"name": "review-label",
+							"type": { "text": "string" },
+							"default": "\"Review\"",
+							"description": "Nonempty literal generated review legend. An authored review uses its own legend. Changing review configuration restarts setup."
+						},
+						{
+							"name": "review-empty-label",
+							"type": { "text": "string" },
+							"default": "\"Not provided\"",
+							"description": "Nonempty plain text for empty review values and unselected choice groups."
+						},
+						{
+							"name": "review-checked-label",
+							"type": { "text": "string" },
+							"default": "\"Selected\"",
+							"description": "Nonempty plain text for checked standalone checkboxes in review."
+						},
+						{
+							"name": "review-unchecked-label",
+							"type": { "text": "string" },
+							"default": "\"Not selected\"",
+							"description": "Nonempty plain text for unchecked standalone checkboxes in review."
+						},
 						{
 							"name": "previous-ref",
 							"type": { "text": "string" },
@@ -103,7 +138,7 @@
 							"name": "stepCount",
 							"readonly": true,
 							"type": { "text": "number" },
-							"description": "Number of available steps."
+							"description": "Number of available steps, including optional final review."
 						},
 						{
 							"kind": "method",
