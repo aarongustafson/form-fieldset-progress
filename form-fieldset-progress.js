@@ -744,8 +744,19 @@ export class FormFieldsetProgressElement extends HTMLElementBase {
 			)
 				continue;
 			const previous = root.activeElement;
-			control.focus();
+			let receivedFocus = false;
+			// Observe focus before field handlers can restore the original target.
+			const recordFocus = (event) => {
+				if (event.target === control) receivedFocus = true;
+			};
+			root.addEventListener('focus', recordFocus, true);
+			try {
+				control.focus();
+			} finally {
+				root.removeEventListener('focus', recordFocus, true);
+			}
 			if (
+				receivedFocus ||
 				this._state !== 'ready' ||
 				this._steps[this._index]?.fieldset !== fieldset ||
 				root.activeElement === control ||

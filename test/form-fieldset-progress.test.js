@@ -230,6 +230,50 @@ describe('progressive enhancement', () => {
 		expect(document.activeElement).toBe(city);
 	});
 
+	it.each([false, true])(
+		'preserves focus redirected to the original navigation button with another field: %s',
+		async (anotherField) => {
+			const host = await fixture('no-validation');
+			const next = host.querySelector('[data-fieldset-progress-next]');
+			const city = host.querySelector('[name=city]');
+			if (anotherField)
+				city.insertAdjacentHTML('afterend', '<input name="extra">');
+			city.addEventListener('focus', () => next.focus());
+			next.focus();
+			expect(host.next()).toBe(true);
+			expect(host.stepIndex).toBe(1);
+			expect(document.activeElement).toBe(next);
+		},
+	);
+
+	it.each(['focused', 'unfocusable', 'throws'])(
+		'removes its temporary focus observer when the field is %s',
+		async (result) => {
+			const host = await fixture('no-validation');
+			const city = host.querySelector('[name=city]');
+			if (result === 'unfocusable')
+				vi.spyOn(city, 'focus').mockImplementation(() => {});
+			if (result === 'throws')
+				vi.spyOn(city, 'focus').mockImplementation(() => {
+					throw new Error('Authored focus failure');
+				});
+			const added = vi.spyOn(document, 'addEventListener');
+			const removed = vi.spyOn(document, 'removeEventListener');
+			if (result === 'throws')
+				expect(() => host.next()).toThrow('Authored focus failure');
+			else expect(host.next()).toBe(true);
+			const observers = added.mock.calls.filter(
+				([type]) => type === 'focus',
+			);
+			expect(observers).toHaveLength(1);
+			expect(removed).toHaveBeenCalledWith(
+				'focus',
+				observers[0][1],
+				true,
+			);
+		},
+	);
+
 	it('offers validated navigation before rendering and allows cancellation', async () => {
 		const host = await fixture();
 		const before = vi.fn((event) => {

@@ -520,6 +520,8 @@ and `aria-hidden` fields are skipped, as are button-like inputs and controls
 owned by another form. The browser determines whether a field hidden by CSS
 can receive focus. Setup, refresh, and reset do not move focus; validation
 failures still focus the invalid field.
+Authored field focus handlers can redirect focus, including back to a
+navigation control.
 Progress has visible text and an accessible name. There is no additional live
 announcement of section changes.
 

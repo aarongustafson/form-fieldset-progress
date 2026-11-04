@@ -96,3 +96,32 @@ test('panels with no focusable fields fall back to the fieldset', async ({
 		example.getByRole('group', { name: 'Address', exact: true }),
 	).toBeFocused();
 });
+
+for (const anotherField of [false, true]) {
+	test(`authored redirect to the original Next button is preserved with another field: ${anotherField}`, async ({
+		page,
+	}) => {
+		const example = page.locator('form-fieldset-progress');
+		await example.evaluate((element, extra) => {
+			const next = element.querySelector('[data-fieldset-progress-next]');
+			const city = element.querySelector('[name=city]');
+			if (extra)
+				city.insertAdjacentHTML('afterend', '<input name="extra">');
+			city.addEventListener('focus', () => next.focus());
+			element.addEventListener('form-fieldset-progress:change', () => {
+				globalThis.preservedRedirect = document.activeElement === next;
+			});
+		}, anotherField);
+		await example
+			.getByRole('textbox', { name: 'Name', exact: true })
+			.fill('Ada');
+		const next = example.locator('[data-fieldset-progress-next]');
+		await next.focus();
+		await next.click();
+		await expect(example).toHaveJSProperty('stepIndex', 1);
+		await expect(next).toBeFocused();
+		expect(await page.evaluate(() => globalThis.preservedRedirect)).toBe(
+			true,
+		);
+	});
+}
