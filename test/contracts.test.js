@@ -7,6 +7,36 @@ const pathFor = (path) => resolve(process.cwd(), path);
 const json = (path) => JSON.parse(readFileSync(pathFor(path), 'utf8'));
 
 describe('published API contracts', () => {
+	it('documents every CSS property and separates next-button colors from progress accent', () => {
+		const css = readFileSync(pathFor('form-fieldset-progress.css'), 'utf8');
+		const readme = readFileSync(pathFor('README.md'), 'utf8');
+		const properties = json('custom-elements.json').modules[0]
+			.declarations[0].cssProperties;
+		const names = [
+			...new Set(
+				[...css.matchAll(/var\((--[\w-]+)/g)].map(([, name]) => name),
+			),
+		];
+		expect(properties.map(({ name }) => name).sort()).toEqual(names.sort());
+		for (const name of names) expect(readme).toContain(name);
+		expect(properties).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					name: '--fieldset-progress-next-background',
+					default: 'ButtonFace',
+				}),
+				expect.objectContaining({
+					name: '--fieldset-progress-next-color',
+					default: 'ButtonText',
+				}),
+				expect.objectContaining({
+					name: '--fieldset-progress-accent',
+					description: expect.stringContaining('progress only'),
+				}),
+			]),
+		);
+	});
+
 	it('links README examples to existing demo sections', () => {
 		const readme = readFileSync(pathFor('README.md'), 'utf8');
 		const demo = document.createElement('div');

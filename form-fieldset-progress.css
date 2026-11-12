@@ -107,7 +107,7 @@ form-fieldset-progress [hidden],
 [data-fieldset-progress-reset] {
 	font: inherit;
 	padding: 0.625em 0.875em;
-	border: 2px solid ButtonBorder;
+	border: 2px solid ButtonText;
 	border-radius: var(--fieldset-progress-radius, 0.25rem);
 	cursor: pointer;
 }
@@ -119,19 +119,12 @@ form-fieldset-progress [hidden],
 }
 
 [data-fieldset-progress-next] {
-	color: HighlightText;
-	background: var(--fieldset-progress-accent, Highlight);
+	color: var(--fieldset-progress-next-color, ButtonText);
+	background: var(--fieldset-progress-next-background, ButtonFace);
 }
 
 [data-fieldset-progress-submit] {
 	margin-inline-start: auto;
-}
-
-[data-fieldset-progress-previous]:focus-visible,
-[data-fieldset-progress-next]:focus-visible,
-[data-fieldset-progress-reset]:focus-visible {
-	outline: 3px solid CanvasText;
-	outline-offset: 3px;
 }
 
 [data-fieldset-progress-review] {

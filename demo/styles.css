@@ -117,22 +117,22 @@ textarea {
 	font: inherit;
 	color: FieldText;
 	background: Field;
-	border: 1px solid ButtonBorder;
+	border: 1px solid FieldText;
 }
 
 button {
 	font: inherit;
 	padding: 0.625em 0.875em;
 	cursor: pointer;
+	background: ButtonFace;
+	color: ButtonText;
+	border: 2px solid ButtonText;
 }
-[type='submit'] {
-	background: Highlight;
-	color: HighlightText;
-	border: 2px solid ButtonBorder;
-}
-:focus-visible {
-	outline: 3px solid CanvasText;
-	outline-offset: 3px;
+
+.paired-controls {
+	--fieldset-progress-accent: #173f63;
+	--fieldset-progress-next-background: #173f63;
+	--fieldset-progress-next-color: #fff;
 }
 [role='status']:empty {
 	display: none;

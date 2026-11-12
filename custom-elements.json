@@ -220,7 +220,17 @@
 						{
 							"name": "--fieldset-progress-accent",
 							"default": "Highlight",
-							"description": "Progress and primary navigation color; ensure contrast with HighlightText."
+							"description": "Native progress only; does not set navigation button colors. Visible text and native value/max convey position independently of fill."
+						},
+						{
+							"name": "--fieldset-progress-next-background",
+							"default": "ButtonFace",
+							"description": "Next button background, paired with --fieldset-progress-next-color. Automatic forced-color adjustment remains enabled."
+						},
+						{
+							"name": "--fieldset-progress-next-color",
+							"default": "ButtonText",
+							"description": "Next button foreground, paired with --fieldset-progress-next-background. Check text contrast when overriding either color."
 						}
 					]
 				}
