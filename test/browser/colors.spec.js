@@ -92,9 +92,15 @@ async function measurements(locator) {
 		const foreground = paint(style.color);
 		const surround = background(element.parentElement);
 		const border = paint(style.borderTopColor);
+		const paintsBorder =
+			parseFloat(style.borderTopWidth) > 0 &&
+			!['none', 'hidden'].includes(style.borderTopStyle);
 		return {
 			text: ratio(foreground, fill),
-			boundary: Math.max(ratio(fill, surround), ratio(border, surround)),
+			boundary: Math.max(
+				ratio(fill, surround),
+				paintsBorder ? ratio(border, surround) : 1,
+			),
 		};
 	});
 }
@@ -107,6 +113,45 @@ async function fixture(page) {
 	const host = page.locator('form-fieldset-progress');
 	await expect(host).toHaveJSProperty('state', 'ready');
 	return host;
+}
+
+for (const tag of ['input', 'button']) {
+	test(`${tag}: boundary measurements ignore unpainted borders`, async ({
+		page,
+	}) => {
+		await page.setContent('<body style="background:white"></body>');
+		await page.evaluate((name) => {
+			const control = document.createElement(name);
+			control.id = 'control';
+			control.style.cssText =
+				'appearance:none;background:white;color:black';
+			document.body.append(control);
+		}, tag);
+		const control = page.locator('#control');
+		for (const border of [
+			'none',
+			'2px hidden black',
+			'0px solid black',
+			'2px solid transparent',
+		]) {
+			await control.evaluate((element, value) => {
+				element.style.border = value;
+			}, border);
+			const result = await measurements(control);
+			expect(result.text, border).toBe(21);
+			expect(result.boundary, border).toBe(1);
+		}
+		await control.evaluate((element) => {
+			element.style.border = '2px solid black';
+		});
+		expect((await measurements(control)).boundary).toBe(21);
+		await control.evaluate((element) => {
+			element.style.border = 'none';
+			element.style.background = 'black';
+			element.style.color = 'white';
+		});
+		expect((await measurements(control)).boundary).toBe(21);
+	});
 }
 
 test('Next defaults to the native button pair and separates progress accent from its paired overrides', async ({
@@ -364,8 +409,11 @@ for (const path of ['index.html', 'esm.html', 'no-script.html']) {
 				(await measurements(button)).boundary,
 			).toBeGreaterThanOrEqual(3);
 		}
+		// Native choice-control painting is not represented by CSS border metrics.
 		for (const field of await page
-			.locator('input:not([type=radio]):visible, textarea:visible')
+			.locator(
+				'input:not([type=radio], [type=checkbox]):visible, textarea:visible',
+			)
 			.all()) {
 			expect((await measurements(field)).text).toBeGreaterThanOrEqual(
 				4.5,
