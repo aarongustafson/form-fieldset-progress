@@ -10,10 +10,10 @@ label customization, authored controls, and section-change events.
 
 ## Installation
 
-The package is unreleased. Install this checkout in a consuming project:
+Install the package from npm:
 
 ```sh
-npm install ../form-fieldset-progress
+npm install @aarongustafson/form-fieldset-progress
 ```
 
 With a bundler, register the element and load its optional stylesheet:
