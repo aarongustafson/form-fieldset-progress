@@ -438,19 +438,48 @@ See the [Reset example](demo/index.html#optional-reset).
 
 ## Styling
 
-The optional stylesheet provides a full-width footer, distinct Back/Next
-treatments, and equal reserved Back and Next/Submit slots around progress.
+The optional stylesheet provides a full-width footer and equal reserved Back
+and Next/Submit slots around progress. Back, Next, and Reset use the
+`ButtonText`/`ButtonFace` control pair, with a `ButtonText` boundary.
 Hiding Back does not collapse its slot. An authored Reset sits before Back and
 wraps above navigation when the footer is 24rem wide or narrower.
 Review styles distinguish field labels from values, preserve multiline answers,
 and allow long values to wrap.
 
-| CSS custom property          | Default                             |
-| ---------------------------- | ----------------------------------- |
-| `--fieldset-progress-gap`    | `0.75rem`                           |
-| `--fieldset-progress-width`  | `16rem`, the maximum progress width |
-| `--fieldset-progress-radius` | `0.25rem`                           |
-| `--fieldset-progress-accent` | `Highlight`                         |
+| CSS custom property                   | Default                             |
+| ------------------------------------- | ----------------------------------- |
+| `--fieldset-progress-gap`             | `0.75rem`                           |
+| `--fieldset-progress-width`           | `16rem`, the maximum progress width |
+| `--fieldset-progress-radius`          | `0.25rem`                           |
+| `--fieldset-progress-accent`          | `Highlight`                         |
+| `--fieldset-progress-next-background` | `ButtonFace`                        |
+| `--fieldset-progress-next-color`      | `ButtonText`                        |
+
+`--fieldset-progress-accent` styles native progress only. Progress keeps its
+visible section label and native value/maximum so meaning doesn’t depend on
+the fill color. Buttons retain the browser’s focus ring; the stylesheet
+doesn’t define an outline. Your normal `button:focus-visible` styles apply.
+Automatic forced-color adjustment remains enabled.
+
+To customize Next, set its foreground and background together:
+
+```css
+form-fieldset-progress {
+  --fieldset-progress-accent: #173f63;
+  --fieldset-progress-next-background: #173f63;
+  --fieldset-progress-next-color: #fff;
+}
+```
+
+See the [paired-color example](demo/index.html#control-colors). Submit controls
+keep their authored styles; the optional component stylesheet doesn’t paint
+their surfaces.
+
+**Existing accent overrides:** earlier styles also used
+`--fieldset-progress-accent` as Next’s background with `HighlightText` labels.
+That coupling is removed. If you want a custom Next fill, set both new Next
+properties explicitly. An existing accent override still styles progress but
+no longer changes navigation buttons.
 
 Light-DOM styling hooks:
 

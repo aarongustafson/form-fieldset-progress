@@ -310,6 +310,69 @@
 					</div>
 				</div>
 			</section>
+			<section class="demo-section" id="control-colors">
+				<h2>Pair the navigation colors</h2>
+				<p>
+					Back, Next, and Reset use ButtonText on ButtonFace by
+					default. The accent property colors native progress only;
+					the visible section label also tells you where you are. To
+					give Next a custom fill, set its foreground and background
+					together. Submit keeps your authored styles. Buttons keep
+					the browser’s focus ring and automatic forced-color
+					adjustment.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>.paired-controls {
+  --fieldset-progress-accent: #173f63;
+  --fieldset-progress-next-background: #173f63;
+  --fieldset-progress-next-color: #fff;
+}
+
+&lt;form-fieldset-progress class="paired-controls"&gt;
+  &lt;form&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Your name
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send application&lt;/button&gt;
+    &lt;button type="reset"&gt;Start over&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/form-fieldset-progress&gt;</code></pre>
+					<div class="demo">
+						<form-fieldset-progress
+							id="paired-colors"
+							class="paired-controls"
+						>
+							<form action="/apply" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label
+										>Your name
+										<input
+											name="name"
+											autocomplete="name"
+											required
+									/></label>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send application</button>
+								<button type="reset">Start over</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
 			<section class="demo-section" id="custom-layout">
 				<h2>BYOM: Bring your own markup</h2>
 				<p>
