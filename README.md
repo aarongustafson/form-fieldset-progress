@@ -1,5 +1,11 @@
 # `<form-fieldset-progress>`
 
+[![npm version](https://img.shields.io/npm/v/@aarongustafson/form-fieldset-progress.svg)](https://www.npmjs.com/package/@aarongustafson/form-fieldset-progress)
+[![CI status](https://img.shields.io/github/actions/workflow/status/aarongustafson/form-fieldset-progress/ci.yml?branch=main&label=CI)](https://github.com/aarongustafson/form-fieldset-progress/actions/workflows/ci.yml)
+[![Minified + gzipped size](https://img.shields.io/bundlejs/size/@aarongustafson/form-fieldset-progress?format=minzip&label=min%2Bgzip)](https://bundlejs.com/?q=@aarongustafson/form-fieldset-progress)
+[![License](https://img.shields.io/npm/l/@aarongustafson/form-fieldset-progress)](https://github.com/aarongustafson/form-fieldset-progress/blob/main/LICENSE)
+[![Type definitions](https://img.shields.io/npm/types/@aarongustafson/form-fieldset-progress)](https://github.com/aarongustafson/form-fieldset-progress/blob/main/form-fieldset-progress.d.ts)
+
 Show a form’s fieldsets one section at a time. The component adds Back, Next,
 and progress, validates fields before advancing, and shows the form’s submit
 button on the last section. It uses light DOM. Without JavaScript, the authored
