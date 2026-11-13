@@ -48,7 +48,7 @@
 					notes is 3 of 3, so the bar is full.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress&gt;
+					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form action="/apply" method="post"&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Contact details&lt;/legend&gt;
@@ -85,7 +85,7 @@
       Send application
     &lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress id="basic">
 							<form action="/apply" method="post">
@@ -171,7 +171,7 @@
 					hidden.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress&gt;
+					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Newsletter&lt;/legend&gt;
@@ -181,7 +181,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress id="single">
 							<form action="/subscribe" method="post">
@@ -215,10 +215,10 @@
 					legend.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress
+					<pre><code><mark>&lt;form-fieldset-progress
   previous-label="Previous"
   next-label="Continue"
-  progress-label="Section {current} of {total}: {legend}"&gt;
+  progress-label="Section {current} of {total}: {legend}"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
@@ -228,7 +228,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="short-labels"
@@ -267,9 +267,9 @@
 					accessible names without adding an <code>aria-label</code>.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress
+					<pre><code><mark>&lt;form-fieldset-progress
   previous-label="Back to {legend}"
-  next-label="Continue to {legend}"&gt;
+  next-label="Continue to {legend}"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
@@ -279,7 +279,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="legend-labels"
@@ -328,7 +328,7 @@
   --fieldset-progress-next-color: #fff;
 }
 
-&lt;form-fieldset-progress class="paired-controls"&gt;
+<mark>&lt;form-fieldset-progress class="paired-controls"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Your name
@@ -341,7 +341,7 @@
     &lt;button type="submit"&gt;Send application&lt;/button&gt;
     &lt;button type="reset"&gt;Start over&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="paired-colors"
@@ -400,11 +400,11 @@
 					an ancestor that also contains the native form.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress
+					<pre><code><mark>&lt;form-fieldset-progress
   previous-ref="english-back"
   next-ref="english-next"
   progress-ref="english-progress"
-  progress-label-ref="english-status"&gt;
+  progress-label-ref="english-status"&gt;</mark>
   &lt;div class="custom-progress"&gt;
     &lt;label id="english-status"
       for="english-progress" hidden&gt;Application sections&lt;/label&gt;
@@ -439,7 +439,7 @@
     &lt;button type="submit"
       form="english-application"&gt;Send application&lt;/button&gt;
   &lt;/nav&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="english-custom"
@@ -542,7 +542,7 @@
 					component updates the text without replacing its arrow.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress
+					<pre><code><mark>&lt;form-fieldset-progress
   previous-ref="custom-back"
   next-ref="custom-next"
   progress-ref="custom-progress"
@@ -551,7 +551,7 @@
   next-label="Continuer : {legend}"
   progress-label="Étape {current}/{total} : {legend}"
   previous-aria-label="{label}, étape {current}"
-  next-aria-label="{label}, étape {current}"&gt;
+  next-aria-label="{label}, étape {current}"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Coordonnées&lt;/legend&gt;
       &lt;label&gt;Votre nom
@@ -576,7 +576,7 @@
       &lt;button type="submit"&gt;Envoyer&lt;/button&gt;
     &lt;/nav&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo" lang="fr">
 						<form-fieldset-progress
 							id="authored"
@@ -665,10 +665,10 @@
 					their available space.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress lang="ar" dir="rtl"
+					<pre><code><mark>&lt;form-fieldset-progress lang="ar" dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
-  progress-label="الخطوة {current} من {total}: {legend}"&gt;
+  progress-label="الخطوة {current} من {total}: {legend}"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;بيانات الاتصال&lt;/legend&gt;
       &lt;label&gt;الاسم &lt;input name="name" /&gt;&lt;/label&gt;
@@ -682,7 +682,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;إرسال&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo" lang="ar" dir="rtl">
 						<form-fieldset-progress
 							id="rtl"
@@ -742,8 +742,8 @@
 					are omitted.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress review-panel
-  review-label="Check your answers"&gt;
+					<pre><code><mark>&lt;form-fieldset-progress review-panel
+  review-label="Check your answers"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
@@ -765,7 +765,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="generated-review"
@@ -842,7 +842,7 @@
 					supplies its title.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress review-ref="answers"&gt;
+					<pre><code><mark>&lt;form-fieldset-progress review-ref="answers"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
@@ -854,7 +854,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="authored-review"
@@ -909,7 +909,7 @@
 					section or emit a change event.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress id="events"&gt;
+					<pre><code><mark>&lt;form-fieldset-progress id="events"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset id="event-contact"&gt;
       &lt;legend&gt;Contact&lt;/legend&gt;
@@ -921,7 +921,7 @@
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark>
 &lt;pre id="section-event"&gt;No section change yet.&lt;/pre&gt;
 
 const element = document.querySelector('#events');
@@ -993,7 +993,7 @@ element.addEventListener('form-fieldset-progress:change',
   &lt;input id="enable-transitions" type="checkbox" checked /&gt;
   Animate section changes when motion is allowed
 &lt;/label&gt;
-&lt;form-fieldset-progress id="animated"&gt;
+<mark>&lt;form-fieldset-progress id="animated"&gt;</mark>
   &lt;form&gt;
     &lt;div class="transition-pages"&gt;
       &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
@@ -1010,7 +1010,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;/div&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark>
 
 &lt;!-- This example adds animation in a separate script. --&gt;
 &lt;script type="module" src="./transitions.js"&gt;&lt;/script&gt;</code></pre>
@@ -1079,7 +1079,7 @@ element.addEventListener('form-fieldset-progress:change',
 					component does not create a Reset button.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress&gt;
+					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name
@@ -1092,7 +1092,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;button type="submit"&gt;Send&lt;/button&gt;
     &lt;button type="reset"&gt;Start over&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress id="reset-demo">
 							<form action="/example" method="post">
@@ -1143,7 +1143,7 @@ element.addEventListener('form-fieldset-progress:change',
 					first section so the browser can report the required field.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress no-validation&gt;
+					<pre><code><mark>&lt;form-fieldset-progress no-validation&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Profile&lt;/legend&gt;
@@ -1154,7 +1154,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;</code></pre>
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					<div class="demo">
 						<form-fieldset-progress
 							id="skip-validation"
@@ -1196,7 +1196,7 @@ element.addEventListener('form-fieldset-progress:change',
 					again.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;
+					<pre><code><mark>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;First section&lt;/legend&gt;
       &lt;p&gt;This remains visible when setup fails.&lt;/p&gt;
@@ -1206,7 +1206,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;/fieldset&gt;
     &lt;button type="submit"&gt;Send example&lt;/button&gt;
   &lt;/form&gt;
-&lt;/form-fieldset-progress&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark>
 
 // After reporting the setup error:
 const element = document.querySelector('#failure');
@@ -1246,7 +1246,7 @@ element.refresh();</code></pre>
 				<div class="code-demo-pair">
 					<pre><code>&lt;!-- no-script.html omits the component script. --&gt;
 &lt;dialog open aria-label="Native form example"&gt;
-  &lt;form-fieldset-progress&gt;
+  <mark>&lt;form-fieldset-progress&gt;</mark>
     &lt;form method="dialog"&gt;
       &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
         &lt;label&gt;Name
@@ -1258,7 +1258,7 @@ element.refresh();</code></pre>
       &lt;/fieldset&gt;
       &lt;button type="submit"&gt;Send&lt;/button&gt;
     &lt;/form&gt;
-  &lt;/form-fieldset-progress&gt;
+  <mark>&lt;/form-fieldset-progress&gt;</mark>
 &lt;/dialog&gt;</code></pre>
 					<div class="demo">
 						<iframe
