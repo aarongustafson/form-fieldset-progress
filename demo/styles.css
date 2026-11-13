@@ -65,6 +65,14 @@ pre {
 	font-size: 0.875rem;
 }
 
+pre code mark {
+	background: Mark;
+	color: MarkText;
+	border-radius: 2px;
+	padding: 0.125rem 0.25rem;
+	font-weight: 600;
+}
+
 .demo {
 	padding: 1rem;
 	border: 1px solid ButtonBorder;
