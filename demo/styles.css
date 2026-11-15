@@ -39,6 +39,7 @@ code {
 }
 
 .demo-section {
+	margin-trim: block;
 	padding: clamp(0.75rem, 2vw, 1.5rem);
 	border: 1px solid ButtonBorder;
 	border-radius: 0.5rem;
