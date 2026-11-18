@@ -1,14 +1,4 @@
-import { test, expect } from '@playwright/test';
-
-test.beforeEach(async ({ page }) => {
-	// Code-control upgrades have separate coverage and can shift measured layout.
-	await page.route('**/demo/code-examples.js', (route) =>
-		route.fulfill({
-			contentType: 'text/javascript',
-			body: 'export {};',
-		}),
-	);
-});
+import { test, expect } from './fixtures.js';
 
 test('Reset is an optional later example rather than part of the introductory form', async ({
 	page,
