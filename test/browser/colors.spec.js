@@ -12,10 +12,13 @@ const componentCSS = await readFile(
 	new URL('../../form-fieldset-progress.css', import.meta.url),
 	'utf8',
 );
-const demoCSS = await readFile(
-	new URL('../../demo/styles.css', import.meta.url),
-	'utf8',
-);
+const demoCSS = (
+	await Promise.all(
+		['styles.css', 'demo-shell.css'].map((file) =>
+			readFile(new URL(`../../demo/${file}`, import.meta.url), 'utf8'),
+		),
+	)
+).join('\n');
 
 // The study's 62 observations reduce to 19 palettes for these six tokens.
 // Alpha is preserved. Substitution tests authored CSS, not OS repainting.
