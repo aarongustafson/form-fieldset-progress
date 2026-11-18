@@ -1,3 +1,11 @@
+@font-face {
+	font-family: 'system-monospace';
+	src:
+		local('SFMono-Regular'), local('Menlo'), local('Monaco'),
+		local('Consolas'), local('Liberation Mono'), local('Courier New'),
+		local('monospace');
+}
+
 :root {
 	color-scheme: light dark;
 	font-family: system-ui, sans-serif;
@@ -35,7 +43,7 @@ h2 {
 	margin-block-start: 0;
 }
 code {
-	font-family: ui-monospace, monospace;
+	font-family: system-monospace, monospace;
 }
 
 .demo-section {

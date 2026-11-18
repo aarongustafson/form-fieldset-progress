@@ -1,4 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
+
+test('component-only demo checks never request the optional code CDN', async ({
+	page,
+}) => {
+	const requests = [];
+	await page.route(
+		'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+		(route) => {
+			requests.push(route.request().url());
+			return route.abort();
+		},
+	);
+	await page.goto('/demo/');
+	await expect(page.locator('#basic')).toHaveJSProperty('state', 'ready');
+	expect(requests).toEqual([]);
+});
 
 test('optional animation loading does not delay form enhancement', async ({
 	page,

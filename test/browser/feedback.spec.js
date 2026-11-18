@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 for (const type of ['button', 'submit', 'image']) {
 	for (const inherited of [false, true]) {

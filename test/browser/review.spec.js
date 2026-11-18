@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test('generated review validates, summarizes native labels and files, updates on return, and submits', async ({
 	page,

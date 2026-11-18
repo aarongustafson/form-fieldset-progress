@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test('Reset is an optional later example rather than part of the introductory form', async ({
 	page,

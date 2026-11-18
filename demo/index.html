@@ -5,16 +5,19 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>form-fieldset-progress demos</title>
 		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="./demo-shell.css" />
 		<link rel="stylesheet" href="../form-fieldset-progress.css" />
 		<link rel="modulepreload" href="../form-fieldset-progress.js" />
 		<link rel="modulepreload" href="../define.js" />
 		<script type="module" src="./demo.js"></script>
 		<script type="module" src="./transitions.js"></script>
 	</head>
-	<body>
+	<body data-syntax-theme="github">
+		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
+			<p class="eyebrow">Web component / Examples</p>
 			<h1>&lt;form-fieldset-progress&gt;</h1>
-			<p>
+			<p class="lede">
 				Turn a form’s fieldsets into steps, with Back, Next, and
 				progress.
 				<a
@@ -22,8 +25,26 @@
 					>README and API</a
 				>
 			</p>
+			<nav aria-label="Component resources">
+				<a
+					href="https://github.com/aarongustafson/form-fieldset-progress/blob/main/README.md"
+					>Read the README</a
+				>
+				<a
+					href="https://github.com/aarongustafson/form-fieldset-progress"
+					>View on GitHub</a
+				>
+				<a href="./esm.html">esm.sh example</a>
+			</nav>
 		</header>
-		<main>
+		<main id="main" tabindex="-1">
+			<p
+				id="microlighter-status"
+				class="enhancement-status"
+				role="status"
+				hidden
+			></p>
+
 			<section class="demo-section" id="getting-started">
 				<h2>Start with a form and fieldsets</h2>
 				<p>
@@ -48,7 +69,16 @@
 					notes is 3 of 3, so the bar is full.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Start with a form and fieldsets code 1"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form action="/apply" method="post"&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Contact details&lt;/legend&gt;
@@ -86,6 +116,7 @@
     &lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress id="basic">
 							<form action="/apply" method="post">
@@ -171,7 +202,16 @@
 					hidden.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Accidentally wrapped a single fieldset? No worries. code 2"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Newsletter&lt;/legend&gt;
@@ -182,6 +222,7 @@
     &lt;button type="submit"&gt;Subscribe&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress id="single">
 							<form action="/subscribe" method="post">
@@ -215,7 +256,16 @@
 					legend.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Customize the labels code 3"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress
   previous-label="Previous"
   next-label="Continue"
   progress-label="Section {current} of {total}: {legend}"&gt;</mark>
@@ -229,6 +279,7 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="short-labels"
@@ -267,7 +318,16 @@
 					accessible names without adding an <code>aria-label</code>.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Customize the labels code 4"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress
   previous-label="Back to {legend}"
   next-label="Continue to {legend}"&gt;</mark>
   &lt;form&gt;
@@ -280,6 +340,7 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="legend-labels"
@@ -322,7 +383,16 @@
 					adjustment.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>.paired-controls {
+					<micro-lighter
+						class="code-panel"
+						language="css"
+						controls="copy"
+						data-label="CSS"
+					>
+						<pre
+							aria-label="Pair the navigation colors code 5"
+							tabindex="0"
+						><code>.paired-controls {
   --fieldset-progress-accent: #173f63;
   --fieldset-progress-next-background: #173f63;
   --fieldset-progress-next-color: #fff;
@@ -342,6 +412,7 @@
     &lt;button type="reset"&gt;Start over&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="paired-colors"
@@ -400,7 +471,16 @@
 					an ancestor that also contains the native form.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="BYOM: Bring your own markup code 6"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress
   previous-ref="english-back"
   next-ref="english-next"
   progress-ref="english-progress"
@@ -440,6 +520,7 @@
       form="english-application"&gt;Send application&lt;/button&gt;
   &lt;/nav&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="english-custom"
@@ -542,7 +623,16 @@
 					component updates the text without replacing its arrow.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Translate labels, maintain button icons code 7"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress
   previous-ref="custom-back"
   next-ref="custom-next"
   progress-ref="custom-progress"
@@ -577,6 +667,7 @@
     &lt;/nav&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo" lang="fr">
 						<form-fieldset-progress
 							id="authored"
@@ -665,7 +756,16 @@
 					their available space.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress lang="ar" dir="rtl"
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="RTL is supported by default code 8"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress lang="ar" dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
   progress-label="الخطوة {current} من {total}: {legend}"&gt;</mark>
@@ -683,6 +783,7 @@
     &lt;button type="submit"&gt;إرسال&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo" lang="ar" dir="rtl">
 						<form-fieldset-progress
 							id="rtl"
@@ -742,7 +843,16 @@
 					are omitted.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress review-panel
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label='Add a "review" screen code 9'
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress review-panel
   review-label="Check your answers"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
@@ -766,6 +876,7 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="generated-review"
@@ -842,7 +953,16 @@
 					supplies its title.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress review-ref="answers"&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label='Add a "review" screen code 10'
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress review-ref="answers"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
@@ -855,6 +975,7 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="authored-review"
@@ -909,7 +1030,16 @@
 					section or emit a change event.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress id="events"&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Listen for section changes code 11"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress id="events"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset id="event-contact"&gt;
       &lt;legend&gt;Contact&lt;/legend&gt;
@@ -935,6 +1065,7 @@ element.addEventListener('form-fieldset-progress:change',
       fieldset: detail.fieldset.id
     }, null, 2);
   });</code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress id="events">
 							<form action="/example" method="post">
@@ -989,7 +1120,16 @@ element.addEventListener('form-fieldset-progress:change',
 					and <a href="./styles.css">demo styles</a>.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;label id="animation-option" hidden&gt;
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="You can also animate section changes code 12"
+							tabindex="0"
+						><code>&lt;label id="animation-option" hidden&gt;
   &lt;input id="enable-transitions" type="checkbox" checked /&gt;
   Animate section changes when motion is allowed
 &lt;/label&gt;
@@ -1014,6 +1154,7 @@ element.addEventListener('form-fieldset-progress:change',
 
 &lt;!-- This example adds animation in a separate script. --&gt;
 &lt;script type="module" src="./transitions.js"&gt;&lt;/script&gt;</code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<label id="animation-option" hidden>
 							<input
@@ -1079,7 +1220,16 @@ element.addEventListener('form-fieldset-progress:change',
 					component does not create a Reset button.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Form reset is supported too code 13"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name
@@ -1093,6 +1243,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;button type="reset"&gt;Start over&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress id="reset-demo">
 							<form action="/example" method="post">
@@ -1143,7 +1294,16 @@ element.addEventListener('form-fieldset-progress:change',
 					first section so the browser can report the required field.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress no-validation&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="You can disable per-section validation code 14"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress no-validation&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Profile&lt;/legend&gt;
@@ -1155,6 +1315,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress
 							id="skip-validation"
@@ -1196,7 +1357,16 @@ element.addEventListener('form-fieldset-progress:change',
 					again.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code><mark>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;</mark>
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Recover from a setup error code 15"
+							tabindex="0"
+						><code><mark>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;</mark>
   &lt;form&gt;
     &lt;fieldset&gt;&lt;legend&gt;First section&lt;/legend&gt;
       &lt;p&gt;This remains visible when setup fails.&lt;/p&gt;
@@ -1212,6 +1382,7 @@ element.addEventListener('form-fieldset-progress:change',
 const element = document.querySelector('#failure');
 element.removeAttribute('next-ref');
 element.refresh();</code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<form-fieldset-progress id="failure" next-ref="missing">
 							<form action="/example" method="post">
@@ -1244,7 +1415,16 @@ element.refresh();</code></pre>
 					and progress are not generated.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;!-- no-script.html omits the component script. --&gt;
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="See the form without JavaScript code 16"
+							tabindex="0"
+						><code>&lt;!-- no-script.html omits the component script. --&gt;
 &lt;dialog open aria-label="Native form example"&gt;
   <mark>&lt;form-fieldset-progress&gt;</mark>
     &lt;form method="dialog"&gt;
@@ -1260,6 +1440,7 @@ element.refresh();</code></pre>
     &lt;/form&gt;
   <mark>&lt;/form-fieldset-progress&gt;</mark>
 &lt;/dialog&gt;</code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<iframe
 							title="Form without JavaScript"
@@ -1275,5 +1456,6 @@ element.refresh();</code></pre>
 				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
 			</p>
 		</footer>
+		<script type="module" src="./code-examples.js"></script>
 	</body>
 </html>

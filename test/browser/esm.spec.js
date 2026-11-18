@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 const moduleURL =
 	/^https:\/\/esm\.sh\/@aarongustafson\/form-fieldset-progress@[^/]+\/form-fieldset-progress\.js/;

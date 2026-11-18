@@ -1,5 +1,5 @@
 import { get } from 'node:http';
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test('malformed URLs return 400 without stopping the demo server', async ({
 	baseURL,
