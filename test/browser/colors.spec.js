@@ -1,6 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+	await page.route(
+		'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+		(route) => route.abort(),
+	);
+});
+
 const componentCSS = await readFile(
 	new URL('../../form-fieldset-progress.css', import.meta.url),
 	'utf8',
@@ -394,7 +401,9 @@ for (const path of ['index.html', 'esm.html', 'no-script.html']) {
 				),
 			).toBe(true);
 			for (const pair of await page.locator('.code-demo-pair').all()) {
-				const code = await pair.locator(':scope > pre').boundingBox();
+				const code = await pair
+					.locator(':scope > micro-lighter')
+					.boundingBox();
 				const live = await pair.locator(':scope > .demo').boundingBox();
 				if (width === 1280)
 					expect(code.x + code.width).toBeLessThanOrEqual(live.x);

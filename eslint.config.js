@@ -5,6 +5,12 @@ export default [
 	...eslintConfig,
 	eslintConfigPrettier,
 	{
+		files: ['demo/code-examples.js'],
+		rules: {
+			'import-x/no-unresolved': ['error', { ignore: ['^https://'] }],
+		},
+	},
+	{
 		ignores: [
 			'node_modules/**',
 			'coverage/**',
