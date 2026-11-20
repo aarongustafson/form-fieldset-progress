@@ -4,15 +4,15 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>form-fieldset-progress demos</title>
-		<link rel="stylesheet" href="./styles.css" />
 		<link rel="stylesheet" href="./demo-shell.css" />
 		<link rel="stylesheet" href="../form-fieldset-progress.css" />
+		<link rel="stylesheet" href="./styles.css" />
 		<link rel="modulepreload" href="../form-fieldset-progress.js" />
 		<link rel="modulepreload" href="../define.js" />
 		<script type="module" src="./demo.js"></script>
 		<script type="module" src="./transitions.js"></script>
 	</head>
-	<body data-syntax-theme="github">
+	<body data-demo-page="full" data-syntax-theme="github">
 		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
 			<p class="eyebrow">Web component / Examples</p>
@@ -42,6 +42,9 @@
 				id="microlighter-status"
 				class="enhancement-status"
 				role="status"
+				data-loading-message="Loading optional code highlighting and Copy controls."
+				data-failure-message="MicroLighter could not load. Code remains readable and selectable; the component loads independently."
+				data-theme-failure-message="Code highlighting and Copy controls are available, but the syntax theme could not load. The component loads independently."
 				hidden
 			></p>
 
@@ -117,7 +120,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="basic">
 							<form action="/apply" method="post">
 								<fieldset>
@@ -223,7 +226,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="single">
 							<form action="/subscribe" method="post">
 								<fieldset>
@@ -280,7 +283,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="short-labels"
 							previous-label="Previous"
@@ -341,7 +344,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="legend-labels"
 							previous-label="Back to {legend}"
@@ -413,7 +416,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="paired-colors"
 							class="paired-controls"
@@ -521,7 +524,7 @@
   &lt;/nav&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="english-custom"
 							previous-ref="english-back"
@@ -668,7 +671,11 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo" lang="fr">
+					<div
+						class="demo"
+						data-demo-label="Exemple interactif"
+						lang="fr"
+					>
 						<form-fieldset-progress
 							id="authored"
 							previous-ref="custom-back"
@@ -784,7 +791,12 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo" lang="ar" dir="rtl">
+					<div
+						class="demo"
+						data-demo-label="مثال تفاعلي"
+						lang="ar"
+						dir="rtl"
+					>
 						<form-fieldset-progress
 							id="rtl"
 							previous-label="العودة إلى {legend}"
@@ -877,7 +889,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="generated-review"
 							review-panel
@@ -976,7 +988,7 @@
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="authored-review"
 							review-ref="answers"
@@ -1066,7 +1078,7 @@ element.addEventListener('form-fieldset-progress:change',
     }, null, 2);
   });</code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="events">
 							<form action="/example" method="post">
 								<fieldset id="event-contact">
@@ -1155,7 +1167,7 @@ element.addEventListener('form-fieldset-progress:change',
 &lt;!-- This example adds animation in a separate script. --&gt;
 &lt;script type="module" src="./transitions.js"&gt;&lt;/script&gt;</code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<label id="animation-option" hidden>
 							<input
 								type="checkbox"
@@ -1244,7 +1256,7 @@ element.addEventListener('form-fieldset-progress:change',
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="reset-demo">
 							<form action="/example" method="post">
 								<fieldset>
@@ -1316,7 +1328,7 @@ element.addEventListener('form-fieldset-progress:change',
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress
 							id="skip-validation"
 							no-validation
@@ -1383,7 +1395,7 @@ const element = document.querySelector('#failure');
 element.removeAttribute('next-ref');
 element.refresh();</code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="failure" next-ref="missing">
 							<form action="/example" method="post">
 								<fieldset>
@@ -1441,7 +1453,7 @@ element.refresh();</code></pre>
   <mark>&lt;/form-fieldset-progress&gt;</mark>
 &lt;/dialog&gt;</code></pre>
 					</micro-lighter>
-					<div class="demo">
+					<div class="demo" data-demo-label="Live example">
 						<iframe
 							title="Form without JavaScript"
 							src="./no-script.html"

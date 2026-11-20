@@ -1,0 +1,5 @@
+{
+	"index.html": "full",
+	"esm.html": "full",
+	"no-script.html": "embedded"
+}

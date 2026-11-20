@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from './fixtures.js';
+import { expectNativeFocus, readDemoStyles } from './demo-fixture.js';
 
 test.beforeEach(async ({ page }) => {
 	await page.route(
@@ -12,13 +13,7 @@ const componentCSS = await readFile(
 	new URL('../../form-fieldset-progress.css', import.meta.url),
 	'utf8',
 );
-const demoCSS = (
-	await Promise.all(
-		['styles.css', 'demo-shell.css'].map((file) =>
-			readFile(new URL(`../../demo/${file}`, import.meta.url), 'utf8'),
-		),
-	)
-).join('\n');
+const demoCSS = await readDemoStyles('index.html');
 
 // The study's 62 observations reduce to 19 palettes for these six tokens.
 // Alpha is preserved. Substitution tests authored CSS, not OS repainting.
@@ -76,8 +71,20 @@ async function measurements(locator) {
 			context.clearRect(0, 0, 1, 1);
 			const ancestors = [];
 			for (; node; node = node.parentElement) ancestors.unshift(node);
-			for (const ancestor of ancestors)
-				paint(getComputedStyle(ancestor).backgroundColor);
+			for (const ancestor of ancestors) {
+				const css = getComputedStyle(ancestor);
+				paint(css.backgroundColor);
+				if (css.backgroundImage !== 'none') {
+					const gradient = css.backgroundImage.match(
+						/^linear-gradient\((rgba?\([^)]+\)),\s*(rgba?\([^)]+\))\)$/,
+					);
+					if (!gradient || gradient[1] !== gradient[2])
+						throw new Error(
+							`Unsupported gradient: ${css.backgroundImage}`,
+						);
+					paint(gradient[1]);
+				}
+			}
 			if (pixel()[3] !== 255)
 				throw new Error('Expected opaque measurement surface.');
 			return pixel();
@@ -117,6 +124,9 @@ async function measurements(locator) {
 
 async function fixture(page) {
 	await page.goto('/test/browser/fixture.html');
+	await page.locator('body').evaluate((body) => {
+		body.dataset.demoPage = 'full';
+	});
 	await page.addStyleTag({
 		content: 'body { color: CanvasText; background: Canvas; }',
 	});
@@ -299,19 +309,8 @@ for (const scheme of ['light', 'dark']) {
 		await expect(next).toBeFocused();
 		const native = host.locator('#native-focus');
 		await native.focus();
-		const ring = await native.evaluate((element) => {
-			const style = getComputedStyle(element);
-			return {
-				style: style.outlineStyle,
-				color: style.outlineColor,
-				width: style.outlineWidth,
-			};
-		});
-		await next.focus();
-		await expect(next).toHaveCSS('outline-style', ring.style);
-		await expect(next).toHaveCSS('outline-color', ring.color);
-		await expect(next).toHaveCSS('outline-width', ring.width);
-		expect(ring.style).not.toBe('none');
+		await expectNativeFocus(native);
+		await expectNativeFocus(next);
 		await page.addStyleTag({
 			content:
 				'button:focus-visible { outline: 4px dotted CanvasText; outline-offset: 6px; }',
@@ -404,13 +403,21 @@ for (const path of ['index.html', 'esm.html', 'no-script.html']) {
 				),
 			).toBe(true);
 			for (const pair of await page.locator('.code-demo-pair').all()) {
-				const code = await pair
-					.locator(':scope > micro-lighter')
-					.boundingBox();
-				const live = await pair.locator(':scope > .demo').boundingBox();
-				if (width === 1280)
-					expect(code.x + code.width).toBeLessThanOrEqual(live.x);
-				else expect(code.y + code.height).toBeLessThanOrEqual(live.y);
+				await expect
+					.poll(() =>
+						pair.evaluate((element) => {
+							const code = element
+								.querySelector(':scope > micro-lighter')
+								.getBoundingClientRect();
+							const live = element
+								.querySelector(':scope > .demo')
+								.getBoundingClientRect();
+							return innerWidth === 1280
+								? code.right <= live.left
+								: code.bottom <= live.top;
+						}),
+					)
+					.toBe(true);
 			}
 		}
 		for (const button of await page.locator('button:visible').all()) {
@@ -419,6 +426,7 @@ for (const path of ['index.html', 'esm.html', 'no-script.html']) {
 			);
 			expect(
 				(await measurements(button)).boundary,
+				await button.evaluate((element) => element.outerHTML),
 			).toBeGreaterThanOrEqual(3);
 		}
 		// Native choice-control painting is not represented by CSS border metrics.
