@@ -54,6 +54,8 @@ Enhancement suggestions are tracked as GitHub issues. When creating an enhanceme
 
 ## Development Setup
 
+Read the [demo editing guide](demo/README.md) before changing demo assets or tests.
+
 1. Clone the repository
 2. Install dependencies: `npm install`
 3. Make your changes

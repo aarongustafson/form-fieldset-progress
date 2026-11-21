@@ -1,22 +1,7 @@
-@font-face {
-	font-family: 'system-monospace';
-	src:
-		local('SFMono-Regular'), local('Menlo'), local('Monaco'),
-		local('Consolas'), local('Liberation Mono'), local('Courier New'),
-		local('monospace');
-}
-
-:root {
+.native-fallback {
 	color-scheme: light dark;
 	font-family: system-ui, sans-serif;
 	line-height: 1.6;
-}
-
-* {
-	box-sizing: border-box;
-}
-
-body {
 	background: Canvas;
 	color: CanvasText;
 	max-inline-size: 90rem;
@@ -24,80 +9,19 @@ body {
 	padding: 1rem;
 }
 
-header,
-footer {
-	padding-block: 1rem;
-}
-footer {
-	border-block-start: 1px solid;
-	margin-block-start: 2rem;
-}
-a {
-	color: LinkText;
-}
-h1 {
-	overflow-wrap: anywhere;
-}
-h2 {
-	font-size: 1.4rem;
-	margin-block-start: 0;
-}
-code {
-	font-family: system-monospace, monospace;
-}
-
-.demo-section {
-	margin-trim: block;
-	padding: clamp(0.75rem, 2vw, 1.5rem);
-	border: 1px solid ButtonBorder;
-	border-radius: 0.5rem;
-	margin-block: 1.5rem;
-}
-
-.code-demo-pair {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: 1.5rem;
-}
-
-.code-demo-pair > * {
-	min-inline-size: 0;
-}
-pre {
-	margin: 0;
-	padding: 1rem;
-	overflow: auto;
-	background: ButtonFace;
-	color: ButtonText;
-	border-radius: 0.25rem;
-	line-height: 1.4;
-	font-size: 0.875rem;
-}
-
-pre code mark {
-	background: Mark;
-	color: MarkText;
-	border-radius: 2px;
-	padding: 0.125rem 0.25rem;
-	font-weight: 600;
-}
-
-.demo {
-	padding: 1rem;
-	border: 1px solid ButtonBorder;
-	border-radius: 0.25rem;
-}
-
-fieldset {
+.demo fieldset,
+.native-fallback fieldset {
 	margin: 0;
 	border: 0;
 	padding: 0;
 	min-inline-size: 0;
 }
-:not([hidden]) + fieldset {
+.demo :not([hidden]) + fieldset,
+.native-fallback :not([hidden]) + fieldset {
 	margin-block-start: 1.5rem;
 }
-legend {
+.demo legend,
+.native-fallback legend {
 	padding: 0;
 	margin-block-end: 0.5rem;
 	font-size: 1.25rem;
@@ -108,7 +32,8 @@ legend {
 .radio-group > legend {
 	font-size: 1rem;
 }
-label {
+.demo label,
+.native-fallback label {
 	display: block;
 	margin-block: 1rem 0.375rem;
 }
@@ -119,37 +44,27 @@ legend + label,
 .radio-group > label {
 	margin-block: 0.375rem;
 }
-input:not(
-	[type='radio'],
-	[type='checkbox'],
-	[type='button'],
-	[type='submit'],
-	[type='reset'],
-	[type='image']
-),
-textarea {
-	display: block;
-	inline-size: 100%;
-	padding: 0.5rem;
-	font: inherit;
-	color: FieldText;
-	background: Field;
-	border: 1px solid FieldText;
+.paired-controls {
+	--fieldset-progress-accent: #173f63;
+	--fieldset-progress-next-background: #173f63;
+	--fieldset-progress-next-color: #fff;
 }
 
-button {
+.demo form-fieldset-progress button[type='submit'] {
+	font: inherit;
+	padding: 0.625em 0.875em;
+	border: 2px solid ButtonText;
+	margin-block-start: 0;
+	margin-inline-end: 0;
+}
+
+#repair {
 	font: inherit;
 	padding: 0.625em 0.875em;
 	cursor: pointer;
 	background: ButtonFace;
 	color: ButtonText;
 	border: 2px solid ButtonText;
-}
-
-.paired-controls {
-	--fieldset-progress-accent: #173f63;
-	--fieldset-progress-next-background: #173f63;
-	--fieldset-progress-next-color: #fff;
 }
 [role='status']:empty {
 	display: none;
@@ -262,11 +177,4 @@ dialog[open] {
 	border: 0;
 	background: Canvas;
 	color: CanvasText;
-}
-
-@media (min-width: 55rem) {
-	.code-demo-pair {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		align-items: start;
-	}
 }

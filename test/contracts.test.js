@@ -6,6 +6,13 @@ import { FormFieldsetProgressElement } from '../index.js';
 const pathFor = (path) => resolve(process.cwd(), path);
 const json = (path) => JSON.parse(readFileSync(pathFor(path), 'utf8'));
 
+it('trims block-edge margins inside demo sections', () => {
+	const styles = readFileSync(pathFor('demo/demo-shell.css'), 'utf8');
+	expect(styles).toMatch(
+		/\.demo-section(?:,\s*\.api-reference)?\s*\{[^}]*\bmargin-trim:\s*block;/,
+	);
+});
+
 describe('published API contracts', () => {
 	it('documents every CSS property and separates next-button colors from progress accent', () => {
 		const css = readFileSync(pathFor('form-fieldset-progress.css'), 'utf8');
