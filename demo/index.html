@@ -58,18 +58,25 @@
 					are needed.
 				</p>
 				<p>
+					Before setup succeeds—or if JavaScript cannot load—the
+					complete native form and Submit stay visible and usable.
+					Don’t pre-hide later fieldsets: authored hidden fieldsets
+					are excluded from ordinary steps.
+				</p>
+				<p>
 					Fill out Contact details and choose Next to reach Delivery
 					address. Next checks the current section’s fields before
 					advancing. Back returns to the previous section without
 					validating it. Changing sections focuses the first available
-					field. On Delivery notes, the form’s submit button replaces
-					Next. These demos show a submission result without sending
-					form data.
+					field. On Delivery address, the form’s submit button
+					replaces Next. These demos show a submission result without
+					sending form data.
 				</p>
 				<p>
 					Progress shows the current section’s position: Contact
-					details is 1 of 3, so the bar is one-third full. Delivery
-					notes is 3 of 3, so the bar is full.
+					details is 1 of 2, so the bar is half full. Delivery address
+					is 2 of 2, so the bar is full. Inactive steps are hidden,
+					not disabled; their values remain in the form.
 				</p>
 				<div class="code-demo-pair">
 					<micro-lighter
@@ -100,16 +107,13 @@
         &lt;input name="city" required
           autocomplete="address-level2" /&gt;
       &lt;/label&gt;
-      &lt;fieldset&gt;
+      &lt;fieldset class="radio-group"&gt;
         &lt;legend&gt;Delivery preference&lt;/legend&gt;
         &lt;label&gt;&lt;input name="delivery" type="radio"
           value="standard" checked /&gt; Standard&lt;/label&gt;
         &lt;label&gt;&lt;input name="delivery" type="radio"
           value="express" /&gt; Express&lt;/label&gt;
       &lt;/fieldset&gt;
-    &lt;/fieldset&gt;
-    &lt;fieldset&gt;
-      &lt;legend&gt;Delivery notes&lt;/legend&gt;
       &lt;label&gt;Delivery notes (optional)
         &lt;textarea name="notes"&gt;&lt;/textarea&gt;
       &lt;/label&gt;
@@ -172,9 +176,6 @@
 											Express</label
 										>
 									</fieldset>
-								</fieldset>
-								<fieldset>
-									<legend>Delivery notes</legend>
 									<label for="delivery-notes"
 										>Delivery notes (optional)</label
 									>
@@ -197,7 +198,7 @@
 				</div>
 			</section>
 			<section class="demo-section" id="single-section">
-				<h2>Accidentally wrapped a single fieldset? No worries.</h2>
+				<h2>Use a single fieldset</h2>
 				<p>
 					With one fieldset, the component shows the submit button
 					immediately. Back and Next are hidden because there is no
@@ -212,10 +213,10 @@
 						data-label="HTML"
 					>
 						<pre
-							aria-label="Accidentally wrapped a single fieldset? No worries. code 2"
+							aria-label="Use a single fieldset code"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/subscribe" method="post"&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Newsletter&lt;/legend&gt;
       &lt;label&gt;Email
@@ -249,30 +250,32 @@
 			</section>
 			<section class="demo-section" id="labels">
 				<h2>Customize the labels</h2>
-				<p>
-					<code>previous-label</code> and
-					<code>next-label</code> change the button text.
-					<code>progress-label</code> changes the text beside
-					progress. Here, <code>{current}</code> is the current
-					section number, <code>{total}</code> is the number of
-					sections, and <code>{legend}</code> is the current section’s
-					legend.
-				</p>
-				<div class="code-demo-pair">
-					<micro-lighter
-						class="code-panel"
-						language="html"
-						controls="copy"
-						data-label="HTML"
-					>
-						<pre
-							aria-label="Customize the labels code 3"
-							tabindex="0"
-						><code><mark>&lt;form-fieldset-progress
+				<div class="demo-example" id="short-button-labels">
+					<h3>Use your application’s wording</h3>
+					<p>
+						<code>previous-label</code> and
+						<code>next-label</code> change the button text.
+						<code>progress-label</code> changes the text beside
+						progress. Here, <code>{current}</code> is the current
+						section number, <code>{total}</code> is the number of
+						sections, and <code>{legend}</code> is the current
+						section’s legend.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Customize the labels code 3"
+								tabindex="0"
+							><code><mark>&lt;form-fieldset-progress
   previous-label="Previous"
   next-label="Continue"
   progress-label="Section {current} of {total}: {legend}"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/example" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
@@ -282,173 +285,104 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
-					</micro-lighter>
-					<div class="demo" data-demo-label="Live example">
-						<form-fieldset-progress
-							id="short-labels"
-							previous-label="Previous"
-							next-label="Continue"
-							progress-label="Section {current} of {total}: {legend}"
-						>
-							<form action="/example" method="post">
-								<fieldset>
-									<legend>Contact</legend>
-									<label for="short-name">Name</label>
-									<input
-										id="short-name"
-										name="name"
-										autocomplete="name"
-									/>
-								</fieldset>
-								<fieldset>
-									<legend>Delivery notes</legend>
-									<label
-										>Notes
-										<textarea name="notes"></textarea>
-									</label>
-								</fieldset>
-								<button type="submit">Send</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
-					</div>
-				</div>
-				<h3>Customize more: include section names in the buttons</h3>
-				<p>
-					In a button label, <code>{legend}</code> is the destination
-					section’s name. Because these visible labels already name
-					the destination, the buttons use that text as their
-					accessible names without adding an <code>aria-label</code>.
-				</p>
-				<div class="code-demo-pair">
-					<micro-lighter
-						class="code-panel"
-						language="html"
-						controls="copy"
-						data-label="HTML"
-					>
-						<pre
-							aria-label="Customize the labels code 4"
-							tabindex="0"
-						><code><mark>&lt;form-fieldset-progress
-  previous-label="Back to {legend}"
-  next-label="Continue to {legend}"&gt;</mark>
-  &lt;form&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
-      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
-    &lt;/fieldset&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
-      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
-    &lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Send&lt;/button&gt;
-  &lt;/form&gt;
-<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
-					</micro-lighter>
-					<div class="demo" data-demo-label="Live example">
-						<form-fieldset-progress
-							id="legend-labels"
-							previous-label="Back to {legend}"
-							next-label="Continue to {legend}"
-						>
-							<form action="/example" method="post">
-								<fieldset>
-									<legend>Contact</legend>
-									<label for="legend-name">Name</label>
-									<input
-										id="legend-name"
-										name="name"
-										autocomplete="name"
-									/>
-								</fieldset>
-								<fieldset>
-									<legend>Delivery notes</legend>
-									<label
-										>Notes
-										<textarea name="notes"></textarea>
-									</label>
-								</fieldset>
-								<button type="submit">Send</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
-					</div>
-				</div>
-			</section>
-			<section class="demo-section" id="control-colors">
-				<h2>Pair the navigation colors</h2>
-				<p>
-					Back, Next, and Reset use ButtonText on ButtonFace by
-					default. The accent property colors native progress only;
-					the visible section label also tells you where you are. To
-					give Next a custom fill, set its foreground and background
-					together. Submit keeps your authored styles. Buttons keep
-					the browser’s focus ring and automatic forced-color
-					adjustment.
-				</p>
-				<div class="code-demo-pair">
-					<micro-lighter
-						class="code-panel"
-						language="css"
-						controls="copy"
-						data-label="CSS"
-					>
-						<pre
-							aria-label="Pair the navigation colors code 5"
-							tabindex="0"
-						><code>.paired-controls {
-  --fieldset-progress-accent: #173f63;
-  --fieldset-progress-next-background: #173f63;
-  --fieldset-progress-next-color: #fff;
-}
-
-<mark>&lt;form-fieldset-progress class="paired-controls"&gt;</mark>
-  &lt;form&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
-      &lt;label&gt;Your name
-        &lt;input name="name" autocomplete="name" required /&gt;
-      &lt;/label&gt;
-    &lt;/fieldset&gt;
-    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
-      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
-    &lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Send application&lt;/button&gt;
-    &lt;button type="reset"&gt;Start over&lt;/button&gt;
-  &lt;/form&gt;
-<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
-					</micro-lighter>
-					<div class="demo" data-demo-label="Live example">
-						<form-fieldset-progress
-							id="paired-colors"
-							class="paired-controls"
-						>
-							<form action="/apply" method="post">
-								<fieldset>
-									<legend>Contact</legend>
-									<label
-										>Your name
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<form-fieldset-progress
+								id="short-labels"
+								previous-label="Previous"
+								next-label="Continue"
+								progress-label="Section {current} of {total}: {legend}"
+							>
+								<form action="/example" method="post">
+									<fieldset>
+										<legend>Contact</legend>
+										<label for="short-name">Name</label>
 										<input
+											id="short-name"
 											name="name"
 											autocomplete="name"
-											required
-									/></label>
-								</fieldset>
-								<fieldset>
-									<legend>Delivery notes</legend>
-									<label
-										>Notes
-										<textarea name="notes"></textarea>
-									</label>
-								</fieldset>
-								<button type="submit">Send application</button>
-								<button type="reset">Start over</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Delivery notes</legend>
+										<label
+											>Notes
+											<textarea name="notes"></textarea>
+										</label>
+									</fieldset>
+									<button type="submit">Send</button>
+									<p role="status" data-result></p>
+								</form>
+							</form-fieldset-progress>
+						</div>
+					</div>
+				</div>
+				<div class="demo-example" id="destination-button-labels">
+					<h3>Include section names in the buttons</h3>
+					<p>
+						In a button label, <code>{legend}</code> is the
+						destination section’s name. Because these visible labels
+						already name the destination, the buttons use that text
+						as their accessible names without adding an
+						<code>aria-label</code>.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Customize the labels code 4"
+								tabindex="0"
+							><code><mark>&lt;form-fieldset-progress
+  previous-label="Back to {legend}"
+  next-label="Continue to {legend}"&gt;</mark>
+  &lt;form action="/example" method="post"&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Name &lt;input name="name" /&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+  &lt;/form&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<form-fieldset-progress
+								id="legend-labels"
+								previous-label="Back to {legend}"
+								next-label="Continue to {legend}"
+							>
+								<form action="/example" method="post">
+									<fieldset>
+										<legend>Contact</legend>
+										<label for="legend-name">Name</label>
+										<input
+											id="legend-name"
+											name="name"
+											autocomplete="name"
+										/>
+									</fieldset>
+									<fieldset>
+										<legend>Delivery notes</legend>
+										<label
+											>Notes
+											<textarea name="notes"></textarea>
+										</label>
+									</fieldset>
+									<button type="submit">Send</button>
+									<p role="status" data-result></p>
+								</form>
+							</form-fieldset-progress>
+						</div>
 					</div>
 				</div>
 			</section>
 			<section class="demo-section" id="custom-layout">
-				<h2>BYOM: Bring your own markup</h2>
+				<h2>Place your own navigation controls</h2>
 				<p>
 					The <code>*-ref</code> attributes identify existing elements
 					by ID instead of generating them. This example places
@@ -463,7 +397,9 @@
 					Each button outside the form uses
 					<code>form="english-application"</code> to associate it with
 					that form. The component updates these controls’ labels and
-					visibility just as it does for generated controls.
+					visibility just as it does for generated controls. Keep
+					navigation, progress, and its label outside the step
+					fieldsets, and don’t associate them with another form.
 				</p>
 				<p>
 					Author enhancement-only controls with <code>hidden</code>.
@@ -481,7 +417,7 @@
 						data-label="HTML"
 					>
 						<pre
-							aria-label="BYOM: Bring your own markup code 6"
+							aria-label="Place your own navigation controls code"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress
   previous-ref="english-back"
@@ -635,7 +571,7 @@
 						<pre
 							aria-label="Translate labels, maintain button icons code 7"
 							tabindex="0"
-						><code><mark>&lt;form-fieldset-progress
+						><code><mark>&lt;form-fieldset-progress lang="fr"
   previous-ref="custom-back"
   next-ref="custom-next"
   progress-ref="custom-progress"
@@ -645,7 +581,7 @@
   progress-label="Étape {current}/{total} : {legend}"
   previous-aria-label="{label}, étape {current}"
   next-aria-label="{label}, étape {current}"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/inscription" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;Coordonnées&lt;/legend&gt;
       &lt;label&gt;Votre nom
         &lt;input name="name" autocomplete="name" required /&gt;
@@ -654,7 +590,7 @@
     &lt;fieldset&gt;&lt;legend&gt;Commentaires&lt;/legend&gt;
       &lt;label&gt;Votre message &lt;textarea name="message"&gt;&lt;/textarea&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
-    &lt;nav aria-label="Sections du formulaire"&gt;
+    &lt;nav class="authored-navigation" aria-label="Sections du formulaire"&gt;
       &lt;label id="custom-status"
         for="custom-progress" hidden&gt;Progression&lt;/label&gt;
       &lt;button id="custom-back" type="button" hidden&gt;
@@ -754,8 +690,8 @@
 					</div>
 				</div>
 			</section>
-			<section class="demo-section">
-				<h2>RTL is supported by default</h2>
+			<section class="demo-section" id="arabic-navigation">
+				<h2>Use right-to-left navigation</h2>
 				<p>
 					This Arabic example uses the same label templates with
 					<code>dir="rtl"</code>. The generated navigation follows the
@@ -770,13 +706,13 @@
 						data-label="HTML"
 					>
 						<pre
-							aria-label="RTL is supported by default code 8"
+							aria-label="Use right-to-left navigation code"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress lang="ar" dir="rtl"
   previous-label="العودة إلى {legend}"
   next-label="المتابعة إلى {legend}"
   progress-label="الخطوة {current} من {total}: {legend}"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/application" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;بيانات الاتصال&lt;/legend&gt;
       &lt;label&gt;الاسم &lt;input name="name" /&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
@@ -837,36 +773,38 @@
 				</div>
 			</section>
 			<section class="demo-section" id="review-panel">
-				<h2>Add a "review" screen</h2>
-				<p>
-					<code>review-panel</code> adds a final fieldset after the
-					authored sections. Its definition list pairs field labels
-					with the current answers. Selects show option labels;
-					checkbox and radio groups show the selected choices. The
-					review counts as a section in progress, and Submit appears
-					there instead of Next.
-				</p>
-				<p>
-					Complete Contact and Delivery, then continue to Check your
-					answers. Use Back to change an answer and return: the
-					summary updates each time you enter review. Native
-					validation runs before entering review and again on
-					submission. Passwords, hidden inputs, and disabled controls
-					are omitted.
-				</p>
-				<div class="code-demo-pair">
-					<micro-lighter
-						class="code-panel"
-						language="html"
-						controls="copy"
-						data-label="HTML"
-					>
-						<pre
-							aria-label='Add a "review" screen code 9'
-							tabindex="0"
-						><code><mark>&lt;form-fieldset-progress review-panel
+				<h2>Add a review screen</h2>
+				<div class="demo-example" id="generated-review-example">
+					<h3>Generate a summary of the answers</h3>
+					<p>
+						<code>review-panel</code> adds a final fieldset after
+						the authored sections. Its summary pairs field labels
+						with the current answers. Selects show option labels;
+						checkbox and radio groups show the selected choices. The
+						review counts as a section in progress, and Submit
+						appears there instead of Next.
+					</p>
+					<p>
+						Complete Contact and Delivery, then continue to Check
+						your answers. Use Back to change an answer and return:
+						the summary updates each time you enter review. Native
+						validation runs before entering review and again on
+						submission. Passwords, hidden inputs, and disabled
+						controls are omitted.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Generate a summary of the answers code"
+								tabindex="0"
+							><code><mark>&lt;form-fieldset-progress review-panel
   review-label="Check your answers"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/delivery" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
@@ -876,7 +814,7 @@
         &lt;option value="uk"&gt;United Kingdom&lt;/option&gt;
         &lt;option value="ca"&gt;Canada&lt;/option&gt;
       &lt;/select&gt;
-      &lt;fieldset&gt;&lt;legend&gt;Updates&lt;/legend&gt;
+      &lt;fieldset class="radio-group"&gt;&lt;legend&gt;Updates&lt;/legend&gt;
         &lt;label&gt;&lt;input type="checkbox" name="updates"
           value="email" checked /&gt; Email&lt;/label&gt;
         &lt;label&gt;&lt;input type="checkbox" name="updates"
@@ -888,94 +826,108 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
-					</micro-lighter>
-					<div class="demo" data-demo-label="Live example">
-						<form-fieldset-progress
-							id="generated-review"
-							review-panel
-							review-label="Check your answers"
-						>
-							<form action="/delivery" method="post">
-								<fieldset>
-									<legend>Contact</legend>
-									<label
-										>Name
-										<input
-											name="name"
-											autocomplete="name"
-											required
-									/></label>
-								</fieldset>
-								<fieldset>
-									<legend>Delivery</legend>
-									<label for="review-country">Country</label>
-									<select id="review-country" name="country">
-										<option value="uk">
-											United Kingdom
-										</option>
-										<option value="ca">Canada</option>
-									</select>
-									<fieldset class="radio-group">
-										<legend>Updates</legend>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<form-fieldset-progress
+								id="generated-review"
+								review-panel
+								review-label="Check your answers"
+							>
+								<form action="/delivery" method="post">
+									<fieldset>
+										<legend>Contact</legend>
 										<label
-											><input
-												type="checkbox"
-												name="updates"
-												value="email"
-												checked
-											/>
-											Email</label
-										>
-										<label
-											><input
-												type="checkbox"
-												name="updates"
-												value="sms"
-											/>
-											SMS</label
-										>
+											>Name
+											<input
+												name="name"
+												autocomplete="name"
+												required
+										/></label>
 									</fieldset>
-									<label
-										>Notes
-										<textarea name="notes"></textarea>
-									</label>
-									<label
-										>Attachments
-										<input
-											type="file"
-											name="files"
-											multiple
-									/></label>
-								</fieldset>
-								<button type="submit">Send</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
+									<fieldset>
+										<legend>Delivery</legend>
+										<label for="review-country"
+											>Country</label
+										>
+										<select
+											id="review-country"
+											name="country"
+										>
+											<option value="uk">
+												United Kingdom
+											</option>
+											<option value="ca">Canada</option>
+										</select>
+										<fieldset class="radio-group">
+											<legend>Updates</legend>
+											<label
+												><input
+													type="checkbox"
+													name="updates"
+													value="email"
+													checked
+												/>
+												Email</label
+											>
+											<label
+												><input
+													type="checkbox"
+													name="updates"
+													value="sms"
+												/>
+												SMS</label
+											>
+										</fieldset>
+										<label
+											>Notes
+											<textarea name="notes"></textarea>
+										</label>
+										<label
+											>Attachments
+											<input
+												type="file"
+												name="files"
+												multiple
+										/></label>
+									</fieldset>
+									<button type="submit">Send</button>
+									<p role="status" data-result></p>
+								</form>
+							</form-fieldset-progress>
+						</div>
 					</div>
 				</div>
-				<h3>BYORF: Bring your own review fieldset</h3>
-				<p>
-					Use <code>review-ref</code> instead of
-					<code>review-panel</code> to identify an outermost fieldset
-					in the same form. Give it a legend and <code>hidden</code>;
-					the component makes it the final screen and reveals it
-					there. An existing direct <code>dl</code> receives the
-					summary; otherwise one is created. Keep the review
-					read-only, without form controls or links. Your legend
-					supplies its title.
-				</p>
-				<div class="code-demo-pair">
-					<micro-lighter
-						class="code-panel"
-						language="html"
-						controls="copy"
-						data-label="HTML"
-					>
-						<pre
-							aria-label='Add a "review" screen code 10'
-							tabindex="0"
-						><code><mark>&lt;form-fieldset-progress review-ref="answers"&gt;</mark>
-  &lt;form&gt;
+				<div class="demo-example" id="authored-review-example">
+					<h3>Supply a read-only review fieldset</h3>
+					<p>
+						Use <code>review-ref</code> instead of
+						<code>review-panel</code> to identify an outermost
+						fieldset in the same form. Give it a legend and
+						<code>hidden</code>; the component makes it the final
+						screen and reveals it there. An existing direct
+						<code>dl</code> receives the summary; otherwise one is
+						created. Keep the review read-only, without form
+						controls or links. Your legend supplies its title. It
+						needs a nonempty direct legend, no nested fieldsets,
+						editable content, or hidden ancestor. See the
+						<a
+							href="https://github.com/aarongustafson/form-fieldset-progress#add-a-review-screen"
+							>review reference</a
+						>
+						for inclusion and labeling rules.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Supply a read-only review fieldset code"
+								tabindex="0"
+							><code><mark>&lt;form-fieldset-progress review-ref="answers"&gt;</mark>
+  &lt;form action="/example" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
@@ -987,32 +939,35 @@
     &lt;button type="submit"&gt;Send&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
-					</micro-lighter>
-					<div class="demo" data-demo-label="Live example">
-						<form-fieldset-progress
-							id="authored-review"
-							review-ref="answers"
-						>
-							<form action="/example" method="post">
-								<fieldset>
-									<legend>Contact</legend>
-									<label
-										>Name
-										<input
-											name="name"
-											autocomplete="name"
-											required
-									/></label>
-								</fieldset>
-								<fieldset id="answers" hidden>
-									<legend>Confirm your details</legend>
-									<p>Check these answers before sending.</p>
-									<dl></dl>
-								</fieldset>
-								<button type="submit">Send</button>
-								<p role="status" data-result></p>
-							</form>
-						</form-fieldset-progress>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<form-fieldset-progress
+								id="authored-review"
+								review-ref="answers"
+							>
+								<form action="/example" method="post">
+									<fieldset>
+										<legend>Contact</legend>
+										<label
+											>Name
+											<input
+												name="name"
+												autocomplete="name"
+												required
+										/></label>
+									</fieldset>
+									<fieldset id="answers" hidden>
+										<legend>Confirm your details</legend>
+										<p>
+											Check these answers before sending.
+										</p>
+										<dl></dl>
+									</fieldset>
+									<button type="submit">Send</button>
+									<p role="status" data-result></p>
+								</form>
+							</form-fieldset-progress>
+						</div>
 					</div>
 				</div>
 				<p>
@@ -1052,7 +1007,7 @@
 							aria-label="Listen for section changes code 11"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress id="events"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/example" method="post"&gt;
     &lt;fieldset id="event-contact"&gt;
       &lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
@@ -1066,6 +1021,7 @@
 <mark>&lt;/form-fieldset-progress&gt;</mark>
 &lt;pre id="section-event"&gt;No section change yet.&lt;/pre&gt;
 
+&lt;script type="module"&gt;
 const element = document.querySelector('#events');
 const output = document.querySelector('#section-event');
 element.addEventListener('form-fieldset-progress:change',
@@ -1076,7 +1032,8 @@ element.addEventListener('form-fieldset-progress:change',
       stepCount: detail.stepCount,
       fieldset: detail.fieldset.id
     }, null, 2);
-  });</code></pre>
+  });
+&lt;/script&gt;</code></pre>
 					</micro-lighter>
 					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="events">
@@ -1146,7 +1103,7 @@ element.addEventListener('form-fieldset-progress:change',
   Animate section changes when motion is allowed
 &lt;/label&gt;
 <mark>&lt;form-fieldset-progress id="animated"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/delivery" method="post"&gt;
     &lt;div class="transition-pages"&gt;
       &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
         &lt;label&gt;Email
@@ -1242,7 +1199,7 @@ element.addEventListener('form-fieldset-progress:change',
 							aria-label="Form reset is supported too code 13"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/example" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
       &lt;label&gt;Name
         &lt;input name="name" autocomplete="name" required /&gt;
@@ -1316,7 +1273,7 @@ element.addEventListener('form-fieldset-progress:change',
 							aria-label="You can disable per-section validation code 14"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress no-validation&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/profile" method="post"&gt;
     &lt;fieldset&gt;
       &lt;legend&gt;Profile&lt;/legend&gt;
       &lt;label&gt;Name &lt;input name="name" required /&gt;&lt;/label&gt;
@@ -1324,7 +1281,7 @@ element.addEventListener('form-fieldset-progress:change',
     &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
       &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
     &lt;/fieldset&gt;
-    &lt;button type="submit"&gt;Send&lt;/button&gt;
+    &lt;button type="submit"&gt;Send profile&lt;/button&gt;
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
 					</micro-lighter>
@@ -1358,15 +1315,99 @@ element.addEventListener('form-fieldset-progress:change',
 					</div>
 				</div>
 			</section>
-			<section class="demo-section">
-				<h2>Recover from a setup error</h2>
+			<section class="demo-section" id="control-colors">
+				<h2>Pair the navigation colors</h2>
 				<p>
-					Here, <code>next-ref="missing"</code> points to an element
-					that does not exist. Setup emits
-					<code>form-fieldset-progress:error</code> and leaves both
-					fieldsets visible. Repair configuration removes that
-					reference and calls <code>refresh()</code> to try setup
-					again.
+					Back, Next, and Reset use <code>ButtonText</code> on
+					<code>ButtonFace</code> by default. To give Next a custom
+					fill, set its foreground and background together. The accent
+					property colors native progress only; the visible section
+					label also tells you where you are. Submit keeps your
+					authored styles. Buttons keep the browser’s focus ring and
+					automatic forced-color adjustment.
+				</p>
+				<div class="code-demo-pair">
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML and CSS"
+					>
+						<pre
+							aria-label="Pair the navigation colors code"
+							tabindex="0"
+						><code>&lt;style&gt;
+.paired-controls {
+  <mark>--fieldset-progress-accent: #173f63;
+  --fieldset-progress-next-background: #173f63;
+  --fieldset-progress-next-color: #fff;</mark>
+}
+&lt;/style&gt;
+
+<mark>&lt;form-fieldset-progress class="paired-controls"&gt;</mark>
+  &lt;form action="/apply" method="post"&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
+      &lt;label&gt;Your name
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send application&lt;/button&gt;
+    &lt;button type="reset"&gt;Start over&lt;/button&gt;
+  &lt;/form&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark></code></pre>
+					</micro-lighter>
+					<div class="demo" data-demo-label="Live example">
+						<form-fieldset-progress
+							id="paired-colors"
+							class="paired-controls"
+						>
+							<form action="/apply" method="post">
+								<fieldset>
+									<legend>Contact</legend>
+									<label
+										>Your name
+										<input
+											name="name"
+											autocomplete="name"
+											required
+									/></label>
+								</fieldset>
+								<fieldset>
+									<legend>Delivery notes</legend>
+									<label
+										>Notes
+										<textarea name="notes"></textarea>
+									</label>
+								</fieldset>
+								<button type="submit">Send application</button>
+								<button type="reset">Start over</button>
+								<p role="status" data-result></p>
+							</form>
+						</form-fieldset-progress>
+					</div>
+				</div>
+			</section>
+			<section class="demo-section" id="setup-recovery">
+				<h2>Refresh after repairing configuration</h2>
+				<p>
+					If setup fails, the component restores the native form and
+					emits <code>form-fieldset-progress:error</code>. Correct the
+					configuration, then call <code>refresh()</code> to restart
+					at the first section without clearing entered values.
+					Structure changes also need <code>refresh()</code>; they
+					aren’t observed automatically.
+				</p>
+				<p>
+					This example has a missing Next reference. Repair
+					configuration removes it and retries setup. The
+					<a
+						href="https://github.com/aarongustafson/form-fieldset-progress#accessibility-and-lifecycle"
+						>lifecycle reference</a
+					>
+					explains restoration and editing managed markup.
 				</p>
 				<div class="code-demo-pair">
 					<micro-lighter
@@ -1376,10 +1417,10 @@ element.addEventListener('form-fieldset-progress:change',
 						data-label="HTML"
 					>
 						<pre
-							aria-label="Recover from a setup error code 15"
+							aria-label="Refresh after repairing configuration code"
 							tabindex="0"
 						><code><mark>&lt;form-fieldset-progress id="failure" next-ref="missing"&gt;</mark>
-  &lt;form&gt;
+  &lt;form action="/example" method="post"&gt;
     &lt;fieldset&gt;&lt;legend&gt;First section&lt;/legend&gt;
       &lt;p&gt;This remains visible when setup fails.&lt;/p&gt;
     &lt;/fieldset&gt;
@@ -1390,10 +1431,12 @@ element.addEventListener('form-fieldset-progress:change',
   &lt;/form&gt;
 <mark>&lt;/form-fieldset-progress&gt;</mark>
 
+&lt;script type="module"&gt;
 // After reporting the setup error:
 const element = document.querySelector('#failure');
 element.removeAttribute('next-ref');
-element.refresh();</code></pre>
+element.refresh();
+&lt;/script&gt;</code></pre>
 					</micro-lighter>
 					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress id="failure" next-ref="missing">
@@ -1419,7 +1462,7 @@ element.refresh();</code></pre>
 					</div>
 				</div>
 			</section>
-			<section class="demo-section">
+			<section class="demo-section" id="native-fallback">
 				<h2>See the form without JavaScript</h2>
 				<p>
 					This embedded example loads no component script. Both
@@ -1437,13 +1480,13 @@ element.refresh();</code></pre>
 							aria-label="See the form without JavaScript code 16"
 							tabindex="0"
 						><code>&lt;!-- no-script.html omits the component script. --&gt;
-&lt;dialog open aria-label="Native form example"&gt;
+&lt;dialog id="native-form" open aria-label="Native form example"&gt;
+  &lt;h1&gt;Native form fallback&lt;/h1&gt;
   <mark>&lt;form-fieldset-progress&gt;</mark>
     &lt;form method="dialog"&gt;
       &lt;fieldset&gt;&lt;legend&gt;Contact&lt;/legend&gt;
-        &lt;label&gt;Name
-          &lt;input name="name" autocomplete="name" required /&gt;
-        &lt;/label&gt;
+        &lt;label for="fallback-name"&gt;Name&lt;/label&gt;
+        &lt;input id="fallback-name" name="name" autocomplete="name" required /&gt;
       &lt;/fieldset&gt;
       &lt;fieldset&gt;&lt;legend&gt;Delivery notes&lt;/legend&gt;
         &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
