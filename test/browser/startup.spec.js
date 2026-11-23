@@ -73,7 +73,7 @@ test('slow core loading preserves visible native fields and entered answers', as
 			}),
 		).toBeVisible();
 		await expect(
-			example.getByRole('group', { name: 'Delivery notes', exact: true }),
+			example.getByRole('textbox', { name: 'Delivery notes (optional)' }),
 		).toBeVisible();
 		await expect(
 			example.getByRole('button', {
@@ -105,14 +105,13 @@ test('failed core loading leaves the complete native form available', async ({
 	);
 	await page.goto('/demo/');
 	const example = page.locator('#basic');
-	for (const name of [
-		'Contact details',
-		'Delivery address',
-		'Delivery notes',
-	])
+	for (const name of ['Contact details', 'Delivery address'])
 		await expect(
 			example.getByRole('group', { name, exact: true }),
 		).toBeVisible();
+	await expect(
+		example.getByRole('textbox', { name: 'Delivery notes (optional)' }),
+	).toBeVisible();
 	await expect(
 		example.getByRole('button', { name: 'Send application', exact: true }),
 	).toBeVisible();

@@ -42,31 +42,54 @@
 				hidden
 			></p>
 
-			<section class="demo-section">
+			<section class="demo-section" id="esm-registration">
 				<h2>Load the component from esm.sh</h2>
 				<p>
 					This example imports the published component class from
 					esm.sh and registers it manually. Both fieldsets remain
-					available if the CDN cannot load. The import is pinned to
-					the package version and is updated by the version script.
+					available if the CDN cannot load. Wrap your native form,
+					then register the element with a module script. Next checks
+					Contact details before showing Delivery notes; Submit
+					appears on the last step. This demo reports submission
+					without sending data when JavaScript is available.
 				</p>
 				<div class="code-demo-pair">
 					<micro-lighter
 						class="code-panel"
-						language="javascript"
+						language="html"
 						controls="copy"
-						data-label="JavaScript"
+						data-label="HTML and JavaScript"
 					>
 						<pre
 							aria-label="Load the component from esm.sh code 1"
 							tabindex="0"
-						><code><mark>import { FormFieldsetProgressElement } from
+						><code><mark>&lt;form-fieldset-progress&gt;</mark>
+  &lt;form action="./esm.html" method="get"&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Contact details&lt;/legend&gt;
+      &lt;label&gt;Your name
+        &lt;input name="name" autocomplete="name" required /&gt;
+      &lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;fieldset&gt;
+      &lt;legend&gt;Delivery notes&lt;/legend&gt;
+      &lt;label&gt;Notes &lt;textarea name="notes"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;/fieldset&gt;
+    &lt;button type="submit"&gt;Send application&lt;/button&gt;
+  &lt;/form&gt;
+<mark>&lt;/form-fieldset-progress&gt;</mark>
+
+&lt;script type="module"&gt;
+<mark>import { FormFieldsetProgressElement } from
   'https://esm.sh/@aarongustafson/form-fieldset-progress@1.0.1/form-fieldset-progress.js?bundle&amp;target=es2022';</mark>
 
-<mark>customElements.define(
-  'form-fieldset-progress',
-  FormFieldsetProgressElement,
-);</mark></code></pre>
+<mark>if (!customElements.get('form-fieldset-progress')) {
+  customElements.define(
+    'form-fieldset-progress',
+    FormFieldsetProgressElement,
+  );
+}</mark>
+&lt;/script&gt;</code></pre>
 					</micro-lighter>
 					<div class="demo" data-demo-label="Live example">
 						<form-fieldset-progress>

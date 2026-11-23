@@ -8,11 +8,17 @@
 
 Show a form’s fieldsets one section at a time. The component adds Back, Next,
 and progress, validates fields before advancing, and shows the form’s submit
-button on the last section. It uses light DOM. Without JavaScript, the authored
-form remains visible.
+button on the last section. It uses light DOM. Before setup succeeds, or without
+JavaScript, the complete authored form remains visible and usable.
 
-See the [demo](demo/index.html) for examples, from default behavior through
-label customization, authored controls, and section-change events.
+## Demos
+
+- [Live examples](https://aarongustafson.github.io/form-fieldset-progress/demo/) ([source](demo/index.html))
+- [esm.sh example](https://aarongustafson.github.io/form-fieldset-progress/demo/esm.html) ([source](demo/esm.html))
+- [Native form without JavaScript](https://aarongustafson.github.io/form-fieldset-progress/demo/no-script.html) ([source](demo/no-script.html))
+
+The examples cover labels, authored controls, review, reset, validation, and
+section-change events.
 
 ## Installation
 
@@ -70,8 +76,10 @@ button outside the fieldsets:
   is the section count. Section 1 of 3 is one-third full, and section 3 of 3 is
   full. This shows position in the form, not successful submission.
 
-Setup runs in a microtask after connection. The authored sections remain visible
-until setup succeeds.
+The complete native form stays visible and usable while the module loads and
+until setup succeeds. Don’t hide the host with `:not(:defined)` or pre-hide later
+steps: a registered element may still fail setup, and authored hidden fieldsets
+are excluded from ordinary steps. Setup failure restores the authored form.
 
 ## Change the labels
 
@@ -123,30 +131,10 @@ When a button’s
 accessible-name override omits its visible wording, the component prefixes that
 wording to keep the visible label in the accessible name.
 
-Translate the templates and the authored legends, fields, and submit labels:
-
-```html
-<form-fieldset-progress
-  lang="fr"
-  previous-label="Retour"
-  next-label="Continuer"
-  previous-aria-label="{label} : {legend}"
-  next-aria-label="{label} : {legend}"
-  progress-label="Étape {current} sur {total} : {legend}"
->
-  <form>
-    <fieldset>
-      <legend>Coordonnées</legend>
-      <label>Votre nom <input name="name" required /></label>
-    </fieldset>
-    <fieldset>
-      <legend>Confirmation</legend>
-      <p>Vérifiez votre nom avant d’envoyer.</p>
-    </fieldset>
-    <button type="submit">Envoyer</button>
-  </form>
-</form-fieldset-progress>
-```
+Use these templates for your application’s vocabulary or to translate its UI.
+Translate the authored legends, fields, and submit labels too. See the
+[French controls](demo/index.html#translated-controls) and
+[Arabic navigation](demo/index.html#arabic-navigation).
 
 The component does not translate the browser’s validation messages.
 Navigation/progress label-attribute changes update in place.
@@ -263,9 +251,9 @@ The review participates in Back/Next, focus, events, and progress. Submit appear
 there. Forward navigation validates the input sections before reaching review;
 native final submission still validates the whole form.
 
-Every entry into review rebuilds a `<dl>` containing one `<div>` with a `<dt>`
-and `<dd>` per field or choice group. Changing answers with Back and returning
-updates the summary. It does not mirror edits continuously while review is open.
+Each entry into review refreshes the summary. Changing answers with Back and
+returning updates it; the summary does not mirror edits continuously while
+review is open.
 
 - Include enabled, named native inputs, selects, and textareas in participating
   sections, plus form-associated controls outside fieldsets.
@@ -277,11 +265,12 @@ updates the summary. It does not mirror edits continuously while review is open.
 - Radio groups and shared-name checkbox groups use a nested fieldset’s legend,
   or their name if there is no nested group legend. Selected choices show their
   labels; standalone checkboxes show Selected or Not selected.
-- Selects and datalist choices use option labels rather than raw values.
+- Selects use enabled option labels, excluding disabled options and options in
+  disabled groups. Datalist choices use option labels rather than raw values.
   A datalist option without label text keeps the input’s value.
   File inputs show filenames only. Other values are shown as stored by the
   native control; empty values show Not provided.
-- Multiple selections or files use a list inside the `<dd>`. Labels and values
+- Multiple selections or files appear as a list. Labels and values
   are inserted as plain text, never interpreted as HTML.
 
 To supply a review fieldset, reference its ID:
@@ -332,6 +321,10 @@ restores authored review nodes and hidden attributes and removes generated UI.
 See the [generated and authored review examples](demo/index.html#review-panel).
 
 ## JavaScript API
+
+See the [source](form-fieldset-progress.js),
+[TypeScript declarations](form-fieldset-progress.d.ts), and
+[custom-elements manifest](custom-elements.json) for the implementation and types.
 
 | Member        | Behavior                                                                                               |
 | ------------- | ------------------------------------------------------------------------------------------------------ |
@@ -481,12 +474,6 @@ See the [paired-color example](demo/index.html#control-colors). Submit controls
 keep their authored styles; the optional component stylesheet doesn’t paint
 their surfaces.
 
-**Existing accent overrides:** earlier styles also used
-`--fieldset-progress-accent` as Next’s background with `HighlightText` labels.
-That coupling is removed. If you want a custom Next fill, set both new Next
-properties explicitly. An existing accent override still styles progress but
-no longer changes navigation buttons.
-
 Light-DOM styling hooks:
 
 - Controls: `data-fieldset-progress-previous`, `data-fieldset-progress-next`,
@@ -503,46 +490,6 @@ Light-DOM styling hooks:
 Slot wrappers are light-DOM layout elements, not shadow slots. Do not override
 `[hidden]` to display inactive controls. Check contrast and visible focus when
 changing styles.
-
-## Reduce startup layout changes
-
-The full native form can appear before the component’s JavaScript arrives,
-then collapse to one section. Setup already runs together in a microtask;
-loading the module earlier reduces the time before that happens.
-
-Put the stylesheet and registration script in the document’s `<head>`.
-Preload the class module so it can download alongside the registration helper:
-
-```html
-<link
-  rel="stylesheet"
-  href="/components/form-fieldset-progress/form-fieldset-progress.css"
-/>
-<link
-  rel="modulepreload"
-  href="/components/form-fieldset-progress/form-fieldset-progress.js"
-/>
-<script
-  type="module"
-  src="/components/form-fieldset-progress/define.js"
-></script>
-```
-
-Adjust the URLs to match your deployment. Keep the module script’s normal
-deferred execution; adding `async` can run setup before the form is fully
-parsed. Load optional animation or other page scripts independently rather
-than making the component wait for them.
-
-Do not hide the host with `:not(:defined)`, or pre-hide its later fieldsets
-with CSS. If JavaScript is unavailable or fails to load, that CSS can leave
-the form or some fields inaccessible. `:defined` only means the element is
-registered, not that setup succeeded. Authored `hidden` fieldsets are excluded
-from ordinary steps, not automatically recovered as later sections.
-
-These loading hints reduce avoidable delay; they do not guarantee a flash-free
-first paint on a slow connection. The native form deliberately stays visible
-and usable while loading and after failure. The component adds no startup
-visibility mask or minimum loading delay.
 
 ## Accessibility and lifecycle
 
@@ -595,7 +542,7 @@ alone do not establish conformance.
 
 ## Publishing
 
-The template’s release hooks are retained. `npm version minor` updates the
+`npm version minor` updates the
 package version, updates and stages the pinned imports in
 [the esm.sh demo](demo/esm.html), and creates the version commit and tag.
 The `postversion` hook runs `git push --follow-tags`; the pushed version tag
